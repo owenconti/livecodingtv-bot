@@ -17,7 +17,7 @@
 var fs = require('fs');
 var credentials = require('./credentials');
 var Client = require('./Client');
-var commands = [];
+var commandFiles = [];
 
 // Load all files in the commands directory into an array
 fs.readdir( './commands' , function( err, files ) {
@@ -27,7 +27,7 @@ fs.readdir( './commands' , function( err, files ) {
 
 	files.forEach( function(fileName) {
 		if ( fileName.indexOf( '.js' ) >= 0 ) {
-			commands.push( require( './commands/' + fileName ) );
+			commandFiles.push( require( './commands/' + fileName ) );
 		}
 	} );
 
@@ -41,13 +41,15 @@ function startBot() {
 	chat.listen( function( stanza ) {
 		var parsedStanza = Client.parseStanza( stanza );
 
-		commands.forEach( function( command ) {
-			var hasType = command.types.indexOf( parsedStanza.type ) >= 0;
-			var regexMatched = command.regex.test( parsedStanza.message );
+		commandFiles.forEach( function( commandsForFile ) {
+			commandsForFile.forEach( function( command ) {
+				var hasType = command.types.indexOf( parsedStanza.type ) >= 0;
+				var regexMatched = command.regex.test( parsedStanza.message );
 
-			if ( hasType && regexMatched ) {
-				command.action( chat, parsedStanza );
-			}
+				if ( hasType && regexMatched ) {
+					command.action( chat, parsedStanza );
+				}
+			} );
 		} );
 
 		console.log( JSON.stringify( parsedStanza, null, 4 ) );

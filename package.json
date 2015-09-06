@@ -10,7 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "moment": "^2.10.6",
+    "node-persist": "0.0.6",
     "node-xmpp": "^1.0.2",
-    "node-xmpp-client": "^1.0.0-alpha23"
+    "node-xmpp-client": "^1.0.0-alpha23",
+    "say": "^0.6.0"
   }
 }

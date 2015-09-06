@@ -1,6 +1,9 @@
-var insults = ['You stink!', 'You\'re so ugly you look like a regex!'];
+var insults = [
+	'You stink!',
+	'You\'re so ugly you look like a regex!'
+];
 
-module.exports = {
+module.exports = [{
     types: ['message'],
     regex: /^(!|\/)insult\s\@(\w|\d)+$/,
     action: function( chat, stanza ) {
@@ -8,4 +11,4 @@ module.exports = {
         var username = stanza.message.substr( stanza.message.indexOf( '@' ) + 1 );
         chat.sendMessage( 'Hey @' + username + '! ' + insults[ insultIndex ] );
     }
-}
+}]
