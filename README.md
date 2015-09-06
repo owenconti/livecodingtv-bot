@@ -8,7 +8,7 @@
 
 3. Fill in the `credentials.js` file with the following format:
 
-`var username = 'LCTV_USERNAME';
+```var username = 'LCTV_USERNAME';
 var password = 'CHAT_PASSWORD';
 var room = 'LCTV_USER_WHERE_BOT_WILL_BE';
 
@@ -18,4 +18,4 @@ module.exports = {
     jid: username + '@livecoding.tv',
     password: password,
     roomJid: room + '@chat.livecoding.tv'
-};`
+};```
