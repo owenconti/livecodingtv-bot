@@ -25,3 +25,5 @@ module.exports = {
 4. Run `npm install`
 
 5. Run `node index.js`
+
+6. Some commands require extra API keys or specific variables. You can use the `credentials.js` file to store these variables.
