@@ -15,9 +15,9 @@ class Client {
      * @param  {string} username
      * @return {void}
      */
-    constructor( jid, password, username, roomJid ) {
-        this.roomJid = roomJid;
-        this.username = username;
+    constructor( credentials, debug ) {
+		this.credentials = credentials;
+		this.debug = debug;
 
         // Fire up the brain!
         brain.initSync({
@@ -26,8 +26,8 @@ class Client {
 
         // Connect to the server
         this.client = new xmpp.Client({
-            jid: jid,
-            password: password
+            jid: this.credentials.jid,
+            password: this.credentials.password
         });
 
         // Once online, send presence to the room
@@ -45,9 +45,14 @@ class Client {
      * @return {void}
      */
     sendMessage( msg ) {
+		if ( this.debug ) {
+			console.log('DEBUGGING: ' + msg);
+			return false;
+		}
+
         this.client.send(
     		new xmpp.Element('message', {
-    			to: this.roomJid,
+    			to: this.credentials.roomJid,
     			type: 'groupchat'
     		})
         	.c('body')
@@ -201,7 +206,7 @@ class Client {
      sendPresence() {
         this.client.send(
             new xmpp.Element('presence', {
-                to: this.roomJid + '/' + this.username
+                to: this.credentials.roomJid + '/' + this.credentials.username
             })
         );
     }

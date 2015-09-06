@@ -19,3 +19,7 @@
         password: password,
         roomJid: room + '@chat.livecoding.tv'
     };```
+
+4. Run `npm install`
+
+5. Run `node index.js`

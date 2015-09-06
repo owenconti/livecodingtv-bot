@@ -57,7 +57,7 @@ module.exports = [{
         if ( user.role === 'moderator' ) {
 	        var todos = chat.getSetting('todos') || [];
 	        var todoIndex = parseInt( removeRegex.exec( stanza.message )[3], 10 );
-			var itemToRemove = todos[ todoIndex ];
+			var itemToRemove = todos[ todoIndex - 1 ];
 
 			if ( !itemToRemove ) {
 	            chat.sendMessage( 'Todo #' + todoIndex + ' not found!' );
@@ -80,7 +80,7 @@ module.exports = [{
 	        var todos = chat.getSetting('todos') || [];
 			var completedTodos = chat.getSetting('completedTodos') || [];
 	        var todoIndex = parseInt( completeRegex.exec( stanza.message )[3], 10 );
-	        var itemToComplete = todos[ todoIndex ];
+	        var itemToComplete = todos[ todoIndex - 1 ];
 
 	        if ( !itemToComplete ) {
 	            chat.sendMessage( 'Todo #' + todoIndex + ' not found!' );

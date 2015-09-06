@@ -3,7 +3,7 @@
 /**
  * TODOs
  *
- * Write when people leave? or become unavailable
+ * 	commands shouldn't store variables outside of actions
  *
  * Requirements
  *
@@ -14,6 +14,8 @@
 /**
  * LCTV Bot :)
  */
+
+var debug = process.argv[2] === 'true' || false;
 var fs = require('fs');
 var credentials = require('./credentials');
 var Client = require('./Client');
@@ -36,7 +38,7 @@ fs.readdir( './commands' , function( err, files ) {
 
 function startBot() {
 	// Connect to the server
-	var chat = new Client( credentials.jid, credentials.password, credentials.username, credentials.roomJid );
+	var chat = new Client( credentials, debug );
 
 	chat.listen( function( stanza ) {
 		var parsedStanza = Client.parseStanza( stanza );

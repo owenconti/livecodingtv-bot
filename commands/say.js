@@ -16,6 +16,11 @@ module.exports = [{
             message = match[2];
         }
 
+		if ( chat.debug ) {
+			console.log('DEBUGGING (say): ' + message);
+			return false;
+		}
+
         say.speak( voice, message );
     }
 }];
