@@ -55,7 +55,8 @@ module.exports = [{
 			userObj = {
 				username: stanza.fromUsername,
 				count: 0,
-				time: 0
+				time: 0,
+				role: ''
 			};
 		} else {
 			// Rate limit existing viewer
@@ -69,6 +70,7 @@ module.exports = [{
 		// Increase the user's count and save to the leaderboard
 		userObj.count++;
 		userObj.time = now;
+		userObj.role = stanza.role;
 
 		leaderboard[ stanza.fromUsername ] = userObj;
 		chat.saveSetting( 'leaderboard', leaderboard );

@@ -26,7 +26,7 @@ module.exports = [{
         var msg = '';
 
         if ( todos.length === 0 ) {
-            msg = 'No todos.\n'
+            msg = 'No todos.\n\n'
         } else {
             msg = 'Todos:\n';
             todos.forEach( function( todo, i ) {
@@ -55,6 +55,8 @@ module.exports = [{
 
             todos.push( item );
             chat.saveSetting('todos', todos);
+
+			chat.sendMessage( 'Todo item added!' );
         }
     }
 }, {

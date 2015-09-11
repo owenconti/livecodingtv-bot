@@ -120,14 +120,8 @@ class Client {
      * @return {object}
      */
     getUser( username ) {
-        var user = null;
-        for ( var _user of _users ) {
-            if ( _user.username === username ) {
-                user = _user;
-                break;
-            }
-        }
-        return user;
+		const leaderboard = this.getSetting( 'leaderboard' );
+		return leaderboard[ username ] || {};
     }
 
     /**
@@ -202,16 +196,7 @@ class Client {
         var itemObj = Client.findChild( 'item', xObj.children );
         var role = itemObj.attrs.role;
 
-        // Add the user to our array of
-        // users when they join chat.
-        if ( message === 'available' ) {
-            _users.push({
-                username: fromUsername,
-                role: role
-            });
-        }
-
-        return { type, fromUsername, message };
+        return { type, fromUsername, message, role };
     }
 
     /**
