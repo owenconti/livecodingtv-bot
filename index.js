@@ -1,26 +1,16 @@
 'use strict';
 
 /**
- * TODOs
- *
- * 	commands shouldn't store variables outside of actions
- *
- * Requirements
- *
- * - commands must use regex to filter messages
- * - ALL commands must be run through the filter for each message
- */
-
-/**
  * LCTV Bot :)
  */
 
-var debug = process.argv[2] === 'true' || false;
 var fs = require('fs');
 var credentials = require('./credentials');
 var Client = require('./Client');
 var Log = require('./Log');
+var debug = process.argv[2] === 'true' || false;
 var commandFiles = [];
+const startUpTime = new Date().getTime();
 
 // Load all files in the commands directory into an array
 fs.readdir( './commands' , function( err, files ) {
@@ -42,8 +32,14 @@ function startBot() {
 	var chat = new Client( credentials, debug );
 
 	chat.listen( function( stanza ) {
-		var parsedStanza = Client.parseStanza( stanza );
+		// Skip the initial messages when starting the bot
+		const messageTime = new Date().getTime();
+		if ( messageTime - startUpTime < 5000 ) { // 5 seconds
+			Log.log('Skipping start up message');
+			return;
+		}
 
+		var parsedStanza = Client.parseStanza( stanza );
 		if ( !parsedStanza.rateLimited ) {
 			commandFiles.forEach( function( commandsForFile ) {
 				commandsForFile.forEach( function( command ) {
