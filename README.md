@@ -1,5 +1,9 @@
 # livecodingtv-bot
 
+# BEFORE YOU BEGIN!
+### This node app uses ES6 features.
+### Please ensure you are running node v4 or greater!
+
 ## Setup
 
 1. Clone the repo
