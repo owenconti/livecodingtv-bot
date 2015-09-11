@@ -5,9 +5,6 @@ var brain = require('node-persist');
 var crypto = require('crypto');
 var Log = require('./Log');
 
-// Local variables
-var _users = [];
-
 class Client {
     /**
      * Connect to a room
@@ -104,14 +101,6 @@ class Client {
         this.client.on('stanza', function( stanza ) {
             action( stanza );
         });
-    }
-
-    /**
-     * Returns the array of users who have joined chat.
-     * @return {array}
-     */
-    getUsers() {
-        return _users;
     }
 
     /**
