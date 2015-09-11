@@ -13,7 +13,7 @@ var completeRegex = new RegExp( /^(!|\/)todo\s(\-c)\s(\d{1})$/ );
  * Complete item:
  * 	!todo -c Item #
  * Remove item:
- * 	!todo -c Item #
+ * 	!todo -r Item #
  */
 
 module.exports = [{
@@ -22,16 +22,25 @@ module.exports = [{
     action: function( chat, stanza ) {
 		// LIST ITEMS
         var todos = chat.getSetting('todos') || [];
+		var completedTodos = chat.getSetting('completedTodos') || [];
         var msg = '';
 
         if ( todos.length === 0 ) {
-            msg = 'No todos.'
+            msg = 'No todos.\n'
         } else {
             msg = 'Todos:\n';
             todos.forEach( function( todo, i ) {
                 msg += (i + 1) + '. ' + todo + '\n';
             } );
         }
+
+		if ( completedTodos.length > 0 ) {
+			msg += 'Completed Todos:\n';
+            completedTodos.forEach( function( todo, i ) {
+                msg += (i + 1) + '. ' + todo + '\n';
+            } );
+		}
+
         chat.sendMessage( msg );
     }
 }, {
