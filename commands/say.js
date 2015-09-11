@@ -6,8 +6,10 @@ module.exports = [{
     types: ['message'],
     regex: regex,
     action: function( chat, stanza ) {
-        // Parse the message from the command
+        // Parse the message from the command,
+        // limit !say message to 50 chars
         var message = regex.exec( stanza.message )[2];
+		message = message.substr( 0, 50 );
 
         // Allow users to override the voice
         var match = /^\-voice\s(\w+)\s(.+)/.exec( message );

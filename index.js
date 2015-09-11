@@ -43,16 +43,20 @@ function startBot() {
 	chat.listen( function( stanza ) {
 		var parsedStanza = Client.parseStanza( stanza );
 
-		commandFiles.forEach( function( commandsForFile ) {
-			commandsForFile.forEach( function( command ) {
-				var hasType = command.types.indexOf( parsedStanza.type ) >= 0;
-				var regexMatched = command.regex.test( parsedStanza.message );
+		if ( !parsedStanza.rateLimited ) {
+			commandFiles.forEach( function( commandsForFile ) {
+				commandsForFile.forEach( function( command ) {
+					var hasType = command.types.indexOf( parsedStanza.type ) >= 0;
+					var regexMatched = command.regex.test( parsedStanza.message );
 
-				if ( hasType && regexMatched ) {
-					command.action( chat, parsedStanza );
-				}
+					if ( hasType && regexMatched ) {
+						command.action( chat, parsedStanza );
+					}
+				} );
 			} );
-		} );
+		} else {
+			console.log( 'Skipping command, user: ' + parsedStanza.fromUsername + ' rate limited!' );
+		}
 
 		console.log( JSON.stringify( parsedStanza, null, 4 ) );
 	} );

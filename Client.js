@@ -2,6 +2,7 @@
 
 var xmpp = require('node-xmpp');
 var brain = require('node-persist');
+var crypto = require('crypto');
 
 // Local variables
 var _users = [];
@@ -50,14 +51,37 @@ class Client {
 			return false;
 		}
 
-        this.client.send(
-    		new xmpp.Element('message', {
-    			to: this.credentials.roomJid,
-    			type: 'groupchat'
-    		})
-        	.c('body')
-            .t( msg )
-      	);
+		// Get the previously sent messages
+		let messages = brain.getItem('messages') || {};
+
+		// Hash the message and use it as our key.
+		// Grab the previous message.
+		// Build the new message object.
+		let hash = crypto.createHash('md5').update( msg ).digest('hex');
+		let previousMessage = messages[ hash ];
+		let messageObj = {
+			message: msg,
+			time: new Date().getTime()
+		};
+
+		// Compare the previous message time vs the current message time
+		// Only send the message to the server, if the difference is > 5 seconds
+		if ( !previousMessage || messageObj.time - previousMessage.time > 5000 ) { // 5 seconds
+			this.client.send(
+	    		new xmpp.Element('message', {
+	    			to: this.credentials.roomJid,
+	    			type: 'groupchat'
+	    		})
+	        	.c('body')
+	            .t( msg )
+	      	);
+		} else {
+			console.log( 'Skipping sendMessage - previous message sent within 5 seconds' );
+		}
+
+		// Save the message to the messages store
+		messages[ hash ] = messageObj;
+		brain.setItem( 'messages', messages );
     }
 
     /**
@@ -142,11 +166,29 @@ class Client {
 
     static parseMessage( stanza ) {
         var type = 'message';
+		var rateLimited = false;
         var fromUsername = Client.parseFromUsername( stanza );
         var body = Client.findChild( 'body', stanza.children );
         var message = body.children.join('').replace('\\', '');
 
-        return { type, fromUsername, message };
+		// Limit users to only run commands once every 5 seconds
+		let messages = brain.getItem( 'userMessages' ) || {};
+		let previousUserMessage = messages[ fromUsername ];
+		let messageObj = {
+			time: new Date().getTime()
+		};
+
+		// If the user's previous message was within 5 seconds,
+		// return false and all commands will be skipped.
+		if ( previousUserMessage && messageObj.time - previousUserMessage.time < 5000 ) { // 5 seconds
+			rateLimited = true;
+		}
+
+		// Update the message store and return
+		messages[ fromUsername ] = messageObj;
+		brain.setItem( 'userMessages', messages );
+
+        return { type, fromUsername, message, rateLimited };
     }
 
     static parsePresence( stanza ) {
