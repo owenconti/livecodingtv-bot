@@ -3,6 +3,12 @@ var insults = [
 	'You\'re so ugly you look like a regex!'
 ];
 
+/**
+ * Commands:
+ *
+ * !insult {username} - Insults the specified user
+ */
+
 module.exports = [{
     types: ['message'],
     regex: /^(!|\/)insult\s\@(\w|\d)+$/,

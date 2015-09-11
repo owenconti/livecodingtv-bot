@@ -4,6 +4,13 @@ var StringDecoder = require('string_decoder').StringDecoder;
 var commitSummaryRegex = /^(!|\/)commits\ssummary\s(\d{1,2})$/;
 
 /**
+ * Commands:
+ *
+ * !commits - list 3 latest commits
+ * !commits summary {weeks} - Draw basic graph of commits over last X weeks
+ */
+
+/**
  * Grab the commits for the repo from GitHub
  * @param  {Function} callback
  * @return {void}

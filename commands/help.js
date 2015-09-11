@@ -9,6 +9,8 @@ module.exports = [{
             !insult {@username} - Throws a random insult at said user.
             !say {[-voice VoiceName]} {message} - Verbally speaks a message.
             !todo - List the current TODOs.
+			!commits - list 3 latest commits
+		    !commits summary {weeks} - Draw basic graph of commits over last X weeks
         `);
     }
 }]

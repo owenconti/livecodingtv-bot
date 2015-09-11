@@ -1,5 +1,12 @@
 var regex = new RegExp( /^(!|\/)setproject\s(.+)$/ );
 
+/**
+ * Commands:
+ *
+ * !project - Displays the current project
+ * !setproject {Text} - Sets the current project (moderator only)
+ */
+
 module.exports = [{
     types: ['message'],
     regex: regex,
