@@ -19,6 +19,7 @@ var debug = process.argv[2] === 'true' || false;
 var fs = require('fs');
 var credentials = require('./credentials');
 var Client = require('./Client');
+var Log = require('./Log');
 var commandFiles = [];
 
 // Load all files in the commands directory into an array
@@ -58,6 +59,6 @@ function startBot() {
 			console.log( 'Skipping command, user: ' + parsedStanza.fromUsername + ' rate limited!' );
 		}
 
-		console.log( JSON.stringify( parsedStanza, null, 4 ) );
+		Log.log( JSON.stringify( parsedStanza, null, 4 ) );
 	} );
 }
