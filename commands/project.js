@@ -21,8 +21,6 @@ module.exports = [{
     types: ['message'],
     regex: /^(!|\/)project$/,
     action: function( chat, stanza ) {
-        console.log("chat.getSetting( 'project' )", chat.getSetting( 'project' ));
-
         chat.replyTo( stanza.fromUsername, chat.getSetting( 'project' ) );
     }
 }]

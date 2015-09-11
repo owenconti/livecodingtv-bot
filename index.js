@@ -25,7 +25,7 @@ var commandFiles = [];
 // Load all files in the commands directory into an array
 fs.readdir( './commands' , function( err, files ) {
 	if ( err ) {
-		console.log( 'ERROR: ' + err );
+		Log.log( 'ERROR: ' + err );
 	}
 
 	files.forEach( function(fileName) {
@@ -56,7 +56,7 @@ function startBot() {
 				} );
 			} );
 		} else {
-			console.log( 'Skipping command, user: ' + parsedStanza.fromUsername + ' rate limited!' );
+			Log.log( 'Skipping command, user: ' + parsedStanza.fromUsername + ' rate limited!' );
 		}
 
 		Log.log( JSON.stringify( parsedStanza, null, 4 ) );

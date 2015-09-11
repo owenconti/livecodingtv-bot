@@ -3,6 +3,7 @@
 var xmpp = require('node-xmpp');
 var brain = require('node-persist');
 var crypto = require('crypto');
+var Log = require('./Log');
 
 // Local variables
 var _users = [];
@@ -33,7 +34,7 @@ class Client {
 
         // Once online, send presence to the room
         this.client.on('online', function( resp ) {
-            console.log( 'Connected to server' );
+            Log.log( 'Connected to server' );
 
             this.sendPresence();
         }.bind( this ) );
@@ -47,7 +48,7 @@ class Client {
      */
     sendMessage( msg ) {
 		if ( this.debug ) {
-			console.log('DEBUGGING: ' + msg);
+			Log.log('DEBUGGING: ' + msg);
 			return false;
 		}
 
@@ -76,7 +77,7 @@ class Client {
 	            .t( msg )
 	      	);
 		} else {
-			console.log( 'Skipping sendMessage - previous message sent within 5 seconds' );
+			Log.log( 'Skipping sendMessage - previous message sent within 5 seconds' );
 		}
 
 		// Save the message to the messages store

@@ -1,5 +1,6 @@
 var say = require('say');
 var voice = 'Victoria';
+var Log = require('../Log');
 var regex = new RegExp( /^(!|\/)say\s(.+)$/ );
 
 module.exports = [{
@@ -19,7 +20,7 @@ module.exports = [{
         }
 
 		if ( chat.debug ) {
-			console.log('DEBUGGING (say): ' + message);
+			Log.log('DEBUGGING (say): ' + message);
 			return false;
 		}
 
