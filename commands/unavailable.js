@@ -1,7 +1,9 @@
+var say = require('say');
+
 module.exports = [{
     types: ['presence'],
     regex: /^unavailable$/,
     action: function( chat, stanza ) {
-        chat.sendMessage( '@' + stanza.fromUsername + ' has disconnected.' );
+        say.speak('Victoria', stanza.fromUsername + ' disconnected.');
     }
 }]
