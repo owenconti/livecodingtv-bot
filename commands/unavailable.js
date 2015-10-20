@@ -6,4 +6,4 @@ module.exports = [{
     action: function( chat, stanza ) {
         say.speak('Victoria', stanza.fromUsername + ' disconnected.');
     }
-}]
+}];
