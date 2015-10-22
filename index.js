@@ -8,7 +8,7 @@ var fs = require('fs');
 var credentials = require('./credentials');
 var Client = require('./Client');
 var Log = require('./Log');
-var debug = process.argv[2] === 'true' || false;
+var debug = process.argv[2] === 'debug' || false;
 var commandFiles = [];
 const startUpTime = new Date().getTime();
 
