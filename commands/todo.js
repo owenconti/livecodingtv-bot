@@ -1,3 +1,5 @@
+'use strict';
+
 var addRegex = new RegExp( /^(!|\/)todo\s(\-a)\s(.+)$/ );
 var listRegex = new RegExp( /^(!|\/)todo$/ );
 var removeRegex = new RegExp( /^(!|\/)todo\s(\-r)\s(\d{1})$/ );

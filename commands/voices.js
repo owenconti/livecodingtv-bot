@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = [{
     types: ['message'],
     regex: /^(!|\/)voices/i,

@@ -1,3 +1,5 @@
+'use strict';
+
 var https = require('https');
 var moment = require('moment');
 var StringDecoder = require('string_decoder').StringDecoder;

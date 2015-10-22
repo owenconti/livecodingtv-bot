@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Greets a viewer when they join the stream.
  * There is a different message displayed for new viewers vs. previous viewers.

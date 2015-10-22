@@ -1,3 +1,5 @@
+'use strict';
+
 var say = require('say');
 var voice = 'Victoria';
 var Log = require('../Log');

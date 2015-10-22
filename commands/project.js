@@ -1,3 +1,5 @@
+'use strict';
+
 var regex = new RegExp( /^(!|\/)setproject\s(.+)$/ );
 
 /**
