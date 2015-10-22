@@ -37,6 +37,18 @@ class Client {
         }.bind( this ) );
     }
 
+	/**
+     * Sends the bot's presence to the room specified.
+     * @return {void}
+     */
+ 	sendPresence() {
+        this.client.send(
+            new xmpp.Element('presence', {
+                to: this.credentials.roomJid + '/' + this.credentials.username
+            })
+        );
+    }
+
     /**
      * Sends a message to the specified room.
      * @param  {string} msg
@@ -53,7 +65,8 @@ class Client {
 		let messages = brain.getItem('messages') || {};
 
 		// Hash the message and use it as our key.
-		// Grab the previous message.
+		// Grab the previous message that uses the same hash.
+		// (ie: the message text is the same).
 		// Build the new message object.
 		let hash = crypto.createHash('md5').update( msg ).digest('hex');
 		let previousMessage = messages[ hash ];
@@ -157,14 +170,17 @@ class Client {
 
 		// Limit users to only run commands once every 5 seconds
 		let messages = brain.getItem( 'userMessages' ) || {};
-		let previousUserMessage = messages[ fromUsername ];
+		let userMessageLog = messages[ fromUsername ];
+		let lastCommandTime = (userMessageLog && userMessageLog.lastCommandTime) || 0;
+
+		// The new message object
 		let messageObj = {
 			time: new Date().getTime()
 		};
 
-		// If the user's previous message was within 5 seconds,
+		// If the user's most recent command was within 5 seconds,
 		// return false and all commands will be skipped.
-		if ( previousUserMessage && messageObj.time - previousUserMessage.time < 5000 ) { // 5 seconds
+		if ( lastCommandTime > 0 && messageObj.time - lastCommandTime < 5000 ) { // 5 seconds
 			rateLimited = true;
 		}
 
@@ -198,6 +214,19 @@ class Client {
         return fromJid.substr( fromJid.indexOf( '/' ) + 1 );
     }
 
+	/**
+	 * [updateLatestCommandLog description]
+	 * @param  {[type]} stanza [description]
+	 * @return {[type]}        [description]
+	 */
+	static updateLatestCommandLog( stanza ) {
+		let messages = brain.getItem( 'userMessages' ) || {};
+		let userMessageLog = messages[ stanza.fromUsername ];
+		userMessageLog.lastCommandTime = new Date().getTime();
+
+		brain.setItem( 'userMessages', messages );
+	}
+
     /**
      * Child a child based on the 'name' property
      * @param  {[type]} name     [description]
@@ -214,18 +243,6 @@ class Client {
             }
         }
         return result;
-    }
-
-    /**
-     * Sends the bot's presence to the room specified.
-     * @return {void}
-     */
-     sendPresence() {
-        this.client.send(
-            new xmpp.Element('presence', {
-                to: this.credentials.roomJid + '/' + this.credentials.username
-            })
-        );
     }
 }
 

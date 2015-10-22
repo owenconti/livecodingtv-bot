@@ -41,16 +41,23 @@ function startBot() {
 
 		var parsedStanza = Client.parseStanza( stanza );
 		if ( !parsedStanza.rateLimited ) {
+			var ranCommand = false;
 			commandFiles.forEach( function( commandsForFile ) {
 				commandsForFile.forEach( function( command ) {
 					var hasType = command.types.indexOf( parsedStanza.type ) >= 0;
 					var regexMatched = command.regex.test( parsedStanza.message );
 
 					if ( hasType && regexMatched ) {
+						ranCommand = true;
 						command.action( chat, parsedStanza );
 					}
 				} );
 			} );
+
+			// If the user ran a command, update the command log
+			if ( ranCommand ) {
+				Client.updateLatestCommandLog( parsedStanza );
+			}
 		} else {
 			Log.log( 'Skipping command, user: ' + parsedStanza.fromUsername + ' rate limited!' );
 		}
