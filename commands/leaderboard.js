@@ -50,6 +50,10 @@ module.exports = [{
 		let userObj = leaderboard[ stanza.fromUsername ];
 		const now = new Date().getTime();
 
+		if ( leaderboard.length === 0 ) {
+			Log.log( 'ERROR! LEADERBOARD IS EMPTY' );
+		}
+
 		if ( !userObj ) {
 			// New viewer
 			userObj = {

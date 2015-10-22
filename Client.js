@@ -8,10 +8,8 @@ var Log = require('./Log');
 class Client {
     /**
      * Connect to a room
-     * @param  {string} jid
-     * @param  {string} password
-     * @param  {string} room
-     * @param  {string} username
+     * @param  {object} credentials
+     * @param  {boolean} debug
      * @return {void}
      */
     constructor( credentials, debug ) {
