@@ -221,7 +221,7 @@ class Client {
 	 */
 	static updateLatestCommandLog( stanza ) {
 		let messages = brain.getItem( 'userMessages' ) || {};
-		let userMessageLog = messages[ stanza.fromUsername ];
+		let userMessageLog = messages[ stanza.fromUsername ] || {};
 		userMessageLog.lastCommandTime = new Date().getTime();
 
 		brain.setItem( 'userMessages', messages );
