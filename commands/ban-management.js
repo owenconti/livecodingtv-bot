@@ -25,6 +25,33 @@ const unbanRegex = new RegExp( /^(!|\/)unban\s(\w+)$/ );
 const banRegex = new RegExp( /^(!|\/)ban\s(\w+)$/ );
 
 module.exports = [{
+	// Auto ban users flood messages to the chat
+    types: ['message'],
+    regex: /./,
+	ignoreRateLimiting: true,
+    action: function( chat, stanza ) {
+		const numberOfMessagesAllowed = 5;
+		const timeframeAllowed = 10; // seconds
+
+		let messages = chat.getSetting( 'userMessages' ) || {};
+		let userMessageLog = messages[ stanza.fromUsername ];
+		let userMessageTimes = userMessageLog.messageTimes;
+
+		// If the user has sent at least the number of messages allowed
+		if ( userMessageTimes.length > numberOfMessagesAllowed ) {
+			const now = new Date().getTime();
+			let limitedMessageTime = userMessageTimes[ userMessageTimes.length - numberOfMessagesAllowed ];
+
+			// If the number of allowed messages sent by the user (ie: 5th)
+			// was sent within the last X seconds (timeframeAllowed),
+			// ban the user.
+			if ( now - limitedMessageTime < ( timeframeAllowed * 1000 ) ) {
+				var affiliationStanza = getUserAffiliationStanza( chat.credentials, stanza.fromUsername, 'outcast' );
+				chat.client.send( affiliationStanza );
+			}
+		}
+    }
+}, {
     types: ['message'],
     regex: unbanRegex,
     action: function( chat, stanza ) {
@@ -50,8 +77,6 @@ module.exports = [{
 
 			var affiliationStanza = getUserAffiliationStanza( chat.credentials, userToBan, 'outcast' );
 			chat.client.send( affiliationStanza );
-
-			chat.sendMessage( '@' + userToBan + ' has been banned!' );
 		}
     }
 }];

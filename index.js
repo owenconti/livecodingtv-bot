@@ -43,31 +43,35 @@ function startBot() {
 
 		if ( !parsedStanza ) {
 			console.log( 'Error parsing stanza: ' + stanza );
-		} else if ( !parsedStanza.rateLimited ) {
-			// Run the command through each command file.
-			// If the type and the regex match, run the 'action'
-			// function of the matching command.
-			var ranCommand = false;
-			commandFiles.forEach( function( commandsForFile ) {
-				commandsForFile.forEach( function( command ) {
-					var hasType = command.types.indexOf( parsedStanza.type ) >= 0;
-					var regexMatched = command.regex.test( parsedStanza.message );
-
-					if ( hasType && regexMatched ) {
-						ranCommand = true;
-						command.action( chat, parsedStanza );
-					}
-				} );
-			} );
-
-			// If the user ran a command, update the command log
-			if ( ranCommand ) {
-				Client.updateLatestCommandLog( parsedStanza );
-			}
-		} else {
-			Log.log( 'Skipping command, user: ' + parsedStanza.fromUsername + ' rate limited!' );
+			return;
 		}
 
+		if ( !parsedStanza.rateLimited ) {
+			Log.log( 'User: ' + parsedStanza.fromUsername + ' rate limited!' );
+		}
+
+		// Run the command through each command file.
+		// If the type and the regex match, run the 'action'
+		// function of the matching command.
+		var ranCommand = false;
+		commandFiles.forEach( function( commandsForFile ) {
+			commandsForFile.forEach( function( command ) {
+				var hasType = command.types.indexOf( parsedStanza.type ) >= 0;
+				var regexMatched = command.regex.test( parsedStanza.message );
+				var ignoreRateLimiting = command.ignoreRateLimiting;
+				var passesRateLimiting = !parsedStanza.rateLimited || ( parsedStanza.rateLimited && ignoreRateLimiting );
+
+				if ( hasType && regexMatched && passesRateLimiting ) {
+					ranCommand = true;
+					command.action( chat, parsedStanza );
+				}
+			} );
+		} );
+
+		// If the user ran a command, update the command log
+		if ( ranCommand ) {
+			Client.updateLatestCommandLog( parsedStanza );
+		}
 		Log.log( JSON.stringify( parsedStanza, null, 4 ) );
 	} );
 }

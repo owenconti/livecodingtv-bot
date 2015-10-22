@@ -178,28 +178,33 @@ class Client {
         var message = body.children.join('').replace('\\', '');
 
 		// Limit users to only run commands once every 5 seconds
+		const now = new Date().getTime();
 		let messages = brain.getItem( 'userMessages' ) || {};
 		let userMessageLog = messages[ fromUsername ];
-		let lastCommandTime = (userMessageLog && userMessageLog.lastCommandTime) || 0;
-
-		// The new message object
-		let messageObj = {
-			time: new Date().getTime()
-		};
+		if ( !userMessageLog ) {
+			userMessageLog = {
+				messageTimes: [],
+				lastCommandTime: 0
+			};
+		}
 
 		// If the user's most recent command was within 5 seconds,
 		// return false and all commands will be skipped.
 		if ( fromUsername !== credentials.username ) {
 			// Only rate limit users who are not the bot :)
-			if ( lastCommandTime > 0 && messageObj.time - lastCommandTime < 5000 ) { // 5 seconds
+			if ( userMessageLog.lastCommandTime > 0 && now - userMessageLog.lastCommandTime < 5000 ) { // 5 seconds
 				rateLimited = true;
 			}
 		}
 
-		// Update the message store and return
-		messages[ fromUsername ] = messageObj;
+		// Push 'now' time into the user's message times
+		userMessageLog.messageTimes.push( now );
+
+		// Update the message log for the user
+		messages[ fromUsername ] = userMessageLog;
 		brain.setItem( 'userMessages', messages );
 
+		// Return the parsed message
         return { type, fromUsername, message, rateLimited };
     }
 
