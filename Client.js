@@ -27,6 +27,10 @@ class Client {
             password: this.credentials.password
         });
 
+		this.client.on('error', function(err) {
+			console.log('CLIENT ERROR: ', err, err.stanza, err.stanza.Stanza);
+		});
+
         // Once online, send presence to the room
         this.client.on('online', function( resp ) {
             Log.log( 'Connected to server' );
@@ -145,21 +149,28 @@ class Client {
 
     /**
      * Parses a stanza from the server
-     * @param  {[type]} stanza [description]
-     * @return {[type]}        [description]
+	 * @param  {Stanza} stanza
+	 * @param  {obj} credentials
+	 * @return {obj}
      */
-    static parseStanza( stanza ) {
+    static parseStanza( stanza, credentials ) {
         var type = stanza.name;
 
         switch( type ) {
             case 'message':
-                return Client.parseMessage( stanza );
+                return Client.parseMessage( stanza, credentials );
             case 'presence':
-                return Client.parsePresence( stanza );
+                return Client.parsePresence( stanza, credentials );
         }
     }
 
-    static parseMessage( stanza ) {
+	/**
+	 * Parses the passed-in 'message' stanza.
+	 * @param  {Stanza} stanza
+	 * @param  {obj} credentials
+	 * @return {obj}
+	 */
+    static parseMessage( stanza, credentials ) {
         var type = 'message';
 		var rateLimited = false;
         var fromUsername = Client.parseFromUsername( stanza );
@@ -178,8 +189,11 @@ class Client {
 
 		// If the user's most recent command was within 5 seconds,
 		// return false and all commands will be skipped.
-		if ( lastCommandTime > 0 && messageObj.time - lastCommandTime < 5000 ) { // 5 seconds
-			rateLimited = true;
+		if ( fromUsername !== credentials.username ) {
+			// Only rate limit users who are not the bot :)
+			if ( lastCommandTime > 0 && messageObj.time - lastCommandTime < 5000 ) { // 5 seconds
+				rateLimited = true;
+			}
 		}
 
 		// Update the message store and return
@@ -189,7 +203,13 @@ class Client {
         return { type, fromUsername, message, rateLimited };
     }
 
-    static parsePresence( stanza ) {
+	/**
+	 * Parses the passed-in 'presence' stanza.
+	 * @param  {Stanza} stanza
+	 * @param  {obj} credentials
+	 * @return {obj}
+	 */
+    static parsePresence( stanza, credentials) {
         var type = 'presence';
         var fromUsername = Client.parseFromUsername( stanza );
         var message = stanza.attrs.type || 'available';
@@ -214,8 +234,8 @@ class Client {
 
 	/**
 	 * [updateLatestCommandLog description]
-	 * @param  {[type]} stanza [description]
-	 * @return {[type]}        [description]
+	 * @param  {Stanza} stanza
+	 * @return {void}
 	 */
 	static updateLatestCommandLog( stanza ) {
 		let messages = brain.getItem( 'userMessages' ) || {};

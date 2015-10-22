@@ -2,7 +2,7 @@
 
 module.exports = [{
     types: ['message'],
-    regex: /^(!|\/)help$/,
+    regex: /^(!|\/)(help|commands)$/,
     action: function( chat, stanza ) {
 		var output = `Built-in commands:
 

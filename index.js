@@ -39,8 +39,14 @@ function startBot() {
 			return;
 		}
 
-		var parsedStanza = Client.parseStanza( stanza );
-		if ( !parsedStanza.rateLimited ) {
+		var parsedStanza = Client.parseStanza( stanza, credentials );
+
+		if ( !parsedStanza ) {
+			console.log( 'Error parsing stanza: ' + stanza );
+		} else if ( !parsedStanza.rateLimited ) {
+			// Run the command through each command file.
+			// If the type and the regex match, run the 'action'
+			// function of the matching command.
 			var ranCommand = false;
 			commandFiles.forEach( function( commandsForFile ) {
 				commandsForFile.forEach( function( command ) {
