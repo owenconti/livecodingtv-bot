@@ -130,7 +130,7 @@ class Client {
      * @return {any}
      */
     getSetting( key ) {
-        return brain.getItem( key ) || null;
+        return brain.getItemSync( key ) || null;
     }
 
     /**
@@ -140,7 +140,7 @@ class Client {
      * @return {void}
      */
     saveSetting( key, value ) {
-        brain.setItem( key, value );
+        brain.setItemSync( key, value );
     }
 
     /**
