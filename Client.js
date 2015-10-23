@@ -124,8 +124,8 @@ class Client {
      * @return {object}
      */
     getUser( username ) {
-		const leaderboard = this.getSetting( 'leaderboard' );
-		return leaderboard[ username ] || {};
+		const users = this.getSetting( 'users' );
+		return users[ username ] || {};
     }
 
     /**
@@ -223,6 +223,22 @@ class Client {
         var xObj = Client.findChild( 'x', stanza.children );
         var itemObj = Client.findChild( 'item', xObj.children );
         var role = itemObj.attrs.role;
+
+		// Store new users in the 'users' brain object
+		let users = brain.getItem( 'users' ) || {};
+		let userObj = users[ fromUsername ];
+		if ( !userObj ) {
+			// New viewer
+			userObj = {
+				username: fromUsername,
+				count: 0,
+				time: new Date().getTime(),
+				role: role,
+				status: 'Viewer'
+			};
+			users[ fromUsername ] = userObj;
+			brain.setItem( 'users', users );
+		}
 
         return { type, fromUsername, message, role };
     }

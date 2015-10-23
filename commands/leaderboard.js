@@ -19,10 +19,10 @@ module.exports = [{
 
 		// Grab users from the leaderboard brain object
 		// Map the leaderboard into an array
-		let leaderboard = chat.getSetting( 'leaderboard' ) || {};
+		let users = chat.getSetting( 'users' ) || {};
 		let userScores = [];
-		for ( var username in leaderboard ) {
-			userScores.push( leaderboard[ username ] );
+		for ( var username in users ) {
+			userScores.push( users[ username ] );
 		}
 
 		// Sort the entire leaderboard
@@ -46,37 +46,28 @@ module.exports = [{
 	regex: /^available$/,
 	action: function( chat, stanza ) {
 		// Grab the user's score from the leaderboard
-		let leaderboard = chat.getSetting( 'leaderboard' ) || {};
-		let userObj = leaderboard[ stanza.fromUsername ];
-		const now = new Date().getTime();
+		let users = chat.getSetting( 'users' ) || {};
+		let userObj = users[ stanza.fromUsername ];
 
-		if ( leaderboard.length === 0 ) {
+		if ( users.length === 0 ) {
 			Log.log( 'ERROR! LEADERBOARD IS EMPTY' );
 		}
 
-		if ( !userObj ) {
-			// New viewer
-			userObj = {
-				username: stanza.fromUsername,
-				count: 0,
-				time: 0,
-				role: ''
-			};
-		} else {
+		if ( userObj ) {
 			// Rate limit existing viewer
 			// Only update leaderboard once every 10 minutes per viewer
+			const now = new Date().getTime();
 			const minutes = 10;
 			if ( now - userObj.time < 1000 * 60 * minutes ) {
 				return;
 			}
+
+			// Increase the user's count and save to the leaderboard
+			userObj.count++;
+			userObj.time = now;
+
+			users[ stanza.fromUsername ] = userObj;
+			chat.saveSetting( 'users', users );
 		}
-
-		// Increase the user's count and save to the leaderboard
-		userObj.count++;
-		userObj.time = now;
-		userObj.role = stanza.role;
-
-		leaderboard[ stanza.fromUsername ] = userObj;
-		chat.saveSetting( 'leaderboard', leaderboard );
 	}
 }]

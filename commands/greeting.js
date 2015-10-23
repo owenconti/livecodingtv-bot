@@ -8,8 +8,8 @@ module.exports = [{
 	types: ['presence'],
 	regex: /^available$/,
     action: function( chat, stanza ) {
-		let leaderboard = chat.getSetting( 'leaderboard' ) || {};
-		let userObj = leaderboard[ stanza.fromUsername ];
+		let users = chat.getSetting( 'users' ) || {};
+		let userObj = users[ stanza.fromUsername ];
 
 		if ( userObj && userObj.count > 1 ) {
 			// Existing viewer
