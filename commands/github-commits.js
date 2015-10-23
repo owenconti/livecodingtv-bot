@@ -3,7 +3,6 @@
 var https = require('https');
 var moment = require('moment');
 var StringDecoder = require('string_decoder').StringDecoder;
-var commitSummaryRegex = /^(!|\/)commits\ssummary\s(\d{1,2})$/;
 
 /**
  * Commands:
@@ -43,6 +42,7 @@ function getCommitsFromGithub( chat, parameters, callback ) {
 	req.end();
 }
 
+const commitSummaryRegex = /^(!|\/)commits\ssummary\s(\d{1,2})$/;
 module.exports = [{
 	types: ['message'],
 	regex: /^(!|\/)commits$/,
