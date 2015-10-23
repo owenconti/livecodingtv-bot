@@ -33,26 +33,29 @@ module.exports = [{
     types: ['message'],
     regex: setStatusRegex,
     action: function( chat, stanza ) {
-		var match = setStatusRegex.exec( stanza.message );
-		var statusToSet = match[3];
-		var username = match[2];
-		if ( username.indexOf('@') === 0 ) {
-			username = username.substr(1);
+		var user = chat.getUser( stanza.fromUsername );
+		if ( user.role === 'moderator' ) {
+			var match = setStatusRegex.exec( stanza.message );
+			var statusToSet = match[3];
+			var username = match[2];
+			if ( username.indexOf('@') === 0 ) {
+				username = username.substr(1);
+			}
+
+			// Look up the user
+			var users = chat.getSetting( 'users' ) || {};
+			var user = users[ username ];
+
+			if ( !user ) {
+				chat.sendMessage( `User '${username}' cannot be found.` );
+				return;
+			}
+
+			// Set the status
+			user.status = statusToSet;
+			chat.saveSetting('users', users);
+
+			chat.replyTo(username, `is now a ${statusToSet}!` );
 		}
-
-		// Look up the user
-		var users = chat.getSetting( 'users' ) || {};
-		var user = users[ username ];
-
-		if ( !user ) {
-			chat.sendMessage( `User '${username}' cannot be found.` );
-			return;
-		}
-
-		// Set the status
-		user.status = statusToSet;
-		chat.saveSetting('users', users);
-
-		chat.replyTo(username, `is now a ${statusToSet}!` );
     }
 }];

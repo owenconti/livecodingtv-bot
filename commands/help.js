@@ -6,15 +6,19 @@ module.exports = [{
     action: function( chat, stanza ) {
 		var output = `Built-in commands:
 
-!help - Lists the availabe commands.
-!addcommand - Adds a new command to the bot.
-!removecommand - Removes a command from the bot.
-!insult {@username} - Throws a random insult at said user.
-!say {[-voice VoiceName]} {message} - Verbally speaks a message.
-!todo - List the current TODOs.
+!addcommand - Adds a new command to the bot (Mod only).
+!ban {@username} - Bans the user (Mod only).
 !commits - list 3 latest commits.
 !commits summary {weeks} - Draw graph of commits over last X weeks.
+!getstatus {@username} - Returns the Status of the user.
+!help - Lists the availabe commands.
+!insult {@username} - Throws a random insult at said user.
+!removecommand - Removes a command from the bot (Mod only).
+!say {[-voice VoiceName]} {message} - Verbally speaks a message.
+!setstatus {@username} {status} - Sets the status of the user (Mod only).
+!todo - List the current TODOs.
 !top {X} - Displays the top X viewers.
+!unban {@username} - Unbans the user (Mod only).
 !voices - Lists the available voices to be used with the !say command.`;
 
 		// Get our custom commands

@@ -8,7 +8,8 @@
 const greetings = {
 	"existing" : {
 		"Viewer" : [
-			`Back again! How's life treating you today?`
+			`Back again! How's life treating you today?`,
+			`Hey friend! What are you working on today?`,
 		],
 		"Royalty" : [
 			'The king has arrived! We appreciate your support!'
