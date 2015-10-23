@@ -27,7 +27,7 @@ const greetings = {
  */
 var getRandomGreeting = function( availableGreetings ) {
 	var length = availableGreetings.length;
-	var index = Math.floor(Math.random() * (length + 1));
+	var index = Math.floor(Math.random() * length);
 	return availableGreetings[ index ];
 };
 
@@ -39,8 +39,6 @@ module.exports = [{
 		let userObj = users[ stanza.fromUsername ];
 		let status = userObj.status;
 		let existingViewer = userObj.count > 1;
-
-		console.log( status );
 
 		// Find the greeting to send to the user
 		let greeting;
