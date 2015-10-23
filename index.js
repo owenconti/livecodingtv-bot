@@ -46,7 +46,7 @@ function startBot() {
 			return;
 		}
 
-		if ( !parsedStanza.rateLimited ) {
+		if ( parsedStanza.rateLimited ) {
 			Log.log( 'User: ' + parsedStanza.fromUsername + ' rate limited!' );
 		}
 

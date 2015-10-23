@@ -233,13 +233,16 @@ class Client {
 				username: fromUsername,
 				count: 0,
 				time: new Date().getTime(),
-				role: role,
-				status: 'Viewer'
+				role: role
 			};
-			users[ fromUsername ] = userObj;
-			brain.setItem( 'users', users );
 		}
 
+		if ( !userObj.status ) {
+			userObj.status = 'Viewer';
+		}
+		users[ fromUsername ] = userObj;
+		brain.setItem( 'users', users );
+		
         return { type, fromUsername, message, role };
     }
 
