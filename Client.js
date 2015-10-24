@@ -224,6 +224,12 @@ class Client {
         var itemObj = Client.findChild( 'item', xObj.children );
         var role = itemObj.attrs.role;
 
+		// If presence is unavailable,
+		// return without storing user object
+		if ( message === 'unavailable' ) {
+			return { type, fromUsername, message, role };
+		}
+
 		// Store new users in the 'users' brain object
 		let users = brain.getItem( 'users' ) || {};
 		let userObj = users[ fromUsername ];
