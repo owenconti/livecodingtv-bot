@@ -4,6 +4,30 @@ const setStatusRegex = new RegExp( /^(!|\/)setstatus\s(.+)\s(\w+)/ );
 const getStatusRegex = new RegExp( /^(!|\/)getstatus\s(.+)/ );
 
 module.exports = [{
+	// !status - Returns the fromUser's status
+    types: ['message'],
+    regex: /^(!|\/)status/,
+    action: function( chat, stanza ) {
+		var username = stanza.fromUsername;
+
+		// Look up the user
+		var users = chat.getSetting( 'users' ) || {};
+		var user = users[ username ];
+
+		if ( !user ) {
+			chat.sendMessage( `User '${username}' cannot be found.` );
+			return;
+		}
+
+		var status = user.status;
+		if ( !status ) {
+			status = 'Viewer';
+		}
+
+		chat.sendMessage(`${username} is set to: ${status}`);
+    }
+}, {
+	// !getstatus {username}
     types: ['message'],
     regex: getStatusRegex,
     action: function( chat, stanza ) {
@@ -30,6 +54,7 @@ module.exports = [{
 		chat.sendMessage(`${username} is set to: ${status}`);
     }
 }, {
+	// !setstatus {username} {status}
     types: ['message'],
     regex: setStatusRegex,
     action: function( chat, stanza ) {
