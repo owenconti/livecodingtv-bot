@@ -33,6 +33,11 @@ module.exports = [{
 		const numberOfMessagesAllowed = 5;
 		const timeframeAllowed = 10; // seconds
 
+		// Never auto ban the streamer or the bot
+		if ( stanza.fromUsername === chat.credentials.username || stanza.fromUsername === chat.credentials.room ) {
+			return;
+		}
+
 		let messages = chat.getSetting( 'userMessages' ) || {};
 		let userMessageLog = messages[ stanza.fromUsername ];
 		let userMessageTimes = userMessageLog.messageTimes;
