@@ -10,7 +10,6 @@
 	!pause - pauses the track
 	!play - plays the current track in the play list
  */
-
 const YouTube = require('youtube-node');
 const Log = require('../Log');
 const websocket = require('../websocket');
@@ -27,9 +26,16 @@ module.exports = [{
 		setPlayer( player, chat );
     }
 }, {
+	// Skips to the next song when the player is finished playing a song
+    types: ['websocket'],
+	regex: /^songEnded$/,
+    action: function( chat, messageObj ) {
+		skipSong( chat );
+    }
+}, {
 	// Tell the chat what the current song is
     types: ['message'],
-    regex: /^(!|\/)song|track|music$/,
+    regex: /^(!|\/)(song|track|music)$/,
     action: function( chat, stanza ) {
 		let player = getPlayer( chat );
 		let playlist = getPlaylist( chat );
@@ -89,27 +95,10 @@ module.exports = [{
     regex: /^(!|\/)skip$/,
     action: function( chat, stanza ) {
 		let player = getPlayer( chat );
-		let playlist = getPlaylist( chat );
 		let user = chat.getUser( stanza.fromUsername );
 
 		if ( player.started && user.role === 'moderator' ) {
-			if ( playlist.length === ( player.currentSongIndex + 1 ) ) {
-				// Current song is the last in the playlist, restart the playlist
-				player.currentSongIndex = 0;
-			} else {
-				// Skip to next track in the playlist
-				player.currentSongIndex++;
-			}
-			setPlayer( player, chat );
-
-			if ( player.playing && playlist.length > 0 ) {
-				// Player is playing a song
-				let currentSong = playlist[ player.currentSongIndex ];
-				websocket.sendMessage( chat.credentials.room, {
-					message: 'skip',
-					youtubeID: currentSong.youtubeID
-				});
-			}
+			skipSong( chat );
 		}
     }
 }, {
@@ -192,10 +181,41 @@ module.exports = [{
 			}
 			songs.push( playlist[ songIndex ].title );
 		}
-		chat.sendMessage( `Next ${songsToDisplay} songs:
-			${songs.join(', ')}` );
+
+		let msg = 'Next ' + songsToDisplay + ' songs:' + '\n';
+		msg += songs.join('\n');
+
+		chat.sendMessage( msg );
     }
 }];
+
+/**
+ * Skips to the next song
+ * @param  {Client} chat
+ * @return void
+ */
+function skipSong( chat ) {
+	let player = getPlayer( chat );
+	let playlist = getPlaylist( chat );
+
+	if ( playlist.length === ( player.currentSongIndex + 1 ) ) {
+		// Current song is the last in the playlist, restart the playlist
+		player.currentSongIndex = 0;
+	} else {
+		// Skip to next track in the playlist
+		player.currentSongIndex++;
+	}
+	setPlayer( player, chat );
+
+	if ( player.playing && playlist.length > 0 ) {
+		// Player is playing a song
+		let currentSong = playlist[ player.currentSongIndex ];
+		websocket.sendMessage( chat.credentials.room, {
+			message: 'skip',
+			youtubeID: currentSong.youtubeID
+		});
+	}
+}
 
 /**
  * Returns the youtube-node client.

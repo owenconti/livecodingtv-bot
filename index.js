@@ -11,6 +11,7 @@ var Log = require('./Log');
 var websocket = require('./websocket');
 var debug = process.argv[2] === 'debug' || false;
 var commandFiles = [];
+var websocketCommands = [];
 const startUpTime = new Date().getTime();
 
 // Load all files in the commands directory into an array
@@ -25,7 +26,6 @@ fs.readdir( './commands' , function( err, files ) {
 		}
 	} );
 
-	websocket.start();
 	startBot();
 });
 
@@ -39,9 +39,16 @@ function startBot() {
 			if ( command.types.indexOf( 'startup' ) >= 0 ) {
 				command.action( chat );
 			}
+			if ( command.types.indexOf( 'websocket' ) >= 0 ) {
+				websocketCommands.push( command );
+			}
 		});
 	});
 
+	// Start the websocket server
+	websocket.start( websocketCommands, chat );
+
+	// Listen for incoming stanzas
 	chat.listen( function( stanza ) {
 		// Skip the initial messages when starting the bot
 		const messageTime = new Date().getTime();

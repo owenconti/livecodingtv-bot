@@ -72,6 +72,11 @@
 			function onStateChange(e) {
 				if ( e.data === YT.PlayerState.ENDED ) {
 					// tell bot we need a new song
+					if ( socket ) {
+						socket.send( JSON.stringify({
+							message: 'songEnded'
+						}) );
+					}
 				}
 			}
 		</script>
