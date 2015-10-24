@@ -16,6 +16,7 @@ module.exports = [{
 !removecommand - Removes a command from the bot (Mod only).
 !say {[-voice VoiceName]} {message} - Verbally speaks a message.
 !setstatus {@username} {status} - Sets the status of the user (Mod only).
+!status - Returns the status for the user.
 !todo - List the current TODOs.
 !top {X} - Displays the top X viewers.
 !unban {@username} - Unbans the user (Mod only).
