@@ -13,9 +13,20 @@
 
 const YouTube = require('youtube-node');
 const Log = require('../Log');
+const websocket = require('../websocket');
 const requestSongRegex = new RegExp( /^(!|\/)request\s(\w+)$/ );
 
 module.exports = [{
+	// Reset current song index and playing boolean
+    types: ['startup'],
+    action: function( chat ) {
+		let player = getPlayer( chat );
+		player.currentSongIndex = 0;
+		player.playing = false;
+		player.started = false;
+		setPlayer( player, chat );
+    }
+}, {
 	// Tell the chat what the current song is
     types: ['message'],
     regex: /^(!|\/)song|track|music$/,
@@ -23,7 +34,7 @@ module.exports = [{
 		let player = getPlayer( chat );
 		let playlist = getPlaylist( chat );
 
-		if ( player.playing && playlist.length > 0 ) {
+		if ( player.started && player.playing && playlist.length > 0 ) {
 			// Player is playing a song
 			let currentSong = playlist[ player.currentSongIndex ];
 			chat.sendMessage( `Current song: ${currentSong.title}`)
@@ -34,7 +45,6 @@ module.exports = [{
     }
 }, {
 	// Request a song
-	// TODO: look up the title of the video
 	// TODO: validate this is a real URL
 	// youtubeID regex: /(youtu(?:\.be|be\.com)\/(?:.*v(?:\/|=)|(?:.*\/)?)([\w'-]+))/i;
     types: ['message'],
@@ -59,7 +69,7 @@ module.exports = [{
 			let videoObj = result.items[0].snippet;
 			let playlist = getPlaylist( chat );
 			let songObj = {
-				youtubeID: videoObj.id,
+				youtubeID: youtubeID,
 				requestedBy: stanza.fromUsername,
 				time: new Date().getTime(),
 				title: videoObj.title
@@ -78,11 +88,11 @@ module.exports = [{
     types: ['message'],
     regex: /^(!|\/)skip$/,
     action: function( chat, stanza ) {
+		let player = getPlayer( chat );
+		let playlist = getPlaylist( chat );
 		let user = chat.getUser( stanza.fromUsername );
-		if ( user.role === 'moderator' ) {
-			let player = getPlayer( chat );
-			let playlist = getPlaylist( chat );
 
+		if ( player.started && user.role === 'moderator' ) {
 			if ( playlist.length === ( player.currentSongIndex + 1 ) ) {
 				// Current song is the last in the playlist, restart the playlist
 				player.currentSongIndex = 0;
@@ -90,9 +100,16 @@ module.exports = [{
 				// Skip to next track in the playlist
 				player.currentSongIndex++;
 			}
-
-			// TODO Skip the track in the youtube frame
 			setPlayer( player, chat );
+
+			if ( player.playing && playlist.length > 0 ) {
+				// Player is playing a song
+				let currentSong = playlist[ player.currentSongIndex ];
+				websocket.sendMessage( chat.credentials.room, {
+					message: 'skip',
+					youtubeID: currentSong.youtubeID
+				});
+			}
 		}
     }
 }, {
@@ -101,12 +118,15 @@ module.exports = [{
     types: ['message'],
     regex: /^(!|\/)pause$/,
     action: function( chat, stanza ) {
+		let player = getPlayer( chat );
 		let user = chat.getUser( stanza.fromUsername );
-		if ( user.role === 'moderator' ) {
-			let player = getPlayer( chat );
+		if ( player.started && user.role === 'moderator' ) {
 			player.playing = false;
-			// TODO Stop playing the youtube frame
 			setPlayer( player, chat );
+
+			websocket.sendMessage( chat.credentials.room, {
+				message: 'pause'
+			});
 		}
     }
 }, {
@@ -115,12 +135,39 @@ module.exports = [{
     types: ['message'],
     regex: /^(!|\/)play$/,
     action: function( chat, stanza ) {
+		let player = getPlayer( chat );
+		let user = chat.getUser( stanza.fromUsername );
+		if ( player.started && user.role === 'moderator' ) {
+			player.playing = true;
+			setPlayer( player, chat );
+
+			websocket.sendMessage( chat.credentials.room, {
+				message: 'play'
+			});
+		}
+    }
+}, {
+	// Fire up the youtube player
+	// MOD only
+    types: ['message'],
+    regex: /^(!|\/)startplayer$/,
+    action: function( chat, stanza ) {
+		let player = getPlayer( chat );
 		let user = chat.getUser( stanza.fromUsername );
 		if ( user.role === 'moderator' ) {
-			let player = getPlayer( chat );
+			player.started = true;
 			player.playing = true;
-			// TODO Start playing the youtube frame
 			setPlayer( player, chat );
+
+			let playlist = getPlaylist( chat );
+			if ( playlist.length > 0 ) {
+				// Player is playing a song
+				let currentSong = playlist[ player.currentSongIndex ];
+				websocket.sendMessage( chat.credentials.room, {
+					message: 'skip',
+					youtubeID: currentSong.youtubeID
+				});
+			}
 		}
     }
 }, {

@@ -8,6 +8,7 @@ var fs = require('fs');
 var credentials = require('./credentials');
 var Client = require('./Client');
 var Log = require('./Log');
+var websocket = require('./websocket');
 var debug = process.argv[2] === 'debug' || false;
 var commandFiles = [];
 const startUpTime = new Date().getTime();
@@ -24,12 +25,22 @@ fs.readdir( './commands' , function( err, files ) {
 		}
 	} );
 
+	websocket.start();
 	startBot();
 });
 
 function startBot() {
 	// Connect to the server
 	var chat = new Client( credentials, debug );
+
+	// Run any startup code for each command
+	commandFiles.forEach( function( commandsForFile ) {
+		commandsForFile.forEach( function( command ) {
+			if ( command.types.indexOf( 'startup' ) >= 0 ) {
+				command.action( chat );
+			}
+		});
+	});
 
 	chat.listen( function( stanza ) {
 		// Skip the initial messages when starting the bot
@@ -57,7 +68,7 @@ function startBot() {
 		commandFiles.forEach( function( commandsForFile ) {
 			commandsForFile.forEach( function( command ) {
 				var hasType = command.types.indexOf( parsedStanza.type ) >= 0;
-				var regexMatched = command.regex.test( parsedStanza.message );
+				var regexMatched = command.regex && command.regex.test( parsedStanza.message );
 				var ignoreRateLimiting = command.ignoreRateLimiting;
 				var passesRateLimiting = !parsedStanza.rateLimited || ( parsedStanza.rateLimited && ignoreRateLimiting );
 
