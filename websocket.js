@@ -37,8 +37,12 @@ function startWebsocket() {
 				// Loop through each websocket command,
 				// run when the regex matches.
 				websocketCommands.forEach( ( command ) => {
-					var regexMatched = command.regex && command.regex.test( messageObj.message );
-					command.action( chat, messageObj );
+					try {
+						var regexMatched = command.regex && command.regex.test( messageObj.message );
+						command.action( chat, messageObj );
+					} catch ( e ) {
+						Log.log('ERROR', e);
+					}
 				} );
 			}
 		});

@@ -58,12 +58,9 @@ function startBot() {
 		}
 
 		var parsedStanza = Client.parseStanza( stanza, credentials );
-
 		if ( !parsedStanza ) {
-			console.log( 'Error parsing stanza: ' + stanza );
 			return;
 		}
-
 		if ( parsedStanza.rateLimited ) {
 			Log.log( 'User: ' + parsedStanza.fromUsername + ' rate limited!' );
 		}
@@ -74,14 +71,18 @@ function startBot() {
 		var ranCommand = false;
 		commandFiles.forEach( function( commandsForFile ) {
 			commandsForFile.forEach( function( command ) {
-				var hasType = command.types.indexOf( parsedStanza.type ) >= 0;
-				var regexMatched = command.regex && command.regex.test( parsedStanza.message );
-				var ignoreRateLimiting = command.ignoreRateLimiting;
-				var passesRateLimiting = !parsedStanza.rateLimited || ( parsedStanza.rateLimited && ignoreRateLimiting );
+				try {
+					var hasType = command.types.indexOf( parsedStanza.type ) >= 0;
+					var regexMatched = command.regex && command.regex.test( parsedStanza.message );
+					var ignoreRateLimiting = command.ignoreRateLimiting;
+					var passesRateLimiting = !parsedStanza.rateLimited || ( parsedStanza.rateLimited && ignoreRateLimiting );
 
-				if ( hasType && regexMatched && passesRateLimiting ) {
-					ranCommand = true;
-					command.action( chat, parsedStanza );
+					if ( hasType && regexMatched && passesRateLimiting ) {
+						ranCommand = true;
+						command.action( chat, parsedStanza );
+					}
+				} catch ( e ) {
+					Log.log('ERROR', e);
 				}
 			} );
 		} );
