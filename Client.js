@@ -231,7 +231,7 @@ class Client {
 			// New viewer
 			userObj = {
 				username: fromUsername,
-				count: 0,
+				count: 1,
 				time: new Date().getTime(),
 				role: role
 			};
@@ -242,7 +242,7 @@ class Client {
 		}
 		users[ fromUsername ] = userObj;
 		brain.setItem( 'users', users );
-		
+
         return { type, fromUsername, message, role };
     }
 

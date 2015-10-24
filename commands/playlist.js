@@ -14,7 +14,7 @@
 const YouTube = require('youtube-node');
 const Log = require('../Log');
 const websocket = require('../websocket');
-const requestSongRegex = new RegExp( /^(!|\/)request\s(\w+)$/ );
+const requestSongRegex = new RegExp( /^(!|\/)request\s(.+)$/ );
 
 module.exports = [{
 	// Reset current song index and playing boolean
