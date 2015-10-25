@@ -2,9 +2,9 @@
 
 const Client = require( './Client' );
 const websocket = require('./websocket');
-const runtime = require('./utils/Runtime');
 const Log = require('./utils/Log');
 const Loader = require('./Loader');
+let runtime = require('./utils/Runtime');
 
 class ChatBot {
 	static start() {
@@ -83,12 +83,12 @@ class ChatBot {
 
 			// Run the incoming stanza against
 			// the plugin commands for the stanza's type.
-			// let pluginCommandsForStanzaType = runtime.pluginCommands[ parsedStanza.type ];
-			// if ( pluginCommandsForStanzaType ) {
-			// 	pluginCommandsForStanzaType.forEach( ( command ) => {
-			// 		ChatBot.runCommand( command, parseStanza, chat, ranCommand );
-			// 	} );
-			// }
+			let pluginCommandsForStanzaType = runtime.pluginCommands[ parsedStanza.type ];
+			if ( pluginCommandsForStanzaType ) {
+				pluginCommandsForStanzaType.forEach( ( command ) => {
+					ChatBot.runCommand( command, parsedStanza, chat, ranCommand );
+				} );
+			}
 
 			// If the user ran a command, update the command log
 			if ( ranCommand ) {

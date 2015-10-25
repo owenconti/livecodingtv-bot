@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const path = require('path');
 const commandTypes = ['message', 'presence', 'startup', 'websocket'];
 
 class Loader {
@@ -43,31 +44,27 @@ class Loader {
 			pluginCommands[ commandType ] = [];
 		} );
 
-		callback( pluginCommands );
+		// Load all files in the commands directory into an array
+		let pluginsDir = path.join( __dirname, 'plugins' );
+		fs.readdir( pluginsDir , function( err, folders ) {
+			if ( err ) {
+				Log.log( 'ERROR: ' + err );
+				return;
+			}
 
-		// let pluginCommands = {};
-		//
-		// // Load all files in the commands directory into an array
-		// fs.readdir( './plugins' , function( err, files ) {
-		// 	if ( err ) {
-		// 		Log.log( 'ERROR: ' + err );
-		// 		return;
-		// 	}
-		//
-		// 	files.forEach( function(fileName) {
-		// 		if ( fileName.indexOf( '.js' ) >= 0 ) {
-		// 			let commands = require( './commands/' + fileName );
-		//
-		// 			// Loop through each command so we can separate out
-		// 			// each command type to its own array.
-		// 			commands.forEach( (command) => {
-		// 				Loader.parseCommandIntoMessageTypes( command, coreCommands );
-		// 			} );
-		// 		}
-		// 	} );
-		//
-		// 	callback( coreCommands );
-		// });
+			folders.forEach( ( folder ) => {
+				let pluginIndexFile = path.join( pluginsDir, folder, 'index.js' );
+				let commands = require( pluginIndexFile );
+
+				// Loop through each command so we can separate out
+				// each command type to its own array.
+				commands.forEach( (command) => {
+					Loader.parseCommandIntoMessageTypes( command, pluginCommands );
+				} );
+			} );
+
+			callback( pluginCommands );
+		});
 	}
 
 	static parseCommandIntoMessageTypes( command, commandObject ) {

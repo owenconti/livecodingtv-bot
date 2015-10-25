@@ -33,4 +33,4 @@ credentials.js
 brain
 
 # Don't commit custom plugins
-plugins
+^plugins
