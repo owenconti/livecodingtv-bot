@@ -35,24 +35,40 @@ function startWebsocket() {
 				console.log(messageObj.data, 'subscribed to websocket connection');
 				connections[ messageObj.data ] = connection;
 			} else {
-				// Loop through each websocket command,
-				// run when the regex matches.
-				runtime.websocketCommands.forEach( ( command ) => {
-					try {
-						var regexMatched = command.regex && command.regex.test( messageObj.message );
-						command.action( chat, messageObj );
-					} catch ( e ) {
-						Log.log('ERROR', e);
-					}
+				// Run any core websocket commands
+				runtime.coreCommands.websocket.forEach( ( command ) => {
+					runWebsocketCommand( command, messageObj );
+				} );
+				// Run any plugin websocket plugins
+				runtime.pluginCommands.websocket.forEach( ( command ) => {
+					runWebsocketCommand( command, messageObj );
 				} );
 			}
 		});
+
+		// Handle websocket connection closed
 	    connection.on('close', function(e) {
 	        console.log( "Connection disconnected");
 			connection = null;
 	    });
 
 	});
+}
+
+/**
+ * Verifies the command should be run,
+ * based on the messageObj regex.
+ * @param  {obj} command
+ * @param  {obj} messageObj
+ * @return void
+ */
+function runWebsocketCommand( command, messageObj ) {
+	try {
+		var regexMatched = command.regex && command.regex.test( messageObj.message );
+		command.action( chat, messageObj );
+	} catch ( e ) {
+		Log.log('ERROR', e);
+	}
 }
 
 module.exports = {
@@ -68,6 +84,13 @@ module.exports = {
 			startWebsocket();
 		});
 	},
+
+	/**
+	 * Sends a message on the socket for the specified username
+	 * @param  {string} username
+	 * @param  {obj} messageObj
+	 * @return void
+	 */
 	sendMessage: function( username, messageObj ) {
 		console.log('WS message sent', username, messageObj);
 

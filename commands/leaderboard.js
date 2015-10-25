@@ -43,33 +43,4 @@ module.exports = [{
 		}
 		chat.sendMessage( msg );
 	}
-}, {
-	types: ['presence'],
-	regex: /^available$/,
-	action: function( chat, stanza ) {
-		// Grab the user's score from the leaderboard
-		let users = runtime.brain.get( 'users' ) || {};
-		let userObj = users[ stanza.user.username ];
-
-		if ( users.length === 0 ) {
-			Log.log( 'ERROR! LEADERBOARD IS EMPTY' );
-		}
-
-		if ( userObj ) {
-			// Rate limit existing viewer
-			// Only update leaderboard once every 10 minutes per viewer
-			const now = new Date().getTime();
-			const minutes = 10;
-			if ( now - userObj.time < 1000 * 60 * minutes ) {
-				return;
-			}
-
-			// Increase the user's count and save to the leaderboard
-			userObj.count++;
-			userObj.time = now;
-
-			users[ stanza.user.username ] = userObj;
-			runtime.brain.set( 'users', users );
-		}
-	}
 }]

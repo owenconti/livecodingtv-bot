@@ -221,6 +221,16 @@ class Client {
 				time: new Date().getTime(),
 				role: role
 			};
+		} else {
+			// Update the user's view count and presence time
+			// only if their count hasn't been updated in
+			// the last 10 minutes.
+			const now = new Date().getTime();
+			const minutes = 10;
+			if ( now - userObj.time > 1000 * 60 * minutes ) {
+				userObj.count++;
+				userObj.time = now;
+			}
 		}
 		if ( !userObj.status ) {
 			userObj.status = 'Viewer';

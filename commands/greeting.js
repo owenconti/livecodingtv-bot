@@ -40,6 +40,8 @@ module.exports = [{
 		let greeting;
 		let existingViewer = stanza.user.viewCount > 1;
 
+		console.log( stanza.user );
+
 		// Find the greeting to send to the user
 		if ( existingViewer ) {
 			// existing viewer
