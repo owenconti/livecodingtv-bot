@@ -1,5 +1,6 @@
 'use strict';
 
+const runtime = require('../utils/Runtime');
 const setStatusRegex = new RegExp( /^(!|\/)setstatus\s(.+)\s(\w+)/ );
 const getStatusRegex = new RegExp( /^(!|\/)getstatus\s(.+)/ );
 
@@ -8,23 +9,12 @@ module.exports = [{
     types: ['message'],
     regex: /^(!|\/)status/,
     action: function( chat, stanza ) {
-		var username = stanza.fromUsername;
-
-		// Look up the user
-		var users = chat.getSetting( 'users' ) || {};
-		var user = users[ username ];
-
-		if ( !user ) {
-			chat.sendMessage( `User '${username}' cannot be found.` );
-			return;
-		}
-
-		var status = user.status;
+		var status = stanza.user.status;
 		if ( !status ) {
 			status = 'Viewer';
 		}
 
-		chat.sendMessage(`${username} is set to: ${status}`);
+		chat.sendMessage(`${stanza.user.username} is set to: ${status}`);
     }
 }, {
 	// !getstatus {username}
@@ -38,7 +28,7 @@ module.exports = [{
 		}
 
 		// Look up the user
-		var users = chat.getSetting( 'users' ) || {};
+		var users = runtime.brain.get( 'users' ) || {};
 		var user = users[ username ];
 
 		if ( !user ) {
@@ -58,8 +48,7 @@ module.exports = [{
     types: ['message'],
     regex: setStatusRegex,
     action: function( chat, stanza ) {
-		var user = chat.getUser( stanza.fromUsername );
-		if ( user.role === 'moderator' ) {
+		if ( stanza.user.isModerator() ) {
 			var match = setStatusRegex.exec( stanza.message );
 			var statusToSet = match[3];
 			var username = match[2];
@@ -68,7 +57,7 @@ module.exports = [{
 			}
 
 			// Look up the user
-			var users = chat.getSetting( 'users' ) || {};
+			var users = runtime.brain.get( 'users' ) || {};
 			var user = users[ username ];
 
 			if ( !user ) {
@@ -78,7 +67,7 @@ module.exports = [{
 
 			// Set the status
 			user.status = statusToSet;
-			chat.saveSetting('users', users);
+			runtime.brain.set('users', users);
 
 			chat.replyTo(username, `is now a ${statusToSet}!` );
 		}

@@ -9,6 +9,7 @@
  * !top X - Displays the top X viewers
  */
 
+const runtime = require('../utils/Runtime');
 const topRegex = /^(\!|\/)top\s(\d{1,2})$/;
 
 module.exports = [{
@@ -19,7 +20,7 @@ module.exports = [{
 
 		// Grab users from the leaderboard brain object
 		// Map the leaderboard into an array
-		let users = chat.getSetting( 'users' ) || {};
+		let users = runtime.brain.get( 'users' ) || {};
 		let userScores = [];
 		for ( var username in users ) {
 			userScores.push( users[ username ] );
@@ -46,8 +47,8 @@ module.exports = [{
 	regex: /^available$/,
 	action: function( chat, stanza ) {
 		// Grab the user's score from the leaderboard
-		let users = chat.getSetting( 'users' ) || {};
-		let userObj = users[ stanza.fromUsername ];
+		let users = runtime.brain.get( 'users' ) || {};
+		let userObj = users[ stanza.user.username ];
 
 		if ( users.length === 0 ) {
 			Log.log( 'ERROR! LEADERBOARD IS EMPTY' );
@@ -66,8 +67,8 @@ module.exports = [{
 			userObj.count++;
 			userObj.time = now;
 
-			users[ stanza.fromUsername ] = userObj;
-			chat.saveSetting( 'users', users );
+			users[ stanza.user.username ] = userObj;
+			runtime.brain.set( 'users', users );
 		}
 	}
 }]

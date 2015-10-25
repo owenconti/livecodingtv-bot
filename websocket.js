@@ -2,7 +2,7 @@
 
 const http = require('http');
 const WebSocketServer = require('websocket').server;
-let runtime = require('./utils/Runtime');
+const runtime = require('./utils/Runtime');
 
 let server = null;
 let wsServer = null;

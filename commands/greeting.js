@@ -5,6 +5,7 @@
  * There is a different message displayed for new viewers vs. previous viewers.
  */
 
+const runtime = require('../utils/Runtime');
 const greetings = {
 	"existing" : {
 		"Viewer" : [
@@ -36,22 +37,18 @@ module.exports = [{
 	types: ['presence'],
 	regex: /^available$/,
     action: function( chat, stanza ) {
-		let users = chat.getSetting( 'users' ) || {};
-		let userObj = users[ stanza.fromUsername ];
-		let status = userObj.status;
-		let existingViewer = userObj.count > 1;
+		let greeting;
+		let existingViewer = stanza.user.viewCount > 1;
 
 		// Find the greeting to send to the user
-		let greeting;
-
 		if ( existingViewer ) {
 			// existing viewer
-			greeting = getRandomGreeting( greetings[ 'existing' ][ status ] );
+			greeting = getRandomGreeting( greetings[ 'existing' ][ stanza.user.status ] );
 		} else {
 			// new viewer
 			greeting = getRandomGreeting( greetings[ 'new' ] );
 		}
 
-		chat.replyTo( stanza.fromUsername, greeting );
+		chat.replyTo( stanza.user.username, greeting );
     }
 }];

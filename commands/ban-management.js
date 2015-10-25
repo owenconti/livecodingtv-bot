@@ -34,13 +34,11 @@ module.exports = [{
 		const timeframeAllowed = 10; // seconds
 
 		// Never auto ban the streamer or the bot
-		if ( stanza.fromUsername === chat.credentials.username || stanza.fromUsername === chat.credentials.room ) {
+		if ( stanza.user.isStreamer() || stanza.user.isBot() ) {
 			return;
 		}
 
-		let messages = chat.getSetting( 'userMessages' ) || {};
-		let userMessageLog = messages[ stanza.fromUsername ];
-		let userMessageTimes = userMessageLog.messageTimes;
+		let userMessageTimes = stanza.user.getMessages().messageTimes;
 
 		// If the user has sent at least the number of messages allowed
 		if ( userMessageTimes.length > numberOfMessagesAllowed ) {
@@ -51,7 +49,7 @@ module.exports = [{
 			// was sent within the last X seconds (timeframeAllowed),
 			// ban the user.
 			if ( now - limitedMessageTime < ( timeframeAllowed * 1000 ) ) {
-				var affiliationStanza = getUserAffiliationStanza( chat.credentials, stanza.fromUsername, 'outcast' );
+				var affiliationStanza = getUserAffiliationStanza( chat.credentials, stanza.user.username, 'outcast' );
 				chat.client.send( affiliationStanza );
 			}
 		}
@@ -60,8 +58,7 @@ module.exports = [{
     types: ['message'],
     regex: unbanRegex,
     action: function( chat, stanza ) {
-		var user = chat.getUser( stanza.fromUsername );
-		if ( user.role === 'moderator' ) {
+		if ( stanza.user.isModerator() ) {
 			var match = unbanRegex.exec( stanza.message );
 			var userToUnban = match[2];
 
@@ -75,8 +72,7 @@ module.exports = [{
     types: ['message'],
     regex: banRegex,
     action: function( chat, stanza ) {
-		var user = chat.getUser( stanza.fromUsername );
-		if ( user.role === 'moderator' ) {
+		if ( stanza.user.isModerator() ) {
 			var match = banRegex.exec( stanza.message );
 			var userToBan = match[2];
 

@@ -1,5 +1,6 @@
 'use strict';
 
+const runtime = require('../utils/Runtime');
 const addRegex = new RegExp( /^(!|\/)todo\s(\-a)\s(.+)$/ );
 const listRegex = new RegExp( /^(!|\/)todo$/ );
 const removeRegex = new RegExp( /^(!|\/)todo\s(\-r)\s(\d{1})$/ );
@@ -23,8 +24,8 @@ module.exports = [{
     regex: listRegex,
     action: function( chat, stanza ) {
 		// LIST ITEMS
-        var todos = chat.getSetting('todos') || [];
-		var completedTodos = chat.getSetting('completedTodos') || [];
+        var todos = runtime.brain.get('todos') || [];
+		var completedTodos = runtime.brain.get('completedTodos') || [];
         var msg = '';
 
         if ( todos.length === 0 ) {
@@ -50,13 +51,12 @@ module.exports = [{
     regex: addRegex,
     action: function( chat, stanza ) {
 		// ADD ITEMS
-        var user = chat.getUser( stanza.fromUsername );
-        if ( user.role === 'moderator' ) {
-            var todos = chat.getSetting('todos') || [];
+        if ( stanza.user.isModerator() ) {
+            var todos = runtime.brain.get('todos') || [];
             var item = addRegex.exec( stanza.message )[3];
 
             todos.push( item );
-            chat.saveSetting('todos', todos);
+            runtime.brain.set('todos', todos);
 
 			chat.sendMessage( 'Todo item added!' );
         }
@@ -66,9 +66,8 @@ module.exports = [{
     regex: removeRegex,
     action: function( chat, stanza ) {
 		// REMOVE ITEMS
-		var user = chat.getUser( stanza.fromUsername );
-        if ( user.role === 'moderator' ) {
-	        var todos = chat.getSetting('todos') || [];
+        if ( stanza.user.isModerator() ) {
+	        var todos = runtime.brain.get('todos') || [];
 	        var todoIndex = parseInt( removeRegex.exec( stanza.message )[3], 10 );
 			var itemToRemove = todos[ todoIndex - 1 ];
 
@@ -78,7 +77,7 @@ module.exports = [{
 	        }
 
 	        todos.splice( todoIndex - 1, 1 );
-	        chat.saveSetting('todos', todos);
+		    runtime.brain.set('todos', todos);
 
 	        chat.sendMessage( 'Removed Todo #' + todoIndex + '.' );
 		}
@@ -88,10 +87,9 @@ module.exports = [{
     regex: completeRegex,
     action: function( chat, stanza ) {
 		// COMPLETE ITEMS
-		var user = chat.getUser( stanza.fromUsername );
-        if ( user.role === 'moderator' ) {
-	        var todos = chat.getSetting('todos') || [];
-			var completedTodos = chat.getSetting('completedTodos') || [];
+        if ( stanza.user.isModerator() ) {
+	        var todos = runtime.brain.get('todos') || [];
+			var completedTodos = runtime.brain.get('completedTodos') || [];
 	        var todoIndex = parseInt( completeRegex.exec( stanza.message )[3], 10 );
 	        var itemToComplete = todos[ todoIndex - 1 ];
 
@@ -102,11 +100,11 @@ module.exports = [{
 
 			// Save the completed item to the completed todos array
 			completedTodos.push( itemToComplete );
-			chat.saveSetting('completedTodos', completedTodos);
+			runtime.brain.set('completedTodos', completedTodos);
 
 			// Remove the completed item from the todos array
 	        todos.splice( todoIndex - 1, 1 );
-	        chat.saveSetting('todos', todos);
+	        runtime.brain.set('todos', todos);
 
 	        chat.sendMessage( 'Moved Todo #' + todoIndex + ' to the completed list.' );
 		}

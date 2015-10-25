@@ -1,10 +1,10 @@
 'use strict';
 
 const xmpp = require('node-xmpp');
-const brain = require('node-persist');
 const crypto = require('crypto');
 const Log = require('./utils/Log');
 const runtime = require('./utils/Runtime');
+const User = require('./model/User');
 
 class Client {
     /**
@@ -14,11 +14,6 @@ class Client {
      */
     constructor( credentials ) {
 		this.credentials = credentials;
-
-        // Fire up the brain!
-        brain.initSync({
-            dir: __dirname + '/brain'
-        });
 
         // Connect to the server
         this.client = new xmpp.Client({
@@ -63,7 +58,7 @@ class Client {
 		}
 
 		// Get the previously sent messages
-		let messages = brain.getItem('messages') || {};
+		let messages = runtime.brain.get('messages') || {};
 
 		// Hash the message and use it as our key.
 		// Grab the previous message that uses the same hash.
@@ -93,7 +88,7 @@ class Client {
 
 		// Save the message to the messages store
 		messages[ hash ] = messageObj;
-		brain.setItem( 'messages', messages );
+		runtime.brain.set( 'messages', messages );
     }
 
     /**
@@ -123,27 +118,10 @@ class Client {
      * @return {object}
      */
     getUser( username ) {
-		const users = this.getSetting( 'users' );
-		return users[ username ] || {};
-    }
+		const users = runtime.brain.get( 'users' );
+		let userObj = users[ username ] || {};
 
-    /**
-     * Retrieves a setting from the brain.
-     * @param  {string} key
-     * @return {any}
-     */
-    getSetting( key ) {
-        return brain.getItemSync( key ) || null;
-    }
-
-    /**
-     * Store a setting in the brain.
-     * @param  {string} key
-     * @param  {any} value
-     * @return {void}
-     */
-    saveSetting( key, value ) {
-        brain.setItemSync( key, value );
+		return new User( userObj );
     }
 
     /**
@@ -172,14 +150,15 @@ class Client {
     static parseMessage( stanza, credentials ) {
         var type = 'message';
 		var rateLimited = false;
-        var fromUsername = Client.parseFromUsername( stanza );
+		let jid = stanza.attrs.from;
+        let username = jid.substr( jid.indexOf( '/' ) + 1 );
         var body = Client.findChild( 'body', stanza.children );
         var message = body.children.join('').replace('\\', '');
 
 		// Limit users to only run commands once every 5 seconds
 		const now = new Date().getTime();
-		let messages = brain.getItem( 'userMessages' ) || {};
-		let userMessageLog = messages[ fromUsername ];
+		let messages = runtime.brain.get( 'userMessages' ) || {};
+		let userMessageLog = messages[ username ];
 		if ( !userMessageLog ) {
 			userMessageLog = {
 				messageTimes: [],
@@ -189,7 +168,7 @@ class Client {
 
 		// If the user's most recent command was within 5 seconds,
 		// return false and all commands will be skipped.
-		if ( fromUsername !== credentials.username ) {
+		if ( username !== credentials.username ) {
 			// Only rate limit users who are not the bot :)
 			if ( userMessageLog.lastCommandTime > 0 && now - userMessageLog.lastCommandTime < 5000 ) { // 5 seconds
 				rateLimited = true;
@@ -200,11 +179,15 @@ class Client {
 		userMessageLog.messageTimes.push( now );
 
 		// Update the message log for the user
-		messages[ fromUsername ] = userMessageLog;
-		brain.setItem( 'userMessages', messages );
+		messages[ username ] = userMessageLog;
+		runtime.brain.set( 'userMessages', messages );
+
+		let users = runtime.brain.get( 'users' ) || {};
+		let userObj = users[ username ];
+		let user = new User( userObj );
 
 		// Return the parsed message
-        return { type, fromUsername, message, rateLimited };
+        return { type, user, message, rateLimited };
     }
 
 	/**
@@ -214,51 +197,45 @@ class Client {
 	 * @return {obj}
 	 */
     static parsePresence( stanza, credentials) {
-        var type = 'presence';
-        var fromUsername = Client.parseFromUsername( stanza );
-        var message = stanza.attrs.type || 'available';
+        let type = 'presence';
+		let jid = stanza.attrs.from;
+        let username = jid.substr( jid.indexOf( '/' ) + 1 );
+        let message = stanza.attrs.type || 'available';
 
         // Find role
-        var xObj = Client.findChild( 'x', stanza.children );
-        var itemObj = Client.findChild( 'item', xObj.children );
-        var role = itemObj.attrs.role;
-
-		// If presence is unavailable,
-		// return without storing user object
-		if ( message === 'unavailable' ) {
-			return { type, fromUsername, message, role };
-		}
+        let xObj = Client.findChild( 'x', stanza.children );
+        let itemObj = Client.findChild( 'item', xObj.children );
+        let role = itemObj.attrs.role;
 
 		// Store new users in the 'users' brain object
-		let users = brain.getItem( 'users' ) || {};
-		let userObj = users[ fromUsername ];
+		let users = runtime.brain.get( 'users' ) || {};
+		let userObj = users[ username ];
+
 		if ( !userObj ) {
 			// New viewer
 			userObj = {
-				username: fromUsername,
+				username: userName,
 				count: 1,
 				time: new Date().getTime(),
 				role: role
 			};
 		}
-
 		if ( !userObj.status ) {
 			userObj.status = 'Viewer';
 		}
-		users[ fromUsername ] = userObj;
-		brain.setItem( 'users', users );
 
-        return { type, fromUsername, message, role };
-    }
+		let user = new User( userObj );
 
-    /**
-     * Parses the 'from' user's username
-     * @param  {object} stanza
-     * @return {string}
-     */
-    static parseFromUsername( stanza ) {
-        var fromJid = stanza.attrs.from;
-        return fromJid.substr( fromJid.indexOf( '/' ) + 1 );
+		// If presence is unavailable,
+		// return without storing user object
+		if ( message === 'unavailable' ) {
+			return { type, user, message, role };
+		}
+
+		users[ user.username ] = userObj;
+		runtime.brain.set( 'users', users );
+
+        return { type, user, message, role };
     }
 
 	/**
@@ -267,11 +244,11 @@ class Client {
 	 * @return {void}
 	 */
 	static updateLatestCommandLog( stanza ) {
-		let messages = brain.getItem( 'userMessages' ) || {};
-		let userMessageLog = messages[ stanza.fromUsername ] || {};
+		let messages = runtime.brain.get( 'userMessages' ) || {};
+		let userMessageLog = messages[ stanza.user.username ] || {};
 		userMessageLog.lastCommandTime = new Date().getTime();
 
-		brain.setItem( 'userMessages', messages );
+		runtime.brain.set( 'userMessages', messages );
 	}
 
     /**

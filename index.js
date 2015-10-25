@@ -9,12 +9,17 @@ const credentials = require('./credentials');
 const websocket = require('./websocket');
 const Client = require('./Client');
 const Log = require('./utils/Log');
+const Brain = require('./utils/Brain');
 
 let runtime = require('./utils/Runtime');
 runtime.debug = process.argv[2] === 'debug' || false;
 runtime.commandFiles = [];
 runtime.websocketCommands = [];
 runtime.startUpTime = new Date().getTime();
+runtime.credentials = credentials;
+runtime.brain = Brain;
+
+Brain.start( __dirname + '/brain' );
 
 // Load all files in the commands directory into an array
 fs.readdir( './commands' , function( err, files ) {
@@ -64,7 +69,7 @@ function startBot() {
 			return;
 		}
 		if ( parsedStanza.rateLimited ) {
-			Log.log( 'User: ' + parsedStanza.fromUsername + ' rate limited!' );
+			Log.log( 'User: ' + parsedStanza.user.username + ' rate limited!' );
 		}
 
 		// Run the command through each command file.
@@ -84,7 +89,7 @@ function startBot() {
 						command.action( chat, parsedStanza );
 					}
 				} catch ( e ) {
-					Log.log('ERROR', e);
+					console.trace( 'ERROR', e );
 				}
 			} );
 		} );

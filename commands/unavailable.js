@@ -6,6 +6,6 @@ module.exports = [{
     types: ['presence'],
     regex: /^unavailable$/,
     action: function( chat, stanza ) {
-        Say.say( stanza.fromUsername + ' disconnected.' );
+        Say.say( stanza.user.username + ' disconnected.' );
     }
 }];

@@ -5,5 +5,7 @@ module.exports = {
 	commands: null,
 	plugins: null,
 	websocketCommands: null,
-	startupTime: 0
+	startupTime: 0,
+	credentials: null,
+	brain: null
 };

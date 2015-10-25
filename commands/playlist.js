@@ -10,6 +10,7 @@
 	!pause - pauses the track
 	!play - plays the current track in the play list
  */
+const runtime = require('../utils/Runtime');
 const YouTube = require('youtube-node');
 const Log = require('../utils/Log');
 const websocket = require('../websocket');
@@ -68,7 +69,7 @@ module.exports = [{
 			}
 
 			if ( result.items.length === 0 ) {
-				chat.replyTo( stanza.fromUsername, 'Your song could not be found.' );
+				chat.replyTo( stanza.user.username, 'Your song could not be found.' );
 				return;
 			}
 
@@ -76,15 +77,15 @@ module.exports = [{
 			let playlist = getPlaylist( chat );
 			let songObj = {
 				youtubeID: youtubeID,
-				requestedBy: stanza.fromUsername,
+				requestedBy: stanza.user.username,
 				time: new Date().getTime(),
 				title: videoObj.title
 			};
 			playlist.push( songObj );
 			setPlaylist( playlist, chat );
 
-			Log.log( `Song: ${videoObj.title} has been added to the playlist by ${stanza.fromUsername}` );
-			chat.replyTo( stanza.fromUsername, `Your song has been added to the playlist!` );
+			Log.log( `Song: ${videoObj.title} has been added to the playlist by ${stanza.user.username}` );
+			chat.replyTo( stanza.user.username, `Your song has been added to the playlist!` );
 		} )
 
     }
@@ -95,9 +96,8 @@ module.exports = [{
     regex: /^(!|\/)skip$/,
     action: function( chat, stanza ) {
 		let player = getPlayer( chat );
-		let user = chat.getUser( stanza.fromUsername );
 
-		if ( player.started && user.role === 'moderator' ) {
+		if ( player.started && stanza.user.isModerator() ) {
 			skipSong( chat );
 		}
     }
@@ -108,8 +108,7 @@ module.exports = [{
     regex: /^(!|\/)pause$/,
     action: function( chat, stanza ) {
 		let player = getPlayer( chat );
-		let user = chat.getUser( stanza.fromUsername );
-		if ( player.started && user.role === 'moderator' ) {
+		if ( player.started && stanza.user.isModerator() ) {
 			player.playing = false;
 			setPlayer( player, chat );
 
@@ -125,8 +124,7 @@ module.exports = [{
     regex: /^(!|\/)play$/,
     action: function( chat, stanza ) {
 		let player = getPlayer( chat );
-		let user = chat.getUser( stanza.fromUsername );
-		if ( player.started && user.role === 'moderator' ) {
+		if ( player.started && stanza.user.isModerator() ) {
 			player.playing = true;
 			setPlayer( player, chat );
 
@@ -142,8 +140,7 @@ module.exports = [{
     regex: /^(!|\/)startplayer$/,
     action: function( chat, stanza ) {
 		let player = getPlayer( chat );
-		let user = chat.getUser( stanza.fromUsername );
-		if ( user.role === 'moderator' ) {
+		if ( stanza.user.isModerator() ) {
 			player.started = true;
 			player.playing = true;
 			setPlayer( player, chat );
@@ -234,7 +231,7 @@ function getYoutubeClient( chat ) {
  * @return {obj} player
  */
 function getPlayer( chat ) {
-	return chat.getSetting( 'songPlayer' ) || {
+	return runtime.brain.get( 'songPlayer' ) || {
 		playing: false,
 		currentSongIndex: 0
 	};
@@ -246,7 +243,7 @@ function getPlayer( chat ) {
  * @param {Client} chat
  */
 function setPlayer( player, chat ) {
-	chat.saveSetting( 'songPlayer', player );
+	runtime.brain.set( 'songPlayer', player );
 }
 
 /**
@@ -255,7 +252,7 @@ function setPlayer( player, chat ) {
  * @return {array}
  */
 function getPlaylist( chat ) {
-	return chat.getSetting( 'playlist' ) || [];
+	return runtime.brain.get( 'playlist' ) || [];
 }
 
 /**
@@ -265,5 +262,5 @@ function getPlaylist( chat ) {
  * @return void
  */
 function setPlaylist( playlist, chat ) {
-	chat.saveSetting( 'playlist', playlist );
+	runtime.brain.set( 'playlist', playlist );
 }

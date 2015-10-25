@@ -9,6 +9,8 @@
  * !addcommand COMMAND_NAME OUTPUT
  * !removecommand COMMAND_NAME
  */
+const runtime = require('../utils/Runtime');
+
 let addCommandRegex = new RegExp( /^(!|\/)addcommand\s(\w+)\s((.|\n)+)$/ );
 let removeCommandRegex = new RegExp( /^(!|\/)removecommand\s(\w+)$/ );
 let runCommandRegex = new RegExp( /^(!|\/)(\w+)$/ );
@@ -20,7 +22,7 @@ module.exports = [{
     action: function( chat, stanza ) {
 		var match = runCommandRegex.exec( stanza.message );
 		var command = match[2];
-		var customCommands = chat.getSetting('customCommands') || {};
+		var customCommands = runtime.brain.get('customCommands') || {};
 		var commandValue = customCommands[ command ];
 
 		if ( commandValue ) {
@@ -32,17 +34,16 @@ module.exports = [{
     types: ['message'],
     regex: addCommandRegex,
     action: function( chat, stanza ) {
-		var user = chat.getUser( stanza.fromUsername );
-        if ( user.role === 'moderator' ) {
+        if ( stanza.user.isModerator() ) {
 			var match = addCommandRegex.exec( stanza.message );
 			var command = match[2];
 			var commandValue = match[3];
 
-			var customCommands = chat.getSetting('customCommands') || {};
+			var customCommands = runtime.brain.get('customCommands') || {};
 			customCommands[ command ] = commandValue;
-			chat.saveSetting( 'customCommands', customCommands );
+			runtime.brain.set( 'customCommands', customCommands );
 
-			chat.replyTo( stanza.fromUsername, `!${command} added!` );
+			chat.replyTo( stanza.user.username, `!${command} added!` );
 		}
     }
 }, {
@@ -50,16 +51,15 @@ module.exports = [{
     types: ['message'],
     regex: removeCommandRegex,
     action: function( chat, stanza ) {
-		var user = chat.getUser( stanza.fromUsername );
-        if ( user.role === 'moderator' ) {
+        if ( stanza.user.isModerator() ) {
 			var match = removeCommandRegex.exec( stanza.message );
 			var command = match[2];
 
-			var customCommands = chat.getSetting('customCommands') || {};
+			var customCommands = runtime.brain.get('customCommands') || {};
 			delete customCommands[ command ];
-			chat.saveSetting( 'customCommands', customCommands );
 
-			chat.replyTo( stanza.fromUsername, `!${command} removed!` );
+			runtime.brain.set( 'customCommands', customCommands );
+			chat.replyTo( stanza.user.username, `!${command} removed!` );
 		}
     }
 }]

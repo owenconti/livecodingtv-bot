@@ -1,5 +1,7 @@
 'use strict';
 
+const runtime = require('../utils/Runtime');
+
 module.exports = [{
     types: ['message'],
     regex: /^(!|\/)(help|commands)$/,
@@ -23,7 +25,7 @@ module.exports = [{
 !voices - Lists the available voices to be used with the !say command.`;
 
 		// Get our custom commands
-		var customCommands = chat.getSetting('customCommands') || {};
+		var customCommands = runtime.brain.get('customCommands') || {};
 		var customCommandKeys = Object.keys( customCommands );
 
 		if ( customCommandKeys.length > 0 ) {
