@@ -52,8 +52,6 @@ module.exports = [{
     }
 }, {
 	// Request a song
-	// TODO: validate this is a real URL
-	// youtubeID regex: /(youtu(?:\.be|be\.com)\/(?:.*v(?:\/|=)|(?:.*\/)?)([\w'-]+))/i;
     types: ['message'],
     regex: requestSongRegex,
     action: function( chat, stanza ) {
@@ -87,6 +85,33 @@ module.exports = [{
 			Log.log( `Song: ${videoObj.title} has been added to the playlist by ${stanza.user.username}` );
 			chat.replyTo( stanza.user.username, `Your song has been added to the playlist!` );
 		} )
+
+    }
+}, {
+	// Remove current song
+	// MOD only
+    types: ['message'],
+    regex: /^(!|\/)remove$/,
+    action: function( chat, stanza ) {
+		let player = getPlayer( chat );
+		let playlist = getPlaylist( chat );
+
+		if ( player.playing && stanza.user.isModerator() ) {
+			playlist.splice( player.currentSongIndex, 1 );
+
+			// If the song we're removing is not the first song,
+			// decrease the index by 1, so 'skipSong' can properly
+			// increase the index to the next song
+			if ( player.currentSongIndex > 0 ) {
+				player.currentSongIndex--;
+				setPlayer( player, chat );
+			}
+
+			setPlaylist( playlist, chat );
+			skipSong( chat );
+
+			console.log('remove after', player.currentSongIndex, playlist);
+		}
 
     }
 }, {
