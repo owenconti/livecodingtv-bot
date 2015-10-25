@@ -98,3 +98,6 @@ Commands can have four attributes:
 		}
 		```
 	* The `stanza` parameter is not passed to `startup` commands.
+
+
+See the examples directory for an example of creating a plugin.
