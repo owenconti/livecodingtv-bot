@@ -1,6 +1,6 @@
 'use strict';
 
-var insults = [
+const insults = [
 	'You stink!',
 	'You\'re so ugly you look like a regex!'
 ];

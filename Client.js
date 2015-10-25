@@ -1,20 +1,19 @@
 'use strict';
 
-var xmpp = require('node-xmpp');
-var brain = require('node-persist');
-var crypto = require('crypto');
-var Log = require('./Log');
+const xmpp = require('node-xmpp');
+const brain = require('node-persist');
+const crypto = require('crypto');
+const Log = require('./utils/Log');
+const runtime = require('./utils/Runtime');
 
 class Client {
     /**
      * Connect to a room
      * @param  {object} credentials
-     * @param  {boolean} debug
      * @return {void}
      */
-    constructor( credentials, debug ) {
+    constructor( credentials ) {
 		this.credentials = credentials;
-		this.debug = debug;
 
         // Fire up the brain!
         brain.initSync({
@@ -58,7 +57,7 @@ class Client {
      * @return {void}
      */
     sendMessage( msg ) {
-		if ( this.debug ) {
+		if ( runtime.debug ) {
 			Log.log('DEBUGGING: ' + msg);
 			return false;
 		}

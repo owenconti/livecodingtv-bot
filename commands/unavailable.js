@@ -1,11 +1,11 @@
 'use strict';
 
-var say = require('say');
+const Say = require('../utils/Say');
 
 module.exports = [{
     types: ['presence'],
     regex: /^unavailable$/,
     action: function( chat, stanza ) {
-        say.speak('Victoria', stanza.fromUsername + ' disconnected.');
+        Say.say( stanza.fromUsername + ' disconnected.' );
     }
 }];

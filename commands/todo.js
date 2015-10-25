@@ -1,9 +1,9 @@
 'use strict';
 
-var addRegex = new RegExp( /^(!|\/)todo\s(\-a)\s(.+)$/ );
-var listRegex = new RegExp( /^(!|\/)todo$/ );
-var removeRegex = new RegExp( /^(!|\/)todo\s(\-r)\s(\d{1})$/ );
-var completeRegex = new RegExp( /^(!|\/)todo\s(\-c)\s(\d{1})$/ );
+const addRegex = new RegExp( /^(!|\/)todo\s(\-a)\s(.+)$/ );
+const listRegex = new RegExp( /^(!|\/)todo$/ );
+const removeRegex = new RegExp( /^(!|\/)todo\s(\-r)\s(\d{1})$/ );
+const completeRegex = new RegExp( /^(!|\/)todo\s(\-c)\s(\d{1})$/ );
 
 /**
  * COMMANDS:

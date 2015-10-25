@@ -1,6 +1,6 @@
 'use strict';
 
-var xmpp = require('node-xmpp');
+const xmpp = require('node-xmpp');
 
 /**
  * Returns a stanza to send to the server.

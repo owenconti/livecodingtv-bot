@@ -1,11 +1,12 @@
 'use strict';
 
-var http = require('http');
-let WebSocketServer = require('websocket').server;
+const http = require('http');
+const WebSocketServer = require('websocket').server;
+let runtime = require('./utils/Runtime');
+
 let server = null;
 let wsServer = null;
 let connections = {};
-let websocketCommands = [];
 let chat;
 
 function startServer( callback ) {
@@ -36,7 +37,7 @@ function startWebsocket() {
 			} else {
 				// Loop through each websocket command,
 				// run when the regex matches.
-				websocketCommands.forEach( ( command ) => {
+				runtime.websocketCommands.forEach( ( command ) => {
 					try {
 						var regexMatched = command.regex && command.regex.test( messageObj.message );
 						command.action( chat, messageObj );
@@ -60,8 +61,7 @@ module.exports = {
 	 * @param  {array} commands
 	 * @return {void}
 	 */
-	start: function( commands, client ) {
-		websocketCommands = commands;
+	start: function( client ) {
 		chat = client;
 
 		startServer( () => {

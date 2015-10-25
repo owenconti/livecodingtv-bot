@@ -11,7 +11,7 @@
 	!play - plays the current track in the play list
  */
 const YouTube = require('youtube-node');
-const Log = require('../Log');
+const Log = require('../utils/Log');
 const websocket = require('../websocket');
 const requestSongRegex = new RegExp( /^(!|\/)request\s(.+)$/ );
 

@@ -4,15 +4,17 @@
  * LCTV Bot :)
  */
 
-var fs = require('fs');
-var credentials = require('./credentials');
-var Client = require('./Client');
-var Log = require('./Log');
-var websocket = require('./websocket');
-var debug = process.argv[2] === 'debug' || false;
-var commandFiles = [];
-var websocketCommands = [];
-const startUpTime = new Date().getTime();
+const fs = require('fs');
+const credentials = require('./credentials');
+const websocket = require('./websocket');
+const Client = require('./Client');
+const Log = require('./utils/Log');
+
+let runtime = require('./utils/Runtime');
+runtime.debug = process.argv[2] === 'debug' || false;
+runtime.commandFiles = [];
+runtime.websocketCommands = [];
+runtime.startUpTime = new Date().getTime();
 
 // Load all files in the commands directory into an array
 fs.readdir( './commands' , function( err, files ) {
@@ -22,7 +24,7 @@ fs.readdir( './commands' , function( err, files ) {
 
 	files.forEach( function(fileName) {
 		if ( fileName.indexOf( '.js' ) >= 0 ) {
-			commandFiles.push( require( './commands/' + fileName ) );
+			runtime.commandFiles.push( require( './commands/' + fileName ) );
 		}
 	} );
 
@@ -31,28 +33,28 @@ fs.readdir( './commands' , function( err, files ) {
 
 function startBot() {
 	// Connect to the server
-	var chat = new Client( credentials, debug );
+	let chat = new Client( credentials );
 
 	// Run any startup code for each command
-	commandFiles.forEach( function( commandsForFile ) {
+	runtime.commandFiles.forEach( function( commandsForFile ) {
 		commandsForFile.forEach( function( command ) {
 			if ( command.types.indexOf( 'startup' ) >= 0 ) {
 				command.action( chat );
 			}
 			if ( command.types.indexOf( 'websocket' ) >= 0 ) {
-				websocketCommands.push( command );
+				runtime.websocketCommands.push( command );
 			}
 		});
 	});
 
 	// Start the websocket server
-	websocket.start( websocketCommands, chat );
+	websocket.start( chat );
 
 	// Listen for incoming stanzas
 	chat.listen( function( stanza ) {
 		// Skip the initial messages when starting the bot
 		const messageTime = new Date().getTime();
-		if ( messageTime - startUpTime < 5000 ) { // 5 seconds
+		if ( messageTime - runtime.startUpTime < 5000 ) { // 5 seconds
 			Log.log('Skipping start up message');
 			return;
 		}
@@ -69,7 +71,7 @@ function startBot() {
 		// If the type and the regex match, run the 'action'
 		// function of the matching command.
 		var ranCommand = false;
-		commandFiles.forEach( function( commandsForFile ) {
+		runtime.commandFiles.forEach( function( commandsForFile ) {
 			commandsForFile.forEach( function( command ) {
 				try {
 					var hasType = command.types.indexOf( parsedStanza.type ) >= 0;
