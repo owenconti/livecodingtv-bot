@@ -17,11 +17,11 @@ function sayNextItem() {
 		let item = queue[ 0 ];
 		speaking = true;
 
-		say.speak( item.voice, item.message, function() {
-			queue.shift();
-			speaking = false;
-			sayNextItem();
-		} );
+		// say.speak( item.voice, item.message, function() {
+		// 	queue.shift();
+		// 	speaking = false;
+		// 	sayNextItem();
+		// } );
 	}
 }
 

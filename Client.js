@@ -214,7 +214,7 @@ class Client {
 		if ( !userObj ) {
 			// New viewer
 			userObj = {
-				username: userName,
+				username: username,
 				count: 1,
 				time: new Date().getTime(),
 				role: role
