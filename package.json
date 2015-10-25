@@ -1,13 +1,12 @@
 {
   "name": "lctv-bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "Live Coding TV chat bot",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "engine": "iojs v3.2.0",
-  "author": "",
+  "author": "Owen Conti <owen@ohseemedia.com>",
   "license": "ISC",
   "dependencies": {
     "express": "^4.13.3",
