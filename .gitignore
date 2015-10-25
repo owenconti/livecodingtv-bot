@@ -31,3 +31,6 @@ credentials.js
 
 # Don't store the contents of the brain in the repo
 brain
+
+# Don't commit custom plugins
+plugins

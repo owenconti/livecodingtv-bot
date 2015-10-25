@@ -10,6 +10,7 @@
  */
 
 const runtime = require('../utils/Runtime');
+const Log = require('../utils/Log');
 const topRegex = /^(\!|\/)top\s(\d{1,2})$/;
 
 module.exports = [{
