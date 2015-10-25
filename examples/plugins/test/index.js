@@ -3,10 +3,13 @@
 /**
  * Test plugin example
  *
+ * There must be an 'index.js' file for each plugin!
+ * Plugins can then require additional files, if needed.
+ *
  * Command 1:
  *
  * The first command will respond to any message with
- * with the contents 'test'. The bot will reply with 
+ * with the contents 'test'. The bot will reply with
  * a string: 'I heard test!'.
  *
  * Command 2:
