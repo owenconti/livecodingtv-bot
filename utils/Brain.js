@@ -14,7 +14,7 @@ class Brain {
 	}
 
 	static set( key, value ) {
-		return brain.setItem( key, value );
+		brain.setItem( key, value );
 	}
 };
 
