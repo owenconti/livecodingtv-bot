@@ -1,6 +1,11 @@
 'use strict';
 
-var brain = require('node-persist');
+const moment = require('moment');
+const brain = require('node-persist');
+let logStorage = brain.create({
+	dir: __dirname + '/../logs'
+});
+logStorage.initSync();
 
 class Log {
 	/**
@@ -10,14 +15,15 @@ class Log {
 	 */
 	static log() {
 		let args = Array.prototype.slice.call(arguments);
-		let logs = brain.getItem('logs') || [];
+		let date = moment().format('YYYY-MM-DD');
+		let logs = logStorage.getItem('logs-' + date) || [];
 
 		args.forEach( function(arg) {
 			console.log( arg );
 			logs.push( arg );
 		} );
 
-		brain.setItem( 'logs', logs );
+		logStorage.setItem( 'logs-' + date, logs );
 	}
 
 }

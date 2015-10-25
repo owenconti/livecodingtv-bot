@@ -183,7 +183,9 @@ class Client {
 		runtime.brain.set( 'userMessages', messages );
 
 		let users = runtime.brain.get( 'users' ) || {};
-		let userObj = users[ username ];
+		let userObj = users[ username ] || {
+			username: username
+		};
 		let user = new User( userObj );
 
 		// Return the parsed message
