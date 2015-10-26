@@ -1,7 +1,8 @@
 'use strict';
 
 const Client = require( './Client' );
-const shell = require('shelljs');
+const notifier = require('node-notifier');
+const path = require('path');
 const websocket = require('./websocket');
 const Log = require('./utils/Log');
 const Loader = require('./Loader');
@@ -71,34 +72,42 @@ class ChatBot {
 				return;
 			}
 
-      shell.exec(`terminal-notifier -title ${parsedStanza.user.username} -message ${parsedStanza.message}`);
-
-			let ranCommand = false;
+			parsedStanza.ranCommand = null;
 
 			// Run the incoming stanza against
 			// the core commands for the stanza's type.
 			let coreCommandsForStanzaType = runtime.coreCommands[ parsedStanza.type ];
-			if ( coreCommandsForStanzaType ) {
-				coreCommandsForStanzaType.forEach( ( command ) => {
-					ChatBot.runCommand( command, parsedStanza, chat, ranCommand );
-				} );
-			}
+
+      coreCommandsForStanzaType.forEach( ( command ) => {
+        ChatBot.runCommand( command, parsedStanza, chat );
+      } );
 
 			// Run the incoming stanza against
 			// the plugin commands for the stanza's type.
 			let pluginCommandsForStanzaType = runtime.pluginCommands[ parsedStanza.type ];
 			if ( pluginCommandsForStanzaType ) {
 				pluginCommandsForStanzaType.forEach( ( command ) => {
-					ChatBot.runCommand( command, parsedStanza, chat, ranCommand );
+					ChatBot.runCommand( command, parsedStanza, chat);
 				} );
 			}
 
+      console.log(parsedStanza.ranCommand);
 			// If the user ran a command, update the command log
-			if ( ranCommand ) {
+			if ( parsedStanza.ranCommand ) {
 				Client.updateLatestCommandLog( parsedStanza );
 			}
-
-      // Send a terminal notification on new message
+      else {
+        // Send a terminal notification on new message
+        if(!parsedStanza.user.isBot()) {
+          notifier.notify({
+            title: parsedStanza.user.username,
+            message: parsedStanza.message,
+            icon: path.join(__dirname, 'assets/Such_doge_Large.png'), // absolute path (not balloons) 
+          }, function (err, response) {
+            // response is response from notification 
+          });
+        }
+      }
 
 			Log.log( JSON.stringify( parsedStanza, null, 4 ) );
 		} );
@@ -119,8 +128,8 @@ class ChatBot {
 			var ignoreRateLimiting = command.ignoreRateLimiting;
 			var passesRateLimiting = !parsedStanza.rateLimited || ( parsedStanza.rateLimited && ignoreRateLimiting );
 
-			if ( regexMatched && passesRateLimiting ) {
-				ranCommand = true;
+			if ( regexMatched && passesRateLimiting && !ignoreRateLimiting ) {
+				parsedStanza.ranCommand = true;
 				command.action( chat, parsedStanza );
 			}
 		} catch ( e ) {
