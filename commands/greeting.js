@@ -36,11 +36,9 @@ var getRandomGreeting = function( availableGreetings ) {
 module.exports = [{
 	types: ['presence'],
 	regex: /^available$/,
-    action: function( chat, stanza ) {
+	action: function( chat, stanza ) {
 		let greeting;
 		let existingViewer = stanza.user.viewCount > 1;
-
-		console.log( stanza.user );
 
 		// Find the greeting to send to the user
 		if ( existingViewer ) {
