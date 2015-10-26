@@ -99,5 +99,10 @@ Commands can have four attributes:
 		```
 	* The `stanza` parameter is not passed to `startup` commands.
 
+## Desktop Notifications
+
+You can enable desktop notifications for new messages with the following command
+in the console. Requires homebrew and mac osx.
+- `$ brew install terminal-notifier`
 
 See the examples directory for an example of creating a plugin.
