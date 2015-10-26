@@ -70,14 +70,17 @@ class ChatBot {
 				return;
 			}
 
-			let ranCommand = false;
+			var ranCommand = false;
 
 			// Run the incoming stanza against
 			// the core commands for the stanza's type.
 			let coreCommandsForStanzaType = runtime.coreCommands[ parsedStanza.type ];
 			if ( coreCommandsForStanzaType ) {
 				coreCommandsForStanzaType.forEach( ( command ) => {
-					ChatBot.runCommand( command, parsedStanza, chat, ranCommand );
+					ChatBot.runCommand( command, parsedStanza, chat, ranCommand )
+					// if (  ) {
+					// 	ranCommand = true;
+					// }
 				} );
 			}
 
@@ -86,7 +89,9 @@ class ChatBot {
 			let pluginCommandsForStanzaType = runtime.pluginCommands[ parsedStanza.type ];
 			if ( pluginCommandsForStanzaType ) {
 				pluginCommandsForStanzaType.forEach( ( command ) => {
-					ChatBot.runCommand( command, parsedStanza, chat, ranCommand );
+					if ( ChatBot.runCommand( command, parsedStanza, chat ) ) {
+						ranCommand = true;
+					}
 				} );
 			}
 
@@ -104,7 +109,6 @@ class ChatBot {
 	 * @param  {obj} command
 	 * @param  {obj} parsedStanza
 	 * @param  {Client} chat
-	 * @param  {boolean} ranCommand
 	 * @return {void}
 	 */
 	static runCommand( command, parsedStanza, chat, ranCommand ) {
@@ -113,9 +117,10 @@ class ChatBot {
 			var ignoreRateLimiting = command.ignoreRateLimiting;
 			var passesRateLimiting = !parsedStanza.rateLimited || ( parsedStanza.rateLimited && ignoreRateLimiting );
 
-			if ( regexMatched && passesRateLimiting ) {
+			if ( regexMatched && passesRateLimiting && !ignoreRateLimiting ) {
 				ranCommand = true;
 				command.action( chat, parsedStanza );
+				return true;
 			}
 		} catch ( e ) {
 			console.trace( 'ERROR', e );

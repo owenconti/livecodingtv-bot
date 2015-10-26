@@ -22,7 +22,7 @@ class Client {
         });
 
 		this.client.on('error', function(err) {
-			console.log('CLIENT ERROR: ', err, err.stanza, err.stanza.Stanza);
+			console.log('CLIENT ERROR: ', err);
 		});
 
         // Once online, send presence to the room
