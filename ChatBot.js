@@ -1,6 +1,7 @@
 'use strict';
 
 const Client = require( './Client' );
+const shell = require('shelljs');
 const websocket = require('./websocket');
 const Log = require('./utils/Log');
 const Loader = require('./Loader');
@@ -70,6 +71,8 @@ class ChatBot {
 				return;
 			}
 
+      shell.exec(`terminal-notifier -title ${parsedStanza.user.username} -message ${parsedStanza.message}`);
+
 			let ranCommand = false;
 
 			// Run the incoming stanza against
@@ -94,6 +97,9 @@ class ChatBot {
 			if ( ranCommand ) {
 				Client.updateLatestCommandLog( parsedStanza );
 			}
+
+      // Send a terminal notification on new message
+
 			Log.log( JSON.stringify( parsedStanza, null, 4 ) );
 		} );
 	}

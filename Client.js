@@ -7,55 +7,55 @@ const runtime = require('./utils/Runtime');
 const User = require('./model/User');
 
 class Client {
-    /**
-     * Connect to a room
-     * @param  {object} credentials
-     * @return {void}
-     */
-    constructor( credentials ) {
-		this.credentials = credentials;
+  /**
+   * Connect to a room
+   * @param  {object} credentials
+   * @return {void}
+   */
+  constructor( credentials ) {
+    this.credentials = credentials;
 
-        // Connect to the server
-        this.client = new xmpp.Client({
-            jid: this.credentials.jid,
-            password: this.credentials.password
-        });
+    // Connect to the server
+    this.client = new xmpp.Client({
+        jid: this.credentials.jid,
+        password: this.credentials.password
+    });
 
-		this.client.on('error', function(err) {
-			console.log('CLIENT ERROR: ', err, err.stanza, err.stanza.Stanza);
-		});
+    this.client.on('error', function(err) {
+      console.log('CLIENT ERROR: ', err, err.stanza, err.stanza.Stanza);
+    });
 
-        // Once online, send presence to the room
-        this.client.on('online', function( resp ) {
-            Log.log( 'Connected to server' );
+    // Once online, send presence to the room
+    this.client.on('online', function( resp ) {
+      Log.log( 'Connected to server' );
 
-            this.sendPresence();
-        }.bind( this ) );
-    }
+      this.sendPresence();
+    }.bind( this ) );
+  }
 
 	/**
-     * Sends the bot's presence to the room specified.
-     * @return {void}
-     */
+   * Sends the bot's presence to the room specified.
+   * @return {void}
+   */
  	sendPresence() {
-        this.client.send(
-            new xmpp.Element('presence', {
-                to: this.credentials.roomJid + '/' + this.credentials.username
-            })
-        );
-    }
+    this.client.send(
+      new xmpp.Element('presence', {
+          to: this.credentials.roomJid + '/' + this.credentials.username
+      })
+    );
+  }
 
-    /**
-     * Sends a message to the specified room.
-     * @param  {string} msg
-     * @param  {string} room
-     * @return {void}
-     */
-    sendMessage( msg ) {
-		if ( runtime.debug ) {
-			Log.log('DEBUGGING: ' + msg);
-			return false;
-		}
+  /**
+   * Sends a message to the specified room.
+   * @param  {string} msg
+   * @param  {string} room
+   * @return {void}
+   */
+  sendMessage( msg ) {
+    if ( runtime.debug ) {
+      Log.log('DEBUGGING: ' + msg);
+      return false;
+    }
 
 		// Get the previously sent messages
 		let messages = runtime.brain.get('messages') || {};
@@ -75,13 +75,13 @@ class Client {
 		// Only send the message to the server, if the difference is > 5 seconds
 		if ( !previousMessage || messageObj.time - previousMessage.time > 5000 ) { // 5 seconds
 			this.client.send(
-	    		new xmpp.Element('message', {
-	    			to: this.credentials.roomJid,
-	    			type: 'groupchat'
-	    		})
-	        	.c('body')
-	            .t( msg )
-	      	);
+        new xmpp.Element('message', {
+          to: this.credentials.roomJid,
+          type: 'groupchat'
+        })
+        .c('body')
+        .t( msg )
+      );
 		} else {
 			Log.log( 'Skipping sendMessage - previous message sent within 5 seconds' );
 		}
@@ -89,57 +89,57 @@ class Client {
 		// Save the message to the messages store
 		messages[ hash ] = messageObj;
 		runtime.brain.set( 'messages', messages );
-    }
+  }
 
-    /**
-     * Replies to the specified user.
-     * @param  {string} username
-     * @param  {string} msg
-     * @return {void}
-     */
-    replyTo( username, msg ) {
-        this.sendMessage( '@' + username + ': ' + msg );
-    }
+  /**
+   * Replies to the specified user.
+   * @param  {string} username
+   * @param  {string} msg
+   * @return {void}
+   */
+  replyTo( username, msg ) {
+    this.sendMessage( '@' + username + ': ' + msg );
+  }
 
-    /**
-     * Listens for messages and calls the passed-in callback.
-     * @param  {function} action
-     * @return {void}
-     */
-    listen( action ) {
-        this.client.on('stanza', function( stanza ) {
-            action( stanza );
-        });
-    }
+  /**
+   * Listens for messages and calls the passed-in callback.
+   * @param  {function} action
+   * @return {void}
+   */
+  listen( action ) {
+    this.client.on('stanza', function( stanza ) {
+      action( stanza );
+    });
+  }
 
-    /**
-     * Returns the user based on the specified username.
-     * @param  {string} username
-     * @return {object}
-     */
-    getUser( username ) {
+  /**
+   * Returns the user based on the specified username.
+   * @param  {string} username
+   * @return {object}
+   */
+  getUser( username ) {
 		const users = runtime.brain.get( 'users' );
 		let userObj = users[ username ] || {};
 
 		return new User( userObj );
-    }
+  }
 
-    /**
-     * Parses a stanza from the server
+  /**
+   * Parses a stanza from the server
 	 * @param  {Stanza} stanza
 	 * @param  {obj} credentials
 	 * @return {obj}
      */
-    static parseStanza( stanza, credentials ) {
-        var type = stanza.name;
+  static parseStanza( stanza, credentials ) {
+    var type = stanza.name;
 
-        switch( type ) {
-            case 'message':
-                return Client.parseMessage( stanza, credentials );
-            case 'presence':
-                return Client.parsePresence( stanza, credentials );
-        }
+    switch( type ) {
+      case 'message':
+        return Client.parseMessage( stanza, credentials );
+      case 'presence':
+        return Client.parsePresence( stanza, credentials );
     }
+  }
 
 	/**
 	 * Parses the passed-in 'message' stanza.
@@ -147,13 +147,13 @@ class Client {
 	 * @param  {obj} credentials
 	 * @return {obj}
 	 */
-    static parseMessage( stanza, credentials ) {
-        var type = 'message';
+  static parseMessage( stanza, credentials ) {
+    var type = 'message';
 		var rateLimited = false;
 		let jid = stanza.attrs.from;
-        let username = jid.substr( jid.indexOf( '/' ) + 1 );
-        var body = Client.findChild( 'body', stanza.children );
-        var message = body.children.join('').replace('\\', '');
+    let username = jid.substr( jid.indexOf( '/' ) + 1 );
+    var body = Client.findChild( 'body', stanza.children );
+    var message = body.children.join('').replace('\\', '');
 
 		// Limit users to only run commands once every 5 seconds
 		const now = new Date().getTime();
@@ -176,7 +176,6 @@ class Client {
 		}
 
 		// Push 'now' time into the user's message times
-		userMessageLog.messageTimes.push( now );
 
 		// Update the message log for the user
 		messages[ username ] = userMessageLog;
@@ -198,16 +197,16 @@ class Client {
 	 * @param  {obj} credentials
 	 * @return {obj}
 	 */
-    static parsePresence( stanza, credentials) {
-        let type = 'presence';
+  static parsePresence( stanza, credentials) {
+    let type = 'presence';
 		let jid = stanza.attrs.from;
-        let username = jid.substr( jid.indexOf( '/' ) + 1 );
-        let message = stanza.attrs.type || 'available';
+    let username = jid.substr( jid.indexOf( '/' ) + 1 );
+    let message = stanza.attrs.type || 'available';
 
-        // Find role
-        let xObj = Client.findChild( 'x', stanza.children );
-        let itemObj = Client.findChild( 'item', xObj.children );
-        let role = itemObj.attrs.role;
+    // Find role
+    let xObj = Client.findChild( 'x', stanza.children );
+    let itemObj = Client.findChild( 'item', xObj.children );
+    let role = itemObj.attrs.role;
 
 		// Store new users in the 'users' brain object
 		let users = runtime.brain.get( 'users' ) || {};
@@ -246,8 +245,7 @@ class Client {
 
 		users[ user.username ] = userObj;
 		runtime.brain.set( 'users', users );
-
-        return { type, user, message, role };
+      return { type, user, message, role };
     }
 
 	/**
@@ -263,23 +261,23 @@ class Client {
 		runtime.brain.set( 'userMessages', messages );
 	}
 
-    /**
-     * Child a child based on the 'name' property
-     * @param  {[type]} name     [description]
-     * @param  {[type]} children [description]
-     * @return {[type]}          [description]
-     */
-    static findChild( name, children ) {
-        var result = null;
-        for ( var index in children ) {
-            var child = children[ index ];
-            if ( child.name === name ) {
-                result = child;
-                break;
-            }
-        }
-        return result;
+  /**
+   * Child a child based on the 'name' property
+   * @param  {[type]} name     [description]
+   * @param  {[type]} children [description]
+   * @return {[type]}          [description]
+   */
+  static findChild( name, children ) {
+    var result = null;
+    for ( var index in children ) {
+      var child = children[ index ];
+      if ( child.name === name ) {
+        result = child;
+        break;
+      }
     }
+    return result;
+  }
 }
 
 module.exports = Client;
