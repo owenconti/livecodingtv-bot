@@ -222,7 +222,7 @@ module.exports = [{
     }
 }, {
     types: ['websocket'],
-    regex: /^(!|\/)isPlaying$/,
+    regex: /^isPlaying$/,
     action: function( chat, messageObj ) {
 		if ( messageObj.data ) {
 			let player = getPlayer( chat );
@@ -236,6 +236,8 @@ module.exports = [{
     types: ['websocket'],
 	regex: /^songEnded$/,
     action: function( chat, messageObj ) {
+		console.log('songEnded WS message', messageObj);
+
 		skipSong( chat );
     }
 }];

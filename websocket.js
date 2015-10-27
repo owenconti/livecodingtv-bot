@@ -65,7 +65,9 @@ function startWebsocket() {
 function runWebsocketCommand( command, messageObj ) {
 	try {
 		var regexMatched = command.regex && command.regex.test( messageObj.message );
-		command.action( chat, messageObj );
+		if ( regexMatched ) {
+			command.action( chat, messageObj );
+		}
 	} catch ( e ) {
 		Log.log('ERROR', e);
 	}

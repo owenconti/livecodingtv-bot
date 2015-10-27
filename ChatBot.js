@@ -121,7 +121,7 @@ class ChatBot {
 				return true;
 			}
 		} catch ( e ) {
-			console.trace( 'ERROR', e );
+			console.trace( 'Command error: ', command, e );
 		}
 	}
 

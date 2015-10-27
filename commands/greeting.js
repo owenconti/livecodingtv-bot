@@ -28,6 +28,10 @@ const greetings = {
  * @return {string}
  */
 var getRandomGreeting = function( availableGreetings ) {
+	if ( !availableGreetings ) {
+		return 'Welcome to the stream.';
+	}
+
 	var length = availableGreetings.length;
 	var index = Math.floor(Math.random() * length);
 	return availableGreetings[ index ];
@@ -43,6 +47,12 @@ module.exports = [{
 		// Find the greeting to send to the user
 		if ( existingViewer ) {
 			// existing viewer
+			// check if the user's status exists in the greetings
+			let greetingsArray = greetings[ 'existing' ][ stanza.user.status ];
+			if ( !greetingsArray ) {
+				let firstExistingStatus = Object.keys( greetings[ 'existing' ] )[0];
+				greetingsArray = greetings[ 'existing' ][ firstExistingStatus ];
+			}
 			greeting = getRandomGreeting( greetings[ 'existing' ][ stanza.user.status ] );
 		} else {
 			// new viewer
