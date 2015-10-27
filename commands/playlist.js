@@ -21,7 +21,6 @@ module.exports = [{
     types: ['startup'],
     action: function( chat ) {
 		let player = getPlayer( chat );
-		player.currentSongIndex = 0;
 		player.playing = false;
 		player.started = false;
 		setPlayer( player, chat );

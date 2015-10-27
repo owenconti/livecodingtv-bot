@@ -8,25 +8,25 @@ module.exports = [{
     types: ['message'],
     regex: /^(!|\/)(help|commands)$/,
     action: function( chat, stanza ) {
-		var output = '';
+		var output = '/code ';
 
 		// Loop through the core message customCommands
-		output += 'Core commands:' + '\n';
+		output += 'Core commands:\n';
 		runtime.coreCommands.message.forEach( ( command ) => {
 			if ( command.name && command.help ) {
-				output += command.name + ' - ' + command.help + '\n';
+				output += '// ' + command.name + ' - ' + command.help + '\n';
 			}
 		} );
 
 		// Loop through the core message customCommands
-		output += '\nPlugin commands:' + '\n';
+		output += '\nPlugin commands:\n';
 		let pluginCommands = runtime.pluginCommands.message;
 		if ( pluginCommands.length === 0 ) {
 			output += 'No plugin commands available.\n';
 		} else {
 			pluginCommands.forEach( ( command ) => {
 				if ( command.name && command.help ) {
-					output += command.name + ' - ' + command.help + '\n';
+					output += '// ' + command.name + ' - ' + command.help + '\n';
 				}
 			} );
 		}
