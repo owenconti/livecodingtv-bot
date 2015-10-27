@@ -183,9 +183,24 @@ class Client {
 		runtime.brain.set( 'userMessages', messages );
 
 		let users = runtime.brain.get( 'users' ) || {};
-		let userObj = users[ username ] || {
-			username: username
-		};
+		let userObj = users[ username ];
+
+		// If the user joined the channel for the first time,
+		// while the bot was not connected, the user will not
+		// have an entry in the 'users' brain.
+		// Create the entry for the user here
+		if ( !userObj) {
+			userObj = {
+				username: username,
+				count: 1,
+				time: new Date().getTime(),
+				role: 'participant',
+				status: 'Viewer'
+			};
+			users[ username ] = userObj;
+			runtime.brain.set( 'users', users );
+		}
+
 		let user = new User( userObj );
 
 		// Return the parsed message
@@ -219,7 +234,8 @@ class Client {
 				username: username,
 				count: 1,
 				time: new Date().getTime(),
-				role: role
+				role: role,
+				status: 'Viewer'
 			};
 		} else {
 			// Update the user's view count and presence time
@@ -232,10 +248,6 @@ class Client {
 				userObj.time = now;
 			}
 		}
-		if ( !userObj.status ) {
-			userObj.status = 'Viewer';
-		}
-
 		let user = new User( userObj );
 
 		// If presence is unavailable,
