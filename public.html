@@ -3,10 +3,13 @@
 		<script>
 			var username = location.hash.substring( 1 );
 			var socket;
+			var isPlaying = false;
 
 			document.title = 'LCTV Bot Music Player | ' + username;
 
-			function connect() {
+			function connectToWebsocketServer() {
+				console.log('Connecting to WS server');
+
 				var url = "ws://localhost:8881";
 				var ws = WebSocket;
 				socket = new ws(url, 'lctv-bot');
@@ -17,7 +20,11 @@
 					// subscribe to username's messages
 					socket.send( JSON.stringify({
 						message: 'subscribe',
-						data: username
+						data: username,
+					}) );
+					socket.send( JSON.stringify({
+						message: 'isPlaying',
+						data: isPlaying
 					}) );
 				};
 
@@ -42,11 +49,19 @@
 							break;
 					}
 				};
+
 				socket.onclose = function(message) {
 					console.log('closed connection!');
+
+					// try to reconnect
+					setTimeout( connectToWebsocketServer, 5000 );
+				};
+
+				socket.onerror = function(err) {
+					console.log('socket error', err);
 				};
 			}
-			connect();
+			connectToWebsocketServer();
 		</script>
 	</head>
 	<body>
@@ -70,7 +85,12 @@
 				});
 			}
 			function onStateChange(e) {
-				if ( e.data === YT.PlayerState.ENDED ) {
+				if ( e.data === YT.PlayerState.PLAYING ) {
+					isPlaying = true;
+				} else if ( e.data === YT.PlayerState.PAUSED ) {
+					isPlaying = false;
+				} else if ( e.data === YT.PlayerState.ENDED ) {
+					isPlaying = false;
 					// tell bot we need a new song
 					if ( socket ) {
 						socket.send( JSON.stringify({

@@ -40,7 +40,7 @@ module.exports = [{
 		let player = getPlayer( chat );
 		let playlist = getPlaylist( chat );
 
-		if ( player.started && player.playing && playlist.length > 0 ) {
+		if ( player.playing && playlist.length > 0 ) {
 			// Player is playing a song
 			let currentSong = playlist[ player.currentSongIndex ];
 			chat.sendMessage( `Current song: ${currentSong.title}`)
@@ -82,7 +82,7 @@ module.exports = [{
 			setPlaylist( playlist, chat );
 
 			Log.log( `Song: ${videoObj.title} has been added to the playlist by ${stanza.user.username}` );
-			chat.replyTo( stanza.user.username, `Your song has been added to the playlist!` );
+			chat.replyTo( stanza.user.username, `${videoObj.title} has been added to the playlist!` );
 		} )
 
     }
@@ -119,7 +119,7 @@ module.exports = [{
     action: function( chat, stanza ) {
 		let player = getPlayer( chat );
 
-		if ( player.started && stanza.user.isModerator() ) {
+		if ( stanza.user.isModerator() ) {
 			skipSong( chat );
 		}
     }
@@ -130,7 +130,7 @@ module.exports = [{
     regex: /^(!|\/)pause$/,
     action: function( chat, stanza ) {
 		let player = getPlayer( chat );
-		if ( player.started && stanza.user.isModerator() ) {
+		if ( stanza.user.isModerator() ) {
 			player.playing = false;
 			setPlayer( player, chat );
 
@@ -146,7 +146,20 @@ module.exports = [{
     regex: /^(!|\/)play$/,
     action: function( chat, stanza ) {
 		let player = getPlayer( chat );
-		if ( player.started && stanza.user.isModerator() ) {
+		if ( stanza.user.isModerator() ) {
+			if ( !player.started ) {
+				let playlist = getPlaylist( chat );
+				if ( playlist.length > 0 ) {
+					player.started = true;
+
+					let currentSong = playlist[ player.currentSongIndex ];
+					websocket.sendMessage( chat.credentials.room, {
+						message: 'skip',
+						youtubeID: currentSong.youtubeID
+					});
+				}
+			}
+
 			player.playing = true;
 			setPlayer( player, chat );
 
@@ -156,26 +169,14 @@ module.exports = [{
 		}
     }
 }, {
-	// Fire up the youtube player
-	// MOD only
-    types: ['message'],
-    regex: /^(!|\/)startplayer$/,
-    action: function( chat, stanza ) {
-		let player = getPlayer( chat );
-		if ( stanza.user.isModerator() ) {
+    types: ['websocket'],
+    regex: /^(!|\/)isPlaying$/,
+    action: function( chat, messageObj ) {
+		if ( messageObj.data ) {
+			let player = getPlayer( chat );
 			player.started = true;
 			player.playing = true;
 			setPlayer( player, chat );
-
-			let playlist = getPlaylist( chat );
-			if ( playlist.length > 0 ) {
-				// Player is playing a song
-				let currentSong = playlist[ player.currentSongIndex ];
-				websocket.sendMessage( chat.credentials.room, {
-					message: 'skip',
-					youtubeID: currentSong.youtubeID
-				});
-			}
 		}
     }
 }, {
