@@ -77,10 +77,9 @@ class ChatBot {
 			let coreCommandsForStanzaType = runtime.coreCommands[ parsedStanza.type ];
 			if ( coreCommandsForStanzaType ) {
 				coreCommandsForStanzaType.forEach( ( command ) => {
-					ChatBot.runCommand( command, parsedStanza, chat, ranCommand )
-					// if (  ) {
-					// 	ranCommand = true;
-					// }
+					if ( ChatBot.runCommand( command, parsedStanza, chat ) ) {
+						ranCommand = true;
+					}
 				} );
 			}
 
@@ -111,14 +110,13 @@ class ChatBot {
 	 * @param  {Client} chat
 	 * @return {void}
 	 */
-	static runCommand( command, parsedStanza, chat, ranCommand ) {
+	static runCommand( command, parsedStanza, chat ) {
 		try {
 			var regexMatched = command.regex && command.regex.test( parsedStanza.message );
 			var ignoreRateLimiting = command.ignoreRateLimiting;
 			var passesRateLimiting = !parsedStanza.rateLimited || ( parsedStanza.rateLimited && ignoreRateLimiting );
 
 			if ( regexMatched && passesRateLimiting && !ignoreRateLimiting ) {
-				ranCommand = true;
 				command.action( chat, parsedStanza );
 				return true;
 			}

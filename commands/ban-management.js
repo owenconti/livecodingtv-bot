@@ -57,6 +57,7 @@ module.exports = [{
 }, {
     types: ['message'],
     regex: unbanRegex,
+	help: 'Unbans the specified user.',
     action: function( chat, stanza ) {
 		if ( stanza.user.isModerator() ) {
 			var match = unbanRegex.exec( stanza.message );
@@ -71,6 +72,7 @@ module.exports = [{
 }, {
     types: ['message'],
     regex: banRegex,
+	help: 'Bans the specified user.',
     action: function( chat, stanza ) {
 		if ( stanza.user.isModerator() ) {
 			var match = banRegex.exec( stanza.message );
