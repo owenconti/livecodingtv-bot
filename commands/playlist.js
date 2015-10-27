@@ -109,8 +109,6 @@ module.exports = [{
 
 			setPlaylist( playlist, chat );
 			skipSong( chat );
-
-			console.log('remove after', player.currentSongIndex, playlist);
 		}
 
     }
@@ -165,6 +163,9 @@ module.exports = [{
     regex: /^(!|\/)startplayer$/,
     action: function( chat, stanza ) {
 		let player = getPlayer( chat );
+
+		console.log('mod', stanza.user.isModerator());
+
 		if ( stanza.user.isModerator() ) {
 			player.started = true;
 			player.playing = true;
