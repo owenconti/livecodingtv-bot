@@ -6,6 +6,8 @@ const getStatusRegex = new RegExp( /^(!|\/)getstatus\s(.+)/ );
 
 module.exports = [{
 	// !status - Returns the fromUser's status
+	name: '!status',
+	help: 'Returns the status of the user.',
     types: ['message'],
     regex: /^(!|\/)status/,
     action: function( chat, stanza ) {
@@ -17,7 +19,8 @@ module.exports = [{
 		chat.sendMessage(`${stanza.user.username} is set to: ${status}`);
     }
 }, {
-	// !getstatus {username}
+	name: '!getstatus {username}',
+	help: 'Returns the status of the specified user.',
     types: ['message'],
     regex: getStatusRegex,
     action: function( chat, stanza ) {
@@ -44,8 +47,9 @@ module.exports = [{
 		chat.sendMessage(`${username} is set to: ${status}`);
     }
 }, {
-	// !setstatus {username} {status}
-    types: ['message'],
+	name: '!setstatus {username} {status}',
+	help: 'Sets the status of the specified user to the specified status.',
+	types: ['message'],
     regex: setStatusRegex,
     action: function( chat, stanza ) {
 		if ( stanza.user.isModerator() ) {

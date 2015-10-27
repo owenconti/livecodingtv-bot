@@ -14,6 +14,8 @@ const Log = require('../utils/Log');
 const topRegex = /^(\!|\/)top\s(\d{1,2})$/;
 
 module.exports = [{
+	name: '!top {X}',
+	help: 'Displays the top X viewers.',
 	types: ['message'],
 	regex: topRegex,
 	action: function( chat, stanza ) {

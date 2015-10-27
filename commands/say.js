@@ -4,6 +4,8 @@ const Say = require('../utils/Say');
 const regex = new RegExp( /^(!|\/)say\s(.+)$/ );
 
 module.exports = [{
+	name: '!say {[-voice VoiceName]} {message}',
+	help: 'Verbally speaks a message.',
     types: ['message'],
     regex: regex,
     action: function( chat, stanza ) {

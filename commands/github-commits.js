@@ -44,6 +44,8 @@ function getCommitsFromGithub( chat, parameters, callback ) {
 
 const commitSummaryRegex = /^(!|\/)commits\ssummary\s(\d{1,2})$/;
 module.exports = [{
+	name: '!commits',
+	help: 'List 3 latest commits for the bot\'s repository.',
 	types: ['message'],
 	regex: /^(!|\/)commits$/,
 	action: function( chat, stanza ) {
@@ -66,6 +68,8 @@ module.exports = [{
 		} );
 	}
 }, {
+	name: '!commits summary {X}',
+	help: 'Draw graph of commits over last X weeks.',
 	types: ['message'],
 	regex: commitSummaryRegex,
 	action: function( chat, stanza ) {

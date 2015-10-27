@@ -26,7 +26,7 @@ const banRegex = new RegExp( /^(!|\/)ban\s(\w+)$/ );
 
 module.exports = [{
 	// Auto ban users flood messages to the chat
-    types: ['message'],
+	types: ['message'],
     regex: /./,
 	ignoreRateLimiting: true,
     action: function( chat, stanza ) {
@@ -55,7 +55,8 @@ module.exports = [{
 		}
     }
 }, {
-    types: ['message'],
+	name: '!unban',
+	types: ['message'],
     regex: unbanRegex,
 	help: 'Unbans the specified user.',
     action: function( chat, stanza ) {
@@ -70,6 +71,7 @@ module.exports = [{
 		}
     }
 }, {
+	name: '!ban',
     types: ['message'],
     regex: banRegex,
 	help: 'Bans the specified user.',
