@@ -4,6 +4,10 @@
 ### This node app uses ES6 features.
 ### Please ensure you are running node v4 or greater!
 
+## Changelog
+
+[https://github.com/owenconti/livecodingtv-bot/blob/master/changelog.md](https://github.com/owenconti/livecodingtv-bot/blob/master/changelog.md)
+
 ## Setup
 
 1. Clone the repo
