@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const Log = require('./utils/Log');
+const Log = require('./Log');
 const commandTypes = ['message', 'presence', 'startup', 'websocket'];
 
 class Loader {
@@ -15,7 +15,8 @@ class Loader {
 		} );
 
 		// Load all files in the commands directory into an array
-		fs.readdir( './commands' , function( err, files ) {
+		let commandsDir = path.join( __dirname, '..', 'commands' );
+		fs.readdir( commandsDir, function( err, files ) {
 			if ( err ) {
 				Log.log( 'ERROR: ' + err );
 				return;
@@ -23,7 +24,8 @@ class Loader {
 
 			files.forEach( function(fileName) {
 				if ( fileName.indexOf( '.js' ) >= 0 ) {
-					let commands = require( './commands/' + fileName );
+					let filePath = path.join( commandsDir, fileName );
+					let commands = require( filePath );
 
 					// Loop through each command so we can separate out
 					// each command type to its own array.
@@ -46,7 +48,7 @@ class Loader {
 		} );
 
 		// Load all files in the commands directory into an array
-		let pluginsDir = path.join( __dirname, 'plugins' );
+		let pluginsDir = path.join( __dirname, '..', 'plugins' );
 		fs.readdir( pluginsDir , function( err, folders ) {
 			if ( err ) {
 				Log.log( 'WARNING: No /plugins directory exists.' );
@@ -56,12 +58,18 @@ class Loader {
 
 			folders.forEach( ( folder ) => {
 				let pluginIndexFile = path.join( pluginsDir, folder, 'index.js' );
-				let commands = require( pluginIndexFile );
+				fs.stat( pluginIndexFile, function(err, stat) {
+					if ( err ) {
+						console.warn(`[bot] Plugin: ${folder} missing index.js. Skipping plugin.`);
+						return;
+					}
 
-				// Loop through each command so we can separate out
-				// each command type to its own array.
-				commands.forEach( (command) => {
-					Loader.parseCommandIntoMessageTypes( command, pluginCommands );
+					// Loop through each command so we can separate out
+					// each command type to its own array.
+					let commands = require( pluginIndexFile );
+					commands.forEach( (command) => {
+						Loader.parseCommandIntoMessageTypes( command, pluginCommands );
+					} );
 				} );
 			} );
 

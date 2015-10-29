@@ -2,9 +2,9 @@
 
 const Client = require( './Client' );
 const websocket = require('./websocket');
-const Log = require('./utils/Log');
+const Log = require('./Log');
 const Loader = require('./Loader');
-let runtime = require('./utils/Runtime');
+let runtime = require('./Runtime');
 
 class ChatBot {
 	static start() {

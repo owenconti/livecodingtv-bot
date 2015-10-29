@@ -2,9 +2,9 @@
 
 const xmpp = require('node-xmpp');
 const crypto = require('crypto');
-const Log = require('./utils/Log');
-const runtime = require('./utils/Runtime');
-const User = require('./model/User');
+const Log = require('./Log');
+const runtime = require('./Runtime');
+const User = require('../model/User');
 
 class Client {
     /**

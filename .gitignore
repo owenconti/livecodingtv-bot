@@ -27,10 +27,13 @@ build/Release
 node_modules
 
 # Don't show our credentials to anyone
-credentials.js
+/setup/credentials.js
 
 # Don't store the contents of the brain in the repo
 brain
 
 # Don't commit custom plugins
 /plugins
+
+# Don't commit settings.json file
+/setup/settings.json

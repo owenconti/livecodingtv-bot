@@ -6,20 +6,8 @@
  */
 
 const runtime = require('../utils/Runtime');
-const greetings = {
-	"existing" : {
-		"Viewer" : [
-			`Back again! How's life treating you today?`,
-			`Hey friend! What are you working on today?`,
-		],
-		"Royalty" : [
-			'The king has arrived! We appreciate your support!'
-		]
-	},
-	"new" : [
-		'Welcome to the stream! Thanks for stopping by!'
-	]
-}
+const Settings = require('../utils/Settings');
+const greetings = Settings.getSetting( __filename, 'greetings' );
 
 /**
  * Returns a random greeting from the
@@ -29,7 +17,7 @@ const greetings = {
  */
 var getRandomGreeting = function( availableGreetings ) {
 	if ( !availableGreetings ) {
-		return 'Welcome to the stream.';
+		return Settings.getSetting( __filename, 'defaultGreeting' );
 	}
 
 	var length = availableGreetings.length;

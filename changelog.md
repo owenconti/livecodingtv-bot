@@ -4,3 +4,13 @@ You can also browse the commit history to track my commits: [https://github.com/
 
 * Updated Loader to allow bot to start without a `/plugins` directory.
 * Verifying credentials.js includes the required attributes to start up when starting the bot.
+* Moved a couple classes into the `utils` directory.
+  * If you required any of the following files, you will need to update your references:
+    * `ChatBot.js`
+	* `Client.js`
+	* `Loader.js`
+	* `websocket.js`
+* Created a `Settings.js` utility file, to easily load settings.
+* Created a `setup` directory, and started a `defaultSettings.json` file to keep default settings.
+* Moved `credentials.js` into the `setup` directory.
+  * If you required `credentials.js`, you will need to update your references.

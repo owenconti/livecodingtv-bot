@@ -4,9 +4,9 @@
  * LCTV Bot :)
  */
 
-const credentials = require('./credentials');
+const credentials = require('./setup/credentials');
 const Brain = require('./utils/Brain');
-const ChatBot = require('./ChatBot');
+const ChatBot = require('./utils/ChatBot');
 
 // Build the initial runtime object
 let runtime = require('./utils/Runtime');

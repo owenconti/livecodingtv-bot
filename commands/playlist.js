@@ -13,7 +13,7 @@
 const runtime = require('../utils/Runtime');
 const YouTube = require('youtube-node');
 const Log = require('../utils/Log');
-const websocket = require('../websocket');
+const websocket = require('../utils/websocket');
 const requestSongRegex = new RegExp( /^(!|\/)request\s(.+)$/ );
 const requiredVotesToSkip = 3;
 
