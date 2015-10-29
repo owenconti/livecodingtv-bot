@@ -14,8 +14,9 @@ const runtime = require('../utils/Runtime');
 const YouTube = require('youtube-node');
 const Log = require('../utils/Log');
 const websocket = require('../utils/websocket');
+const Settings = require('../utils/Settings');
+const requiredVotesToSkip = Settings.getSetting( __filename, 'requiredVotesToSkip' );
 const requestSongRegex = new RegExp( /^(!|\/)request\s(.+)$/ );
-const requiredVotesToSkip = 3;
 
 module.exports = [{
 	// Reset current song index and playing boolean

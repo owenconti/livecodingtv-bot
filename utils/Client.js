@@ -103,6 +103,7 @@ class Client {
 
     /**
      * Listens for messages and calls the passed-in callback.
+     * Called from ChatBot.js
      * @param  {function} action
      * @return {void}
      */

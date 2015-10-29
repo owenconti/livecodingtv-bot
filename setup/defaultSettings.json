@@ -15,5 +15,34 @@
 				"Welcome to the stream! Thanks for stopping by!"
 			]
 		}
+	},
+	"say" : {
+		"defaultVoice" : "Victoria"
+	},
+	"unavailable" : {
+		"disconnectMessage" : "${username} disconnected."
+	},
+	"user-status" : {
+		"statuses" : {
+			"vip" : {
+				"title" : "VIP",
+				"weight" : 80
+			},
+			"donator" : {
+				"title" : "Donator",
+				"weight" : 90
+			},
+			"moderator" : {
+				"title" : "Moderator",
+				"weight" : 100
+			},
+			"viewer" : {
+				"title" : "Viewer",
+				"weight" : 0
+			}
+		}
+	},
+	"playlist" : {
+		"requiredVotesToSkip" : 3
 	}
 }

@@ -14,3 +14,7 @@ You can also browse the commit history to track my commits: [https://github.com/
 * Created a `setup` directory, and started a `defaultSettings.json` file to keep default settings.
 * Moved `credentials.js` into the `setup` directory.
   * If you required `credentials.js`, you will need to update your references.
+* Added available statuses to the default settings
+* Added `hasStatus` to User model to easily check for a specific status
+* Updated various commands to pull from default settings file
+* Added `Templater` class, to build strings from a template

@@ -1,6 +1,8 @@
 'use strict';
 
 const runtime = require('../utils/Runtime');
+const Settings = require('../utils/Settings');
+const availableStatuses = Settings.getSetting( __filename, 'statuses' );
 
 class User {
 	constructor( attrs ) {
@@ -18,12 +20,20 @@ class User {
 		return userMessageLog;
 	}
 
-	isModerator() {
-		return this.role === 'moderator';
+	/**
+	 * Returns a boolean if the user has equal-to or
+	 * greater than the passed-in permission.
+	 * @param  {String}  statusID
+	 * @return {Boolean
+	 */
+	hasStatus( statusID ) {
+		let statusObj = availableStatuses[ statusID ];
+		let userStatusObj = availableStatuses[ this.status ];
+		return userStatusObj.weight >= statusObj.weight;
 	}
 
-	isVIP() {
-		return this.status === 'royalty';
+	isModerator() {
+		return this.hasStatus( 'moderator' );
 	}
 
 	isStreamer() {
