@@ -11,6 +11,7 @@
   "dependencies": {
     "express": "^4.13.3",
     "moment": "^2.10.6",
+    "node-base64-image": "^0.1.0",
     "node-persist": "0.0.6",
     "node-xmpp": "^1.0.2",
     "say": "^0.6.0",

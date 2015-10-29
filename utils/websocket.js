@@ -94,12 +94,17 @@ module.exports = {
 	 * @return void
 	 */
 	sendMessage: function( username, messageObj ) {
-		console.log('WS message sent', username, messageObj);
-
 		// Find the right connection
 		let connection = connections[ username ];
 		if ( connection ) {
 			connection.sendUTF( JSON.stringify(messageObj) );
+
+			// Stop logging out giant base64 encoded images
+			if ( messageObj.message === 'showImage' ) {
+				messageObj = 'base64 encoded image';
+			}
+
+			console.log('WS message sent', username, messageObj);
 		}
 	}
 };

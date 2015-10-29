@@ -18,3 +18,5 @@ You can also browse the commit history to track my commits: [https://github.com/
 * Added `hasStatus` to User model to easily check for a specific status
 * Updated various commands to pull from default settings file
 * Added `Templater` class, to build strings from a template
+* Added `Assets` class, to load assets into the bot
+* Updated say command to display a popout doge when !say is used

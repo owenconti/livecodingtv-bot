@@ -37,3 +37,6 @@ brain
 
 # Don't commit settings.json file
 /setup/settings.json
+
+# Don't commit the user's assets
+/setup/assets

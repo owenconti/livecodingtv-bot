@@ -1,5 +1,11 @@
 <html>
 	<head>
+		<style>
+			body {
+				background: lime;
+				overflow: hidden;
+			}
+		</style>
 		<script>
 			var username = location.hash.substring( 1 );
 			var socket;
@@ -46,6 +52,18 @@
 								yt.playVideo();
 								yt.loadVideoById( messageObj.youtubeID );
 							}
+							break;
+						case 'showImage':
+							var $img = $('img#flyout');
+							$img.attr('src', 'data:image/png;base64,' + messageObj.image);
+							$img.velocity( {
+								bottom: '0'
+							} );
+							$img.velocity( {
+								bottom: '-100%'
+							}, {
+								delay: 5000
+							} );
 							break;
 					}
 				};
@@ -100,5 +118,9 @@
 				}
 			}
 		</script>
+		<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+		<script src="//cdn.jsdelivr.net/velocity/1.2.3/velocity.min.js"></script>
+
+		<img src="" id="flyout" style="display: block; bottom: -100%; top: auto; position: absolute;" />
 	</body>
 </html>
