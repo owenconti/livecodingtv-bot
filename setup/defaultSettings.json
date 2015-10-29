@@ -24,9 +24,17 @@
 	},
 	"user-status" : {
 		"statuses" : {
+			"viewer" : {
+				"title" : "Viewer",
+				"weight" : 0
+			},
+			"follower" : {
+				"title" : "Follower",
+				"weight" : 50
+			},
 			"vip" : {
 				"title" : "VIP",
-				"weight" : 50
+				"weight" : 70
 			},
 			"donator" : {
 				"title" : "Donator",
@@ -39,10 +47,6 @@
 			"owner" : {
 				"title" : "Owner",
 				"weight" : 100
-			},
-			"viewer" : {
-				"title" : "Viewer",
-				"weight" : 0
 			}
 		}
 	},

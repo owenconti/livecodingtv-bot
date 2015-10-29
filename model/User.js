@@ -2,7 +2,7 @@
 
 const runtime = require('../utils/Runtime');
 const Settings = require('../utils/Settings');
-const availableStatuses = Settings.getSetting( __filename, 'statuses' );
+const availableStatuses = Settings.getSetting( 'user-status', 'statuses' );
 
 class User {
 	constructor( attrs ) {
@@ -27,8 +27,8 @@ class User {
 	 * @return {Boolean
 	 */
 	hasStatus( statusID ) {
-		let statusObj = availableStatuses[ statusID ];
-		let userStatusObj = availableStatuses[ this.status ];
+		let statusObj = availableStatuses[ statusID.toLowerCase() ];
+		let userStatusObj = availableStatuses[ this.status.toLowerCase() ];
 		return userStatusObj.weight >= statusObj.weight;
 	}
 

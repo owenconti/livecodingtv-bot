@@ -13,7 +13,7 @@ module.exports = [{
     types: ['message'],
     regex: /^(!|\/)status/,
     action: function( chat, stanza ) {
-		let statusObj = availableStatuses[ stanza.user.status ];
+		let statusObj = availableStatuses[ stanza.user.status.toLowerCase() ];
 		chat.sendMessage(`${stanza.user.username} is set to: ${ statusObj.title }`);
     }
 }, {
@@ -37,7 +37,7 @@ module.exports = [{
 			return;
 		}
 
-		let statusObj = availableStatuses[ user.status ];
+		let statusObj = availableStatuses[ user.status.toLowerCase() ];
 		chat.sendMessage(`${username} is set to: ${ statusObj.title }`);
     }
 }, {
@@ -73,7 +73,7 @@ module.exports = [{
 			user.status = statusToSet;
 			runtime.brain.set('users', users);
 
-			let statusObj = availableStatuses[ statusToSet ];
+			let statusObj = availableStatuses[ statusToSet.toLowerCase() ];
 			chat.replyTo(username, `is now a ${statusObj.title}!` );
 		}
     }
