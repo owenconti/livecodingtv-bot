@@ -49,7 +49,8 @@ class Loader {
 		let pluginsDir = path.join( __dirname, 'plugins' );
 		fs.readdir( pluginsDir , function( err, folders ) {
 			if ( err ) {
-				Log.log( 'ERROR: ' + err );
+				Log.log( 'WARNING: No /plugins directory exists.' );
+				callback( pluginCommands );
 				return;
 			}
 
