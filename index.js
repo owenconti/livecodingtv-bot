@@ -18,5 +18,12 @@ runtime.startUpTime = new Date().getTime();
 runtime.credentials = credentials;
 runtime.brain = Brain;
 
+// Verify credentials exist
+if ( !runtime.credentials.username || !runtime.credentials.room || !runtime.credentials.password || !runtime.credentials.jid || !runtime.credentials.roomJid  ) {
+	console.error('ERROR: Credentials file is missing required attributes. Please check your credentials.js');
+	console.log('[bot] Quitting startup process.');
+	return;
+}
+
 Brain.start( __dirname + '/brain' );
 ChatBot.start();
