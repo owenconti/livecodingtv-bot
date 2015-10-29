@@ -26,14 +26,18 @@
 		"statuses" : {
 			"vip" : {
 				"title" : "VIP",
-				"weight" : 80
+				"weight" : 50
 			},
 			"donator" : {
 				"title" : "Donator",
-				"weight" : 90
+				"weight" : 80
 			},
 			"moderator" : {
 				"title" : "Moderator",
+				"weight" : 90
+			},
+			"owner" : {
+				"title" : "Owner",
 				"weight" : 100
 			},
 			"viewer" : {
