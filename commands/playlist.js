@@ -192,36 +192,6 @@ module.exports = [{
 		}
     }
 }, {
-	// List next songs in the playlist
-	name: '!upcoming',
-	help: 'Lists the upcoming songs in the playlist.',
-	types: ['message'],
-    regex: /^(!|\/)upcoming$/,
-    action: function( chat, stanza ) {
-		let player = getPlayer( chat );
-		let playlist = getPlaylist( chat );
-		let songs = [];
-		const songsToDisplay = 5;
-		if ( playlist.length < songsToDisplay ) {
-			songsToDisplay = playlist.length;
-		}
-
-		let songIndex = player.currentSongIndex
-		for ( let i = 0; i < songsToDisplay; i++ ) {
-			if ( playlist.length === ( songIndex + 1 ) ) {
-				songIndex = 0;
-			} else {
-				songIndex++;
-			}
-			songs.push( playlist[ songIndex ].title );
-		}
-
-		let msg = 'Next ' + songsToDisplay + ' songs:' + '\n';
-		msg += songs.join('\n');
-
-		chat.sendMessage( msg );
-    }
-}, {
     types: ['websocket'],
     regex: /^isPlaying$/,
     action: function( chat, messageObj ) {
@@ -237,8 +207,6 @@ module.exports = [{
     types: ['websocket'],
 	regex: /^songEnded$/,
     action: function( chat, messageObj ) {
-		console.log('songEnded WS message', messageObj);
-
 		skipSong( chat );
     }
 }];
@@ -251,16 +219,13 @@ module.exports = [{
 function skipSong( chat ) {
 	let player = getPlayer( chat );
 	let playlist = getPlaylist( chat );
+	let nextTrackIndex = Math.floor( Math.random() * playlist.length );
 
-	if ( playlist.length === ( player.currentSongIndex + 1 ) ) {
-		// Current song is the last in the playlist, restart the playlist
-		player.currentSongIndex = 0;
-	} else {
-		// Skip to next track in the playlist
-		player.currentSongIndex++;
-	}
+	player.currentSongIndex = nextTrackIndex;
 	player.skipVotes = [];
 	setPlayer( player, chat );
+
+	Log.log( `Skipping song, new index: ${player.currentSongIndex} out of ${playlist.length}`);
 
 	if ( player.playing && playlist.length > 0 ) {
 		// Player is playing a song

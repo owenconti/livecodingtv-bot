@@ -12,7 +12,7 @@
 
 1. Clone the repo
 
-2. Create a `credentials.js` file in the root of the app.
+2. Create a `setup/custom/credentials.js` file in the root of the app.
 
 3. Find your XMPP password on LCTV page.
 	1. Open your live stream page ( https://www.livecoding.tv/USERNAME )
@@ -20,7 +20,7 @@
 	3. Search the HTML content for "password".
 	4. The XMPP password will be a long string in an object containing 'jid' and 'password'.
 
-4. Fill in the `credentials.js` file with the following format:
+4. Fill in the `setup/custom/credentials.js` file with the following format:
 
 ```
 var username = 'LCTV_BOT_USERNAME';
@@ -60,8 +60,14 @@ module.exports = {
 - Github repo must be publicly available
 - Attribute in credentials.js: `githubRepo: 'owenconti/livecodingtv-bot'`
 
-## Using commands
-Commands can have four attributes:
+## Custom settings
+
+## Custom assets
+
+## Plugin settings
+
+## Writing plugins
+Plugins can be composed of multiple commands. Commands can have four attributes:
 
 ```
 {
