@@ -2,7 +2,7 @@
 
 const path = require('path');
 let defaultSettings = require('../setup/core/settings.json');
-let settings = require('../setup/custom/settings.json');
+let customSettings = require('../setup/custom/settings.json');
 
 class Settings {
 	/**
@@ -16,13 +16,13 @@ class Settings {
 		fileName = path.basename( fileName, '.js' );
 
 		// Check for the setting in settings.json first
-		if ( settings[ fileName ] && settings[ fileName ][ key ] ) {
-			return settings[ fileName ][ key ];
+		if ( customSettings[ fileName ] && customSettings[ fileName ][ key ] !== undefined ) {
+			return customSettings[ fileName ][ key ];
 		}
 
 		// If a setting was not found in the settings.json,
 		// then search in the defaultSettings
-		if ( defaultSettings[ fileName ] && defaultSettings[ fileName ][ key ] ) {
+		if ( defaultSettings[ fileName ] && defaultSettings[ fileName ][ key ] !== undefined ) {
 			return defaultSettings[ fileName ][ key ];
 		}
 
@@ -33,8 +33,8 @@ class Settings {
 		fileName = path.basename( fileName, '.js' );
 
 		// Check for the setting in settings.json first
-		if ( settings[ fileName ] ) {
-			return settings[ fileName ];
+		if ( customSettings[ fileName ] ) {
+			return customSettings[ fileName ];
 		}
 
 		// If a setting was not found in the settings.json,

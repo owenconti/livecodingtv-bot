@@ -20,3 +20,10 @@ You can also browse the commit history to track my commits: [https://github.com/
 * Added `Templater` class, to build strings from a template
 * Added `Assets` class, to load assets into the bot
 * Updated say command to display a popout doge when !say is used
+* Assets now load custom assets, and then core assets.
+* Rearranged setup folder so it makes more sense
+* Updated the Loader class to read settings files to determine which commands and plugins it should load.
+  * **Required update**
+  * By default, all core commands are enabled.
+  * By default, all plugins are disabled.
+  * You must add a `coreCommands` and `plugins` setting to your `setup/custom/settings.json` file if you want to enable or disable commands and plugins.

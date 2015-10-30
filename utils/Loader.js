@@ -3,19 +3,24 @@
 const fs = require('fs');
 const path = require('path');
 const Log = require('./Log');
+const Settings = require('./Settings');
 const commandTypes = ['message', 'presence', 'startup', 'websocket'];
 
 class Loader {
+	/**
+	 * Load the enabled commands.
+	 * @param  {Function} callback
+	 * @return {void}
+	 */
 	static loadCoreCommands( callback ) {
-		let coreCommands = {};
-
 		// Make sure each command type is an array
+		let coreCommands = {};
 		commandTypes.forEach( (commandType) => {
 			coreCommands[ commandType ] = [];
 		} );
 
 		// Load all files in the commands directory into an array
-		let commandsDir = path.join( __dirname, '..', 'commands' );
+		const commandsDir = path.join( __dirname, '..', 'commands' );
 		fs.readdir( commandsDir, function( err, files ) {
 			if ( err ) {
 				Log.log( 'ERROR: ' + err );
@@ -24,31 +29,43 @@ class Loader {
 
 			files.forEach( function(fileName) {
 				if ( fileName.indexOf( '.js' ) >= 0 ) {
-					let filePath = path.join( commandsDir, fileName );
-					let commands = require( filePath );
+					// Check settings to see if command is enabled
+					// If command is enabled, load the command
+					let commandName = fileName.replace('.js', '');
+					let isCommandEnabled = Settings.getSetting('coreCommands', commandName);
 
-					// Loop through each command so we can separate out
-					// each command type to its own array.
-					commands.forEach( (command) => {
-						Loader.parseCommandIntoMessageTypes( command, coreCommands );
-					} );
+					if ( isCommandEnabled === true ) {
+						Log.log( `[Loader] Command loaded: ${commandName}` );
+
+						// Loop through each command so we can separate out
+						// each command type to its own array.
+						let filePath = path.join( commandsDir, fileName );
+						let commands = require( filePath );
+						commands.forEach( (command) => {
+							Loader.parseCommandIntoMessageTypes( command, coreCommands );
+						} );
+					}
 				}
-			} );
+			});
 
 			callback( coreCommands );
 		});
 	}
 
+	/**
+	 * Load the enabled plugins.
+	 * @param  {Function} callback
+	 * @return {void}
+	 */
 	static loadPluginCommands( callback ) {
-		let pluginCommands = {};
-
 		// Make sure each command type is an array
+		let pluginCommands = {};
 		commandTypes.forEach( (commandType) => {
 			pluginCommands[ commandType ] = [];
 		} );
 
 		// Load all files in the commands directory into an array
-		let pluginsDir = path.join( __dirname, '..', 'plugins' );
+		const pluginsDir = path.join( __dirname, '..', 'plugins' );
 		fs.readdir( pluginsDir , function( err, folders ) {
 			if ( err ) {
 				Log.log( 'WARNING: No /plugins directory exists.' );
@@ -56,13 +73,14 @@ class Loader {
 				return;
 			}
 
-			folders.forEach( ( folder ) => {
-				let pluginIndexFile = path.join( pluginsDir, folder, 'index.js' );
-				fs.stat( pluginIndexFile, function(err, stat) {
-					if ( err ) {
-						console.warn(`[bot] Plugin: ${folder} missing index.js. Skipping plugin.`);
-						return;
-					}
+			folders.forEach( ( pluginName ) => {
+				let pluginIndexFile = path.join( pluginsDir, pluginName, 'index.js' );
+
+				// Check settings to see if command is enabled
+				// If command is enabled, load the command
+				let isPluginEnabled = Settings.getSetting('plugins', pluginName);
+				if ( isPluginEnabled === true ) {
+					Log.log( `[Loader] Plugin loaded: ${pluginName}` );
 
 					// Loop through each command so we can separate out
 					// each command type to its own array.
@@ -70,8 +88,8 @@ class Loader {
 					commands.forEach( (command) => {
 						Loader.parseCommandIntoMessageTypes( command, pluginCommands );
 					} );
-				} );
-			} );
+				}
+			});
 
 			callback( pluginCommands );
 		});

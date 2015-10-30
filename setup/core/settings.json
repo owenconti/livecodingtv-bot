@@ -1,4 +1,19 @@
 {
+	"coreCommands" : {
+		"ban-management" : true,
+		"custom-commands" : true,
+		"github-commits" : true,
+		"greeting" : true,
+		"help" : true,
+		"insult" : true,
+		"leaderboard" : true,
+		"playlist" : true,
+		"say" : true,
+		"todo" : true,
+		"unavailable" : true,
+		"user-status" : true,
+		"voices" : true
+	},
 	"greeting": {
 		"defaultGreeting" : "Welcome to the stream!",
 		"greetings" : {
