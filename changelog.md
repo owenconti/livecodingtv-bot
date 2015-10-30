@@ -27,3 +27,6 @@ You can also browse the commit history to track my commits: [https://github.com/
   * By default, all core commands are enabled.
   * By default, all plugins are disabled.
   * You must add a `coreCommands` and `plugins` setting to your `setup/custom/settings.json` file if you want to enable or disable commands and plugins.
+* Fixed bug with `greeting` command where an existing user with a status that did not have a matching greeting, was not greeted.
+  * **Required update**
+  * If you had any custom greetings, you will need to update to the new greeting structure. See `setup/core/settings.json` for an example.
