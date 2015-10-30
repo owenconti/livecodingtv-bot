@@ -10,7 +10,7 @@ class Templater {
 	static run( templateString, model ) {
 		let keys = Object.keys( model );
 		keys.forEach( ( key ) => {
-			let pattern = new RegExp( "${" + key + "}", "g" );
+			let pattern = new RegExp( "{{" + key + "}}", "g" );
 			templateString = templateString.replace( pattern, model[key] );
 		} );
 

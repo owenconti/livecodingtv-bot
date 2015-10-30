@@ -33,7 +33,7 @@
 		"defaultVoice" : "Victoria"
 	},
 	"unavailable" : {
-		"disconnectMessage" : "${username} disconnected."
+		"disconnectMessage" : "{{username}} disconnected."
 	},
 	"user-status" : {
 		"statuses" : {
