@@ -1,8 +1,8 @@
 'use strict';
 
 const path = require('path');
-let defaultSettings = require('../setup/defaultSettings.json');
-let settings = require('../setup/settings.json');
+let defaultSettings = require('../setup/core/settings.json');
+let settings = require('../setup/custom/settings.json');
 
 class Settings {
 	/**
