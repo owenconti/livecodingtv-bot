@@ -3,6 +3,9 @@ Starting to keep track of changes as of October 28, 2015. I will try my best to 
 You can also browse the commit history to track my commits: [https://github.com/owenconti/livecodingtv-bot/commits/master](https://github.com/owenconti/livecodingtv-bot/commits/master)
 
 ## Oct 29 2015
+* Updated pattern for `Templater` class to use '{{VAR}}' instead of '${VAR}'.
+  * **Required update**
+  * If you are using the `Templater` class, make sure your template strings use the '{{VAR}}' pattern.
 * Removed the `upcoming` playlist command
 * Updated `skip` playlist command to be random
 * Fixed auto ban command
