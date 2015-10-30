@@ -38,21 +38,25 @@ module.exports = [{
 			return;
 		}
 
-		let userMessageTimes = stanza.user.getMessages().messageTimes;
+		let userMessageLog = stanza.user.getMessages();
+		if ( userMessageLog ) {
+			let messages = userMessageLog.messages;
+			// If the user has sent at least the number of messages allowed
+			if ( messages.length > numberOfMessagesAllowed ) {
+				const now = new Date().getTime();
 
-		// If the user has sent at least the number of messages allowed
-		if ( userMessageTimes.length > numberOfMessagesAllowed ) {
-			const now = new Date().getTime();
-			let limitedMessageTime = userMessageTimes[ userMessageTimes.length - numberOfMessagesAllowed ];
+				let startOfLimitMessage = messages[ messages.length - numberOfMessagesAllowed ];
 
-			// If the number of allowed messages sent by the user (ie: 5th)
-			// was sent within the last X seconds (timeframeAllowed),
-			// ban the user.
-			if ( now - limitedMessageTime < ( timeframeAllowed * 1000 ) ) {
-				var affiliationStanza = getUserAffiliationStanza( chat.credentials, stanza.user.username, 'outcast' );
-				chat.client.send( affiliationStanza );
+				// If the number of allowed messages sent by the user (ie: 5th)
+				// was sent within the last X seconds (timeframeAllowed),
+				// ban the user.
+				if ( now - startOfLimitMessage.time < ( timeframeAllowed * 1000 ) ) {
+					var affiliationStanza = getUserAffiliationStanza( chat.credentials, stanza.user.username, 'outcast' );
+					chat.client.send( affiliationStanza );
+				}
 			}
 		}
+
     }
 }, {
 	name: '!unban',

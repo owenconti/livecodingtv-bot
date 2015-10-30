@@ -13,6 +13,22 @@ class User {
 		this.lastVisitTime = attrs.time;
 	}
 
+	/**
+	 * Save this user into the brain
+	 * @return {void}
+	 */
+	saveToBrain() {
+		let users = runtime.brain.get( 'users' ) || {};
+		users[ this.username ] = {
+			username: this.username,
+			count: this.viewCount,
+			time: this.lastVisitTime,
+			role: this.role,
+			status: this.status
+		};
+		runtime.brain.set( 'users', users );
+	}
+
 	getMessages() {
 		let messages = runtime.brain.get( 'userMessages' ) || {};
 		let userMessageLog = messages[ this.username ];

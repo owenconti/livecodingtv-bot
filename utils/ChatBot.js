@@ -69,8 +69,7 @@ class ChatBot {
 			if ( !parsedStanza ) {
 				return;
 			}
-
-			var ranCommand = false;
+			parsedStanza.ranCommand = false;
 
 			// Run the incoming stanza against
 			// the core commands for the stanza's type.
@@ -78,7 +77,7 @@ class ChatBot {
 			if ( coreCommandsForStanzaType ) {
 				coreCommandsForStanzaType.forEach( ( command ) => {
 					if ( ChatBot.runCommand( command, parsedStanza, chat ) ) {
-						ranCommand = true;
+						parsedStanza.ranCommand = true;
 					}
 				} );
 			}
@@ -89,15 +88,14 @@ class ChatBot {
 			if ( pluginCommandsForStanzaType ) {
 				pluginCommandsForStanzaType.forEach( ( command ) => {
 					if ( ChatBot.runCommand( command, parsedStanza, chat ) ) {
-						ranCommand = true;
+						parsedStanza.ranCommand = true;
 					}
 				} );
 			}
 
-			// If the user ran a command, update the command log
-			if ( ranCommand ) {
-				Client.updateLatestCommandLog( parsedStanza );
-			}
+			// Update the user's message log
+			Client.updateMessageLog( parsedStanza );
+
 			Log.log( JSON.stringify( parsedStanza, null, 4 ) );
 		} );
 	}
@@ -116,9 +114,14 @@ class ChatBot {
 			var ignoreRateLimiting = command.ignoreRateLimiting;
 			var passesRateLimiting = !parsedStanza.rateLimited || ( parsedStanza.rateLimited && ignoreRateLimiting );
 
-			if ( regexMatched && passesRateLimiting && !ignoreRateLimiting ) {
+			if ( regexMatched && passesRateLimiting ) {
 				command.action( chat, parsedStanza );
-				return true;
+
+				// If we are ignoring rate limiting,
+				// don't say we ran a command.
+				if ( !ignoreRateLimiting ) {
+ 					return true;
+				}
 			}
 		} catch ( e ) {
 			console.trace( 'Command error: ', command, e );
