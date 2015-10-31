@@ -61,6 +61,14 @@ module.exports = {
 - Attribute in credentials.js: `githubRepo: 'owenconti/livecodingtv-bot'`
 
 ## Custom settings
+```
+{
+	"plugins": {
+		"noifications": true,
+		"api-triggers": true
+	}
+}
+```
 
 ## Custom assets
 
