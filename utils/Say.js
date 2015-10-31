@@ -30,10 +30,9 @@ module.exports = {
 		if ( !voice ) {
 			voice = 'Victoria';
 		}
-		if ( !message ) {
+		if ( !message || typeof message !== 'string' ) {
 			throw new Error('Nothing to say!');
 		}
-
 		if ( runtime.debug ) {
 			Log.log('DEBUGGING (say): ' + message);
 			return;
