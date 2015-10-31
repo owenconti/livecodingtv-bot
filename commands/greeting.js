@@ -9,15 +9,15 @@ const runtime = require('../utils/Runtime');
 const greetings = {
 	"existing" : {
 		"Viewer" : [
-			`Back again! How's life treating you today?`,
-			`Hey friend! What are you working on today?`,
+			`Welcome back, dickhead!`,
+			`Hey pal, wanna see my dickscript?`,
 		],
 		"Royalty" : [
 			'The king has arrived! We appreciate your support!'
 		]
 	},
 	"new" : [
-		'Welcome to the stream! Thanks for stopping by!'
+		'Welcome to the stream! Lick my balls!'
 	]
 }
 

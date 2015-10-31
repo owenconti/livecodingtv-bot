@@ -1,7 +1,6 @@
 'use strict';
 
 const Client = require( './Client' );
-const notifier = require('node-notifier');
 const path = require('path');
 const websocket = require('./websocket');
 const Log = require('./utils/Log');
@@ -91,23 +90,10 @@ class ChatBot {
 				} );
 			}
 
-      console.log(parsedStanza.ranCommand);
 			// If the user ran a command, update the command log
 			if ( parsedStanza.ranCommand ) {
 				Client.updateLatestCommandLog( parsedStanza );
 			}
-      else {
-        // Send a terminal notification on new message
-        if(!parsedStanza.user.isBot()) {
-          notifier.notify({
-            title: parsedStanza.user.username,
-            message: parsedStanza.message,
-            icon: path.join(__dirname, 'assets/Such_doge_Large.png'), // absolute path (not balloons) 
-          }, function (err, response) {
-            // response is response from notification 
-          });
-        }
-      }
 
 			Log.log( JSON.stringify( parsedStanza, null, 4 ) );
 		} );
