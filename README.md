@@ -66,6 +66,20 @@ module.exports = {
 
 ## Plugin settings
 
+Where can I find plugins? 
+Take a look at https://github.com/owenconti/livecodingtv-bot-plugins
+
+What you need for getting Plugins to work:
+
+1. Download the plugin to the folder "plugins"
+2. Add it to your settings.json in "setup/custom/" like that:
+```
+"plugins" : {
+	"PLUGIN-NAME": true
+}
+```
+3. Reestart the bot
+
 ## Writing plugins
 Plugins can be composed of multiple commands. Commands can have four attributes:
 
