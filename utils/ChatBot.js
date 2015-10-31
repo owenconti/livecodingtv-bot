@@ -1,7 +1,6 @@
 'use strict';
 
 const Client = require( './Client' );
-const notifier = require('node-notifier');
 const path = require('path');
 const websocket = require('./websocket');
 const Log = require('./Log');

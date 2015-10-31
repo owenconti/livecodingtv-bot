@@ -1,0 +1,14 @@
+{
+  "name": "lctv-bot-notifications-plugin",
+  "version": "1.0.0",
+  "description": "Desktop notifications for new message received.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "camwhite",
+  "license": "ISC",
+  "dependencies": {
+    "node-notifier": "^4.3.1"
+  }
+}
