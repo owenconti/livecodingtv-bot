@@ -2,6 +2,9 @@ Starting to keep track of changes as of October 28, 2015. I will try my best to 
 
 You can also browse the commit history to track my commits: [https://github.com/owenconti/livecodingtv-bot/commits/master](https://github.com/owenconti/livecodingtv-bot/commits/master)
 
+## Oct 31 2015
+* Fixed error with Client.js getUser() where it would crash when no `users` brain file existed.
+
 ## Oct 29 2015
 * Updated pattern for `Templater` class to use '{{VAR}}' instead of '${VAR}'.
   * **Required update**

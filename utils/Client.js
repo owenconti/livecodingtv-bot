@@ -119,7 +119,7 @@ class Client {
      * @return {object}
      */
 	 static getUser( username ) {
-		const users = runtime.brain.get( 'users' );
+		const users = runtime.brain.get( 'users' ) || {};
 		let userObj = users[ username ];
 
 		if ( !userObj ) {
