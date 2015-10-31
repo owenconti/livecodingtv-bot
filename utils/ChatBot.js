@@ -4,9 +4,9 @@ const Client = require( './Client' );
 const notifier = require('node-notifier');
 const path = require('path');
 const websocket = require('./websocket');
-const Log = require('./utils/Log');
+const Log = require('./Log');
 const Loader = require('./Loader');
-let runtime = require('./utils/Runtime');
+let runtime = require('./Runtime');
 
 class ChatBot {
 	static start() {
@@ -66,48 +66,41 @@ class ChatBot {
 				return;
 			}
 
+			runtime.brain.start( __dirname + '/../brain' );
+
 			// Grab the incoming stanza, and parse it
 			let parsedStanza = Client.parseStanza( stanza, runtime.credentials );
 			if ( !parsedStanza ) {
 				return;
 			}
-
-			parsedStanza.ranCommand = null;
+			parsedStanza.ranCommand = false;
 
 			// Run the incoming stanza against
 			// the core commands for the stanza's type.
 			let coreCommandsForStanzaType = runtime.coreCommands[ parsedStanza.type ];
 
-      coreCommandsForStanzaType.forEach( ( command ) => {
-        ChatBot.runCommand( command, parsedStanza, chat );
-      } );
+			if ( coreCommandsForStanzaType ) {
+				coreCommandsForStanzaType.forEach( ( command ) => {
+					if ( ChatBot.runCommand( command, parsedStanza, chat ) ) {
+						parsedStanza.ranCommand = true;
+					}
+				} );
+			}
 
 			// Run the incoming stanza against
 			// the plugin commands for the stanza's type.
 			let pluginCommandsForStanzaType = runtime.pluginCommands[ parsedStanza.type ];
 			if ( pluginCommandsForStanzaType ) {
 				pluginCommandsForStanzaType.forEach( ( command ) => {
-					ChatBot.runCommand( command, parsedStanza, chat);
+
+					if ( ChatBot.runCommand( command, parsedStanza, chat ) ) {
+						parsedStanza.ranCommand = true;
+					}
 				} );
 			}
 
-      console.log(parsedStanza.ranCommand);
-			// If the user ran a command, update the command log
-			if ( parsedStanza.ranCommand ) {
-				Client.updateLatestCommandLog( parsedStanza );
-			}
-      else {
-        // Send a terminal notification on new message
-        if(!parsedStanza.user.isBot()) {
-          notifier.notify({
-            title: parsedStanza.user.username,
-            message: parsedStanza.message,
-            icon: path.join(__dirname, 'assets/Such_doge_Large.png'), // absolute path (not balloons) 
-          }, function (err, response) {
-            // response is response from notification 
-          });
-        }
-      }
+			// Update the user's message log
+			Client.updateMessageLog( parsedStanza );
 
 			Log.log( JSON.stringify( parsedStanza, null, 4 ) );
 		} );
@@ -119,21 +112,25 @@ class ChatBot {
 	 * @param  {obj} command
 	 * @param  {obj} parsedStanza
 	 * @param  {Client} chat
-	 * @param  {boolean} ranCommand
 	 * @return {void}
 	 */
-	static runCommand( command, parsedStanza, chat, ranCommand ) {
+	static runCommand( command, parsedStanza, chat ) {
 		try {
 			var regexMatched = command.regex && command.regex.test( parsedStanza.message );
 			var ignoreRateLimiting = command.ignoreRateLimiting;
 			var passesRateLimiting = !parsedStanza.rateLimited || ( parsedStanza.rateLimited && ignoreRateLimiting );
 
-			if ( regexMatched && passesRateLimiting && !ignoreRateLimiting ) {
-				parsedStanza.ranCommand = true;
+			if ( regexMatched && passesRateLimiting ) {
 				command.action( chat, parsedStanza );
+
+				// If we are ignoring rate limiting,
+				// don't say we ran a command.
+				if ( !ignoreRateLimiting ) {
+ 					return true;
+				}
 			}
 		} catch ( e ) {
-			console.trace( 'ERROR', e );
+			console.trace( 'Command error: ', command, e );
 		}
 	}
 

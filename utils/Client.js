@@ -2,36 +2,36 @@
 
 const xmpp = require('node-xmpp');
 const crypto = require('crypto');
-const Log = require('./utils/Log');
-const runtime = require('./utils/Runtime');
-const User = require('./model/User');
+const Log = require('./Log');
+const runtime = require('./Runtime');
+const User = require('../model/User');
 
 class Client {
-  /**
-   * Connect to a room
-   * @param  {object} credentials
-   * @return {void}
-   */
-  constructor( credentials ) {
-    this.credentials = credentials;
+    /**
+     * Connect to a room
+     * @param  {object} credentials
+     * @return {void}
+     */
+    constructor( credentials ) {
+		this.credentials = credentials;
 
-    // Connect to the server
-    this.client = new xmpp.Client({
-        jid: this.credentials.jid,
-        password: this.credentials.password
-    });
+        // Connect to the server
+        this.client = new xmpp.Client({
+            jid: this.credentials.jid,
+            password: this.credentials.password
+        });
 
-    this.client.on('error', function(err) {
-      console.log('CLIENT ERROR: ', err, err.stanza, err.stanza.Stanza);
-    });
+		this.client.on('error', function(err) {
+			console.log('CLIENT ERROR: ', err);
+		});
 
-    // Once online, send presence to the room
-    this.client.on('online', function( resp ) {
-      Log.log( 'Connected to server' );
+        // Once online, send presence to the room
+        this.client.on('online', function( resp ) {
+            Log.log( 'Connected to server' );
 
-      this.sendPresence();
-    }.bind( this ) );
-  }
+            this.sendPresence();
+        }.bind( this ) );
+    }
 
 	/**
    * Sends the bot's presence to the room specified.
@@ -89,37 +89,54 @@ class Client {
 		// Save the message to the messages store
 		messages[ hash ] = messageObj;
 		runtime.brain.set( 'messages', messages );
-  }
+    }
 
-  /**
-   * Replies to the specified user.
-   * @param  {string} username
-   * @param  {string} msg
-   * @return {void}
-   */
-  replyTo( username, msg ) {
-    this.sendMessage( '@' + username + ': ' + msg );
-  }
+    /**
+     * Replies to the specified user.
+     * @param  {string} username
+     * @param  {string} msg
+     * @return {void}
+     */
+    replyTo( username, msg ) {
+        this.sendMessage( '@' + username + ': ' + msg );
+    }
 
-  /**
-   * Listens for messages and calls the passed-in callback.
-   * @param  {function} action
-   * @return {void}
-   */
-  listen( action ) {
-    this.client.on('stanza', function( stanza ) {
-      action( stanza );
-    });
-  }
+    /**
+     * Listens for messages and calls the passed-in callback.
+     * Called from ChatBot.js
+     * @param  {function} action
+     * @return {void}
+     */
+    listen( action ) {
+        this.client.on('stanza', function( stanza ) {
+            action( stanza );
+        });
+    }
 
-  /**
-   * Returns the user based on the specified username.
-   * @param  {string} username
-   * @return {object}
-   */
-  getUser( username ) {
-		const users = runtime.brain.get( 'users' );
-		let userObj = users[ username ] || {};
+    /**
+     * Returns the user based on the specified username.
+     * @param  {string} username
+     * @return {object}
+     */
+	 static getUser( username ) {
+		const users = runtime.brain.get( 'users' ) || {};
+		let userObj = users[ username ];
+
+		if ( !userObj ) {
+			// If the user joined the channel for the first time,
+			// while the bot was not connected, the user will not
+			// have an entry in the 'users' brain.
+			// Create the entry for the user here
+			userObj = {
+				username: username,
+				count: 1,
+				time: new Date().getTime(),
+				role: 'participant',
+				status: 'Viewer'
+			};
+			users[ username ] = userObj;
+			runtime.brain.set( 'users', users );
+		}
 
 		return new User( userObj );
   }
@@ -155,37 +172,21 @@ class Client {
     var body = Client.findChild( 'body', stanza.children );
     var message = body.children.join('').replace('\\', '');
 
-		// Limit users to only run commands once every 5 seconds
+		// Rate limiting
 		const now = new Date().getTime();
 		let messages = runtime.brain.get( 'userMessages' ) || {};
 		let userMessageLog = messages[ username ];
-		if ( !userMessageLog ) {
-			userMessageLog = {
-				messageTimes: [],
-				lastCommandTime: 0
-			};
-		}
 
-		// If the user's most recent command was within 5 seconds,
-		// return false and all commands will be skipped.
-		if ( username !== credentials.username ) {
-			// Only rate limit users who are not the bot :)
-			if ( userMessageLog.lastCommandTime > 0 && now - userMessageLog.lastCommandTime < 5000 ) { // 5 seconds
+		// Don't rate limit the bot
+		if ( username !== credentials.username && userMessageLog ) {
+			let lastCommandTimeExists = userMessageLog.lastCommandTime > 0;
+
+			if ( lastCommandTimeExists && now - userMessageLog.lastCommandTime < 3000 ) { // 3 seconds
 				rateLimited = true;
 			}
 		}
 
-		// Push 'now' time into the user's message times
-
-		// Update the message log for the user
-		messages[ username ] = userMessageLog;
-		runtime.brain.set( 'userMessages', messages );
-
-		let users = runtime.brain.get( 'users' ) || {};
-		let userObj = users[ username ] || {
-			username: username
-		};
-		let user = new User( userObj );
+		let user = Client.getUser( username );
 
 		// Return the parsed message
         return { type, user, message, rateLimited };
@@ -209,33 +210,17 @@ class Client {
     let role = itemObj.attrs.role;
 
 		// Store new users in the 'users' brain object
-		let users = runtime.brain.get( 'users' ) || {};
-		let userObj = users[ username ];
+		let user = Client.getUser( username );
 
-		if ( !userObj ) {
-			// New viewer
-			userObj = {
-				username: username,
-				count: 1,
-				time: new Date().getTime(),
-				role: role
-			};
-		} else {
-			// Update the user's view count and presence time
-			// only if their count hasn't been updated in
-			// the last 10 minutes.
-			const now = new Date().getTime();
-			const minutes = 10;
-			if ( now - userObj.time > 1000 * 60 * minutes ) {
-				userObj.count++;
-				userObj.time = now;
-			}
+		// Update the user's view count and presence time
+		// only if their count hasn't been updated in
+		// the last 5 minutes.
+		const now = new Date().getTime();
+		const minutes = 5;
+		if ( now - user.lastVisitTime > 1000 * 60 * minutes ) {
+			user.viewCount++;
+			user.lastVisitTime = now;
 		}
-		if ( !userObj.status ) {
-			userObj.status = 'Viewer';
-		}
-
-		let user = new User( userObj );
 
 		// If presence is unavailable,
 		// return without storing user object
@@ -243,20 +228,35 @@ class Client {
 			return { type, user, message, role };
 		}
 
-		users[ user.username ] = userObj;
-		runtime.brain.set( 'users', users );
-      return { type, user, message, role };
+		user.saveToBrain();
+
+        return { type, user, message, role };
     }
 
 	/**
-	 * [updateLatestCommandLog description]
+	 * Records the user's message in the message log
 	 * @param  {Stanza} stanza
 	 * @return {void}
 	 */
-	static updateLatestCommandLog( stanza ) {
+	static updateMessageLog( parsedStanza ) {
+		const now = new Date().getTime();
 		let messages = runtime.brain.get( 'userMessages' ) || {};
-		let userMessageLog = messages[ stanza.user.username ] || {};
-		userMessageLog.lastCommandTime = new Date().getTime();
+		let userMessageLog = messages[ parsedStanza.user.username ] || {
+			messages: [],
+			lastCommandTime: 0
+		};
+
+		userMessageLog.messages.push( {
+			message: parsedStanza.message,
+			time: now
+		} );
+
+		// If the user ran a command, track the time
+		if ( parsedStanza.ranCommand ) {
+			userMessageLog.lastCommandTime = now;
+		}
+
+		messages[ parsedStanza.user.username ] = userMessageLog;
 
 		runtime.brain.set( 'userMessages', messages );
 	}

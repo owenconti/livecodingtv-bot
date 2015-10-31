@@ -2,7 +2,7 @@
 
 const http = require('http');
 const WebSocketServer = require('websocket').server;
-const runtime = require('./utils/Runtime');
+const runtime = require('./Runtime');
 
 let server = null;
 let wsServer = null;
@@ -65,7 +65,9 @@ function startWebsocket() {
 function runWebsocketCommand( command, messageObj ) {
 	try {
 		var regexMatched = command.regex && command.regex.test( messageObj.message );
-		command.action( chat, messageObj );
+		if ( regexMatched ) {
+			command.action( chat, messageObj );
+		}
 	} catch ( e ) {
 		Log.log('ERROR', e);
 	}
@@ -92,12 +94,17 @@ module.exports = {
 	 * @return void
 	 */
 	sendMessage: function( username, messageObj ) {
-		console.log('WS message sent', username, messageObj);
-
 		// Find the right connection
 		let connection = connections[ username ];
 		if ( connection ) {
 			connection.sendUTF( JSON.stringify(messageObj) );
+
+			// Stop logging out giant base64 encoded images
+			if ( messageObj.message === 'showImage' ) {
+				messageObj = 'base64 encoded image';
+			}
+
+			console.log('WS message sent', username, messageObj);
 		}
 	}
 };

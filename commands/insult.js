@@ -12,6 +12,8 @@ const insults = [
  */
 
 module.exports = [{
+	name: '!insult {username}',
+	help: 'Throws a random insult at the specified user.',
     types: ['message'],
     regex: /^(!|\/)insult\s\@(\w|\d)+$/,
     action: function( chat, stanza ) {

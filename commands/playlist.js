@@ -13,7 +13,9 @@
 const runtime = require('../utils/Runtime');
 const YouTube = require('youtube-node');
 const Log = require('../utils/Log');
-const websocket = require('../websocket');
+const websocket = require('../utils/websocket');
+const Settings = require('../utils/Settings');
+const requiredVotesToSkip = Settings.getSetting( __filename, 'requiredVotesToSkip' );
 const requestSongRegex = new RegExp( /^(!|\/)request\s(.+)$/ );
 
 module.exports = [{
@@ -21,27 +23,22 @@ module.exports = [{
     types: ['startup'],
     action: function( chat ) {
 		let player = getPlayer( chat );
-		player.currentSongIndex = 0;
 		player.playing = false;
 		player.started = false;
+		player.skipVotes = player.skipVotes || [];
 		setPlayer( player, chat );
     }
 }, {
-	// Skips to the next song when the player is finished playing a song
-    types: ['websocket'],
-	regex: /^songEnded$/,
-    action: function( chat, messageObj ) {
-		skipSong( chat );
-    }
-}, {
 	// Tell the chat what the current song is
-    types: ['message'],
-    regex: /^(!|\/)(song|track|music)$/,
+	name: '!song !track !music !current',
+	help: 'Display the currently playing song.',
+	types: ['message'],
+    regex: /^(!|\/)(song|track|music|current)$/,
     action: function( chat, stanza ) {
 		let player = getPlayer( chat );
 		let playlist = getPlaylist( chat );
 
-		if ( player.started && player.playing && playlist.length > 0 ) {
+		if ( player.playing && playlist.length > 0 ) {
 			// Player is playing a song
 			let currentSong = playlist[ player.currentSongIndex ];
 			chat.sendMessage( `Current song: ${currentSong.title}`)
@@ -52,6 +49,8 @@ module.exports = [{
     }
 }, {
 	// Request a song
+	name: '!request {youtube_id}',
+	help: 'Add a YouTube video to the playlist.',
     types: ['message'],
     regex: requestSongRegex,
     action: function( chat, stanza ) {
@@ -83,13 +82,15 @@ module.exports = [{
 			setPlaylist( playlist, chat );
 
 			Log.log( `Song: ${videoObj.title} has been added to the playlist by ${stanza.user.username}` );
-			chat.replyTo( stanza.user.username, `Your song has been added to the playlist!` );
+			chat.replyTo( stanza.user.username, `${videoObj.title} has been added to the playlist!` );
 		} )
 
     }
 }, {
 	// Remove current song
 	// MOD only
+	name: '!remove',
+	help: 'Remove the current song from the playlist (Mod only).',
     types: ['message'],
     regex: /^(!|\/)remove$/,
     action: function( chat, stanza ) {
@@ -109,31 +110,48 @@ module.exports = [{
 
 			setPlaylist( playlist, chat );
 			skipSong( chat );
-
-			console.log('remove after', player.currentSongIndex, playlist);
 		}
 
     }
 }, {
 	// Skip current song
-	// MOD only - or vote to skip
+	// MOD only - or vote to skip, any user
+	name: '!skip',
+	help: 'Skip the song if moderator, else place a vote to skip the song.',
     types: ['message'],
     regex: /^(!|\/)skip$/,
     action: function( chat, stanza ) {
 		let player = getPlayer( chat );
 
-		if ( player.started && stanza.user.isModerator() ) {
+		if ( stanza.user.isModerator() ) {
 			skipSong( chat );
+		} else {
+			if ( player.skipVotes.indexOf( stanza.user.username ) === -1 ) {
+				player.skipVotes.push( stanza.user.username );
+				setPlayer( player, chat );
+
+				if ( player.skipVotes.length >= requiredVotesToSkip ) {
+					chat.sendMessage('Required votes to skip met, skipping song.');
+					skipSong( chat );
+				} else {
+					let remainingVotesNeeded = requiredVotesToSkip - player.skipVotes.length;
+					let voteText = remainingVotesNeeded === 1 ? 'vote' : 'votes';
+					chat.sendMessage( `Song skip vote recorded. ${remainingVotesNeeded} more ${voteText} needed to skip song.` );
+				}
+			}
+
 		}
     }
 }, {
 	// Pause current song
 	// MOD only
+	name: '!pause',
+	help: 'Pauses the YouTube player.',
     types: ['message'],
     regex: /^(!|\/)pause$/,
     action: function( chat, stanza ) {
 		let player = getPlayer( chat );
-		if ( player.started && stanza.user.isModerator() ) {
+		if ( stanza.user.isModerator() ) {
 			player.playing = false;
 			setPlayer( player, chat );
 
@@ -145,11 +163,26 @@ module.exports = [{
 }, {
 	// Play current song
 	// MOD only
+	name: '!play',
+	help: 'Plays the YouTube player.',
     types: ['message'],
     regex: /^(!|\/)play$/,
     action: function( chat, stanza ) {
 		let player = getPlayer( chat );
-		if ( player.started && stanza.user.isModerator() ) {
+		if ( stanza.user.isModerator() ) {
+			if ( !player.started ) {
+				let playlist = getPlaylist( chat );
+				if ( playlist.length > 0 ) {
+					player.started = true;
+
+					let currentSong = playlist[ player.currentSongIndex ];
+					websocket.sendMessage( chat.credentials.room, {
+						message: 'skip',
+						youtubeID: currentSong.youtubeID
+					});
+				}
+			}
+
 			player.playing = true;
 			setPlayer( player, chat );
 
@@ -159,55 +192,22 @@ module.exports = [{
 		}
     }
 }, {
-	// Fire up the youtube player
-	// MOD only
-    types: ['message'],
-    regex: /^(!|\/)startplayer$/,
-    action: function( chat, stanza ) {
-		let player = getPlayer( chat );
-		if ( stanza.user.isModerator() ) {
+    types: ['websocket'],
+    regex: /^isPlaying$/,
+    action: function( chat, messageObj ) {
+		if ( messageObj.data ) {
+			let player = getPlayer( chat );
 			player.started = true;
 			player.playing = true;
 			setPlayer( player, chat );
-
-			let playlist = getPlaylist( chat );
-			if ( playlist.length > 0 ) {
-				// Player is playing a song
-				let currentSong = playlist[ player.currentSongIndex ];
-				websocket.sendMessage( chat.credentials.room, {
-					message: 'skip',
-					youtubeID: currentSong.youtubeID
-				});
-			}
 		}
     }
 }, {
-	// List next songs in the playlist
-    types: ['message'],
-    regex: /^(!|\/)upcoming$/,
-    action: function( chat, stanza ) {
-		let player = getPlayer( chat );
-		let playlist = getPlaylist( chat );
-		let songs = [];
-		let songsToDisplay = 5;
-		if ( playlist.length < songsToDisplay ) {
-			songsToDisplay = playlist.length;
-		}
-
-		let songIndex = player.currentSongIndex
-		for ( let i = 0; i < songsToDisplay; i++ ) {
-			if ( playlist.length === ( songIndex + 1 ) ) {
-				songIndex = 0;
-			} else {
-				songIndex++;
-			}
-			songs.push( playlist[ songIndex ].title );
-		}
-
-		let msg = 'Next ' + songsToDisplay + ' songs:' + '\n';
-		msg += songs.join('\n');
-
-		chat.sendMessage( msg );
+	// Skips to the next song when the player is finished playing a song
+    types: ['websocket'],
+	regex: /^songEnded$/,
+    action: function( chat, messageObj ) {
+		skipSong( chat );
     }
 }];
 
@@ -219,15 +219,13 @@ module.exports = [{
 function skipSong( chat ) {
 	let player = getPlayer( chat );
 	let playlist = getPlaylist( chat );
+	let nextTrackIndex = Math.floor( Math.random() * playlist.length );
 
-	if ( playlist.length === ( player.currentSongIndex + 1 ) ) {
-		// Current song is the last in the playlist, restart the playlist
-		player.currentSongIndex = 0;
-	} else {
-		// Skip to next track in the playlist
-		player.currentSongIndex++;
-	}
+	player.currentSongIndex = nextTrackIndex;
+	player.skipVotes = [];
 	setPlayer( player, chat );
+
+	Log.log( `Skipping song, new index: ${player.currentSongIndex} out of ${playlist.length}`);
 
 	if ( player.playing && playlist.length > 0 ) {
 		// Player is playing a song

@@ -6,19 +6,32 @@
  */
 
 const runtime = require('../utils/Runtime');
-const greetings = {
-	"existing" : {
-		"Viewer" : [
-			`Back again! How's life treating you today?`,
-			`Hey friend! What are you working on today?`,
-		],
-		"Royalty" : [
-			'The king has arrived! We appreciate your support!'
-		]
-	},
-	"new" : [
-		'Welcome to the stream! Thanks for stopping by!'
-	]
+const Settings = require('../utils/Settings');
+
+/**
+ * Checks the settings files for greetings, for the passed-in viewerType
+ * @param  {String} viewerType
+ * @param  {String} status
+ * @return {array}
+ */
+function findAvailableGreetings( viewerType, status ) {
+	let greetingsForViewerType = Settings.getSetting( __filename, viewerType );
+
+	// If the user is new, return the 'new' greetings
+	if ( viewerType === 'new' ) {
+		return greetingsForViewerType;
+	} else {
+		// User is existing
+		if ( greetingsForViewerType && greetingsForViewerType[status] !== undefined ) {
+			// Greeting for the user's status exists
+			return greetingsForViewerType[status];
+		} else {
+			// Greeting for the user's status does not exist,
+			// return greetings for the first status
+			let firstExistingStatus = Object.keys( greetingsForViewerType )[0];
+			return greetingsForViewerType[ firstExistingStatus ];
+		}
+	}
 }
 
 /**
@@ -27,7 +40,11 @@ const greetings = {
  * @param  {array} availableGreetings
  * @return {string}
  */
-var getRandomGreeting = function( availableGreetings ) {
+function getRandomGreeting( availableGreetings ) {
+	if ( !availableGreetings ) {
+		return Settings.getSetting( __filename, 'defaultGreeting' );
+	}
+
 	var length = availableGreetings.length;
 	var index = Math.floor(Math.random() * length);
 	return availableGreetings[ index ];
@@ -36,20 +53,10 @@ var getRandomGreeting = function( availableGreetings ) {
 module.exports = [{
 	types: ['presence'],
 	regex: /^available$/,
-    action: function( chat, stanza ) {
-		let greeting;
-		let existingViewer = stanza.user.viewCount > 1;
-
-		console.log( stanza.user );
-
-		// Find the greeting to send to the user
-		if ( existingViewer ) {
-			// existing viewer
-			greeting = getRandomGreeting( greetings[ 'existing' ][ stanza.user.status ] );
-		} else {
-			// new viewer
-			greeting = getRandomGreeting( greetings[ 'new' ] );
-		}
+	action: function( chat, stanza ) {
+		let viewerType = stanza.user.viewCount > 1 ? 'existing' : 'new';
+		let availableGreetings = findAvailableGreetings( viewerType, stanza.user.status );
+		let greeting = getRandomGreeting( availableGreetings );
 
 		chat.replyTo( stanza.user.username, greeting );
     }

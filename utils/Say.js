@@ -17,11 +17,11 @@ function sayNextItem() {
 		let item = queue[ 0 ];
 		speaking = true;
 
-		// say.speak( item.voice, item.message, function() {
-		// 	queue.shift();
-		// 	speaking = false;
-		// 	sayNextItem();
-		// } );
+		say.speak( item.voice, item.message, function() {
+			queue.shift();
+			speaking = false;
+			sayNextItem();
+		} );
 	}
 }
 
@@ -30,10 +30,9 @@ module.exports = {
 		if ( !voice ) {
 			voice = 'Victoria';
 		}
-		if ( !message ) {
+		if ( !message || typeof message !== 'string' ) {
 			throw new Error('Nothing to say!');
 		}
-
 		if ( runtime.debug ) {
 			Log.log('DEBUGGING (say): ' + message);
 			return;

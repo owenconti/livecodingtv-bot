@@ -31,6 +31,8 @@ module.exports = [{
     }
 }, {
 	// Add custom command
+	name: '!addcommand {command} {output}',
+	help: 'Adds a new command to the bot (Mod only).',
     types: ['message'],
     regex: addCommandRegex,
     action: function( chat, stanza ) {
@@ -48,6 +50,8 @@ module.exports = [{
     }
 }, {
 	// Remove custom command
+	name: '!removecomamnd {command}',
+	help: 'Removes a command from the bot (Mod only).',
     types: ['message'],
     regex: removeCommandRegex,
     action: function( chat, stanza ) {

@@ -6,20 +6,9 @@ const listRegex = new RegExp( /^(!|\/)todo$/ );
 const removeRegex = new RegExp( /^(!|\/)todo\s(\-r)\s(\d{1})$/ );
 const completeRegex = new RegExp( /^(!|\/)todo\s(\-c)\s(\d{1})$/ );
 
-/**
- * COMMANDS:
- *
- * List items:
- * 	!todo
- * Add item:
- * 	!todo -a Item name
- * Complete item:
- * 	!todo -c Item #
- * Remove item:
- * 	!todo -r Item #
- */
-
 module.exports = [{
+	name: '!todo',
+	help: 'List the current TODOs.',
     types: ['message'],
     regex: listRegex,
     action: function( chat, stanza ) {
@@ -47,6 +36,8 @@ module.exports = [{
         chat.sendMessage( msg );
     }
 }, {
+	name: '!todo -a {TODO item}',
+	help: 'Adds specified item to the TODO list (Mod only).',
     types: ['message'],
     regex: addRegex,
     action: function( chat, stanza ) {
@@ -62,6 +53,8 @@ module.exports = [{
         }
     }
 }, {
+	name: '!todo -r {X}',
+	help: 'Removes TODO item at index X from the TODO list (Mod only).',
     types: ['message'],
     regex: removeRegex,
     action: function( chat, stanza ) {
@@ -83,6 +76,8 @@ module.exports = [{
 		}
     }
 }, {
+	name: '!todo -c {X}',
+	help: 'Completes the TODO item at the specified index (Mod only).',
     types: ['message'],
     regex: completeRegex,
     action: function( chat, stanza ) {

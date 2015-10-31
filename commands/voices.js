@@ -1,6 +1,8 @@
 'use strict';
 
 module.exports = [{
+	name: '!voices',
+	help: 'Lists the available voices to be used with the !say command.',
     types: ['message'],
     regex: /^(!|\/)voices/i,
     action: function( chat, stanza ) {
