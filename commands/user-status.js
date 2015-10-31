@@ -2,6 +2,7 @@
 
 const runtime = require('../utils/Runtime');
 const Settings = require('../utils/Settings');
+const Client = require('../utils/Client');
 const availableStatuses = Settings.getSetting( __filename, 'statuses' );
 const setStatusRegex = new RegExp( /^(!|\/)setstatus\s(.+)\s(\w+)/ );
 const getStatusRegex = new RegExp( /^(!|\/)getstatus\s(.+)/ );
@@ -48,7 +49,7 @@ module.exports = [{
     action: function( chat, stanza ) {
 		if ( stanza.user.isModerator() ) {
 			var match = setStatusRegex.exec( stanza.message );
-			var statusToSet = match[3];
+			var statusToSet = match[3].toLowerCase();
 			var username = match[2];
 			if ( username.indexOf('@') === 0 ) {
 				username = username.substr(1);
@@ -60,18 +61,10 @@ module.exports = [{
 				return;
 			}
 
-			// Look up the user
-			var users = runtime.brain.get( 'users' ) || {};
-			var user = users[ username ];
-
-			if ( !user ) {
-				chat.sendMessage( `User '${username}' cannot be found.` );
-				return;
-			}
-
 			// Set the status
+			let user = Client.getUser( username );
 			user.status = statusToSet;
-			runtime.brain.set('users', users);
+			user.saveToBrain();
 
 			let statusObj = availableStatuses[ statusToSet.toLowerCase() ];
 			chat.replyTo(username, `is now a ${statusObj.title}!` );
