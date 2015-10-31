@@ -25,5 +25,5 @@ if ( !runtime.credentials.username || !runtime.credentials.room || !runtime.cred
 	return;
 }
 
-Brain.start( __dirname + '/brain' );
+runtime.brain.start( __dirname + "/brain" );
 ChatBot.start();

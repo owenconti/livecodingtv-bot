@@ -64,6 +64,8 @@ class ChatBot {
 				return;
 			}
 
+			runtime.brain.start( __dirname + '/../brain' );
+
 			// Grab the incoming stanza, and parse it
 			let parsedStanza = Client.parseStanza( stanza, runtime.credentials );
 			if ( !parsedStanza ) {
