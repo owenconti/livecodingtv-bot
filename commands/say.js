@@ -4,7 +4,7 @@ const Settings = require('../utils/Settings');
 const defaultVoice = Settings.getSetting( __filename, 'defaultVoice' );
 const Say = require('../utils/Say');
 const Assets = require('../utils/Assets');
-const websocket = require('../utils/websocket');
+const Websocket = require('../utils/Websocket');
 const regex = new RegExp( /^(!|\/)say\s(.+)$/ );
 
 module.exports = [{
@@ -28,7 +28,7 @@ module.exports = [{
 
 		// Send a doge.png whenever a !say is used
 		Assets.load('doge.png', function(base64Image) {
-			websocket.sendMessage( chat.credentials.room, {
+			Websocket.sendMessage( chat.credentials.room, {
 				message: 'showImage',
 				image: base64Image
 			});

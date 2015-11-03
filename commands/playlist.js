@@ -13,7 +13,7 @@
 const runtime = require('../utils/Runtime');
 const YouTube = require('youtube-node');
 const Log = require('../utils/Log');
-const websocket = require('../utils/websocket');
+const Websocket = require('../utils/Websocket');
 const Settings = require('../utils/Settings');
 const requiredVotesToSkip = Settings.getSetting( __filename, 'requiredVotesToSkip' );
 const requestSongRegex = new RegExp( /^(!|\/)request\s(.+)$/ );
@@ -155,7 +155,7 @@ module.exports = [{
 			player.playing = false;
 			setPlayer( player, chat );
 
-			websocket.sendMessage( chat.credentials.room, {
+			Websocket.sendMessage( chat.credentials.room, {
 				message: 'pause'
 			});
 		}
@@ -176,7 +176,7 @@ module.exports = [{
 					player.started = true;
 
 					let currentSong = playlist[ player.currentSongIndex ];
-					websocket.sendMessage( chat.credentials.room, {
+					Websocket.sendMessage( chat.credentials.room, {
 						message: 'skip',
 						youtubeID: currentSong.youtubeID
 					});
@@ -186,7 +186,7 @@ module.exports = [{
 			player.playing = true;
 			setPlayer( player, chat );
 
-			websocket.sendMessage( chat.credentials.room, {
+			Websocket.sendMessage( chat.credentials.room, {
 				message: 'play'
 			});
 		}
@@ -230,7 +230,7 @@ function skipSong( chat ) {
 	if ( player.playing && playlist.length > 0 ) {
 		// Player is playing a song
 		let currentSong = playlist[ player.currentSongIndex ];
-		websocket.sendMessage( chat.credentials.room, {
+		Websocket.sendMessage( chat.credentials.room, {
 			message: 'skip',
 			youtubeID: currentSong.youtubeID
 		});

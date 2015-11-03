@@ -1,7 +1,7 @@
 'use strict';
 
 const Client = require( './Client' );
-const websocket = require('./websocket');
+const Websocket = require('./Websocket');
 const Log = require('./Log');
 const Loader = require('./Loader');
 let runtime = require('./Runtime');
@@ -25,7 +25,7 @@ class ChatBot {
 				ChatBot.runStartupCommands( chat );
 
 				// Start the websocket server
-				websocket.start( chat );
+				Websocket.start( chat );
 
 				// Start listening for stanzas
 				ChatBot.listenForStanzas( chat );
