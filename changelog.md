@@ -2,6 +2,11 @@ Starting to keep track of changes as of October 28, 2015. I will try my best to 
 
 You can also browse the commit history to track my commits: [https://github.com/owenconti/livecodingtv-bot/commits/master](https://github.com/owenconti/livecodingtv-bot/commits/master)
 
+## Nov 2 2015
+* Replaced node-xmpp with node-xmpp-client.
+  * **Required update**
+  * You must run `npm install` after pulling this change.
+
 ## Oct 31 2015
 * Fixed error with Client.js getUser() where it would crash when no `users` brain file existed.
 

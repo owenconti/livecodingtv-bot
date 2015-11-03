@@ -1,6 +1,6 @@
 'use strict';
 
-const xmpp = require('node-xmpp');
+const xmpp = require('node-xmpp-client');
 const crypto = require('crypto');
 const Log = require('./Log');
 const runtime = require('./Runtime');
@@ -39,7 +39,7 @@ class Client {
      */
  	sendPresence() {
         this.client.send(
-            new xmpp.Element('presence', {
+            new xmpp.Stanza('presence', {
                 to: this.credentials.roomJid + '/' + this.credentials.username
             })
         );
@@ -75,7 +75,7 @@ class Client {
 		// Only send the message to the server, if the difference is > 5 seconds
 		if ( !previousMessage || messageObj.time - previousMessage.time > 5000 ) { // 5 seconds
 			this.client.send(
-	    		new xmpp.Element('message', {
+	    		new xmpp.Stanza('message', {
 	    			to: this.credentials.roomJid,
 	    			type: 'groupchat'
 	    		})
