@@ -15,8 +15,9 @@ class ChatBot {
 			runtime.coreCommands = coreCommands;
 
 			// Load plugin commands
-			Loader.loadPluginCommands( ( pluginCommands ) => {
+			Loader.loadPluginCommands( ( pluginCommands, pluginWebsocketFiles ) => {
 				runtime.pluginCommands = pluginCommands;
+				runtime.pluginWebsocketFiles = pluginWebsocketFiles;
 
 				// Load the client (connects to server)
 				let chat = new Client( runtime.credentials );

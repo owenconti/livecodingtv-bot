@@ -59,6 +59,7 @@ class Loader {
 	 */
 	static loadPluginCommands( callback ) {
 		// Make sure each command type is an array
+		let pluginClientFiles = [];
 		let pluginCommands = {};
 		commandTypes.forEach( (commandType) => {
 			pluginCommands[ commandType ] = [];
@@ -75,6 +76,7 @@ class Loader {
 
 			folders.forEach( ( pluginName ) => {
 				let pluginIndexFile = path.join( pluginsDir, pluginName, 'index.js' );
+				let pluginClientFile = path.join( pluginsDir, pluginName, 'client.js' );
 
 				// Check settings to see if command is enabled
 				// If command is enabled, load the command
@@ -88,10 +90,19 @@ class Loader {
 					commands.forEach( (command) => {
 						Loader.parseCommandIntoMessageTypes( command, pluginCommands );
 					} );
+
+					// Load the client.js file, if it exists
+					try {
+						let clientJsFile = require( pluginClientFile );
+						clientJsFile.func = 'var ' + clientJsFile.name + ' = ' + clientJsFile.func + '; ' + clientJsFile.name + '( socket, username );';
+						pluginClientFiles.push( clientJsFile );
+					} catch( e ) {
+						Log.log( `[Loader] No client.js file for plugin ${pluginName}` );
+					}
 				}
 			});
 
-			callback( pluginCommands );
+			callback( pluginCommands, pluginClientFiles );
 		});
 	}
 

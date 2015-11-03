@@ -52,12 +52,18 @@ class Websocket {
 
 	onConnectionMessage( connection, message ) {
 		let messageObj = JSON.parse( message.utf8Data );
+		let username = messageObj.data;
 
 		// Store the connection in the connections object
 		if ( messageObj.message === 'subscribe' ) {
-			console.log(messageObj.data, 'subscribed to websocket connection');
+			console.log(username, 'subscribed to websocket connection');
 
-			this.connections[ messageObj.data ] = connection;
+			this.connections[ username ] = connection;
+
+			this.sendMessage( username, {
+				message: 'clientFiles',
+				files: runtime.pluginWebsocketFiles
+			} );
 		} else {
 			// Run any core websocket commands
 			runtime.coreCommands.websocket.forEach( ( command ) => {
@@ -97,6 +103,10 @@ class Websocket {
 			// Stop logging out giant base64 encoded images
 			if ( messageObj.message === 'showImage' ) {
 				messageObj = 'base64 encoded image';
+			}
+
+			if ( messageObj.message === 'clientFiles' ) {
+				messageObj = 'plugin client files';
 			}
 
 			console.log('WS message sent', username, messageObj);

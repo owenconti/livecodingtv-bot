@@ -10,11 +10,11 @@ class Brain {
 	}
 
 	static get( key ) {
-		return brain.getItem( key ) || null;
+		return brain.getItemSync( key ) || null;
 	}
 
 	static set( key, value ) {
-		brain.setItem( key, value );
+		brain.setItemSync( key, value );
 	}
 };
 

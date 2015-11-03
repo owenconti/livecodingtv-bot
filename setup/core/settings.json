@@ -62,8 +62,5 @@
 				"weight" : 100
 			}
 		}
-	},
-	"playlist" : {
-		"requiredVotesToSkip" : 3
-	}
+	}	
 }
