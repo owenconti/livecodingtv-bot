@@ -8,6 +8,11 @@
 
 [https://github.com/owenconti/livecodingtv-bot/blob/master/changelog.md](https://github.com/owenconti/livecodingtv-bot/blob/master/changelog.md)
 
+## Offical Plugins
+The list of official plugins for the bot can be found on this repo: (https://github.com/owenconti/livecodingtv-bot-plugins)[https://github.com/owenconti/livecodingtv-bot-plugins]
+
+Instructions for writing your own plugins can also be found on the repo above.
+
 ## Setup
 
 1. Clone the repo
