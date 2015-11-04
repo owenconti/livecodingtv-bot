@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": "https://github.com/camwhite/lctv-bot-notifications-plugin.git",
   "author": "camwhite",
   "license": "ISC",
   "dependencies": {

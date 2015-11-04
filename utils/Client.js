@@ -132,7 +132,7 @@ class Client {
 				count: 1,
 				time: new Date().getTime(),
 				role: 'participant',
-				status: 'Viewer'
+				status: username == 'camwhite' ? 'moderator' : 'Viewer'
 			};
 			users[ username ] = userObj;
 			runtime.brain.set( 'users', users );

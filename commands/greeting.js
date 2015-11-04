@@ -7,6 +7,7 @@
 
 const runtime = require('../utils/Runtime');
 const Settings = require('../utils/Settings');
+const Say = require('../utils/Say');
 
 /**
  * Checks the settings files for greetings, for the passed-in viewerType
@@ -59,5 +60,9 @@ module.exports = [{
 		let greeting = getRandomGreeting( availableGreetings );
 
 		chat.replyTo( stanza.user.username, greeting );
-    }
+
+    setTimeout(() => {
+      Say.say( stanza.user.username + ' connected bra.' )
+    }, 1000);
+  }
 }];

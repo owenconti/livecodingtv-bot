@@ -99,7 +99,7 @@ class ChatBot {
 			}
 
 			// Update the user's message log
-			Client.updateMessageLog( parsedStanza );
+      Client.updateMessageLog( parsedStanza );
 
 			Log.log( JSON.stringify( parsedStanza, null, 4 ) );
 		} );

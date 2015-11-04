@@ -27,7 +27,7 @@ module.exports = [{
         }
 
 		// Send a doge.png whenever a !say is used
-		Assets.load('doge.png', function(base64Image) {
+		Assets.load('giphy.gif', function(base64Image) {
 			websocket.sendMessage( chat.credentials.room, {
 				message: 'showImage',
 				image: base64Image
