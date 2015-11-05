@@ -2,6 +2,9 @@ Starting to keep track of changes as of October 28, 2015. I will try my best to 
 
 You can also browse the commit history to track my commits: [https://github.com/owenconti/livecodingtv-bot/commits/master](https://github.com/owenconti/livecodingtv-bot/commits/master)
 
+## Nov 4 2015
+* Updated ban management to display the ban police image when a user is banned.
+
 ## Nov 2 2015
 * Replaced node-xmpp with node-xmpp-client.
   * **Required update**
