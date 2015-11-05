@@ -101,8 +101,8 @@ class Websocket {
 			connection.sendUTF( JSON.stringify(messageObj) );
 
 			// Stop logging out giant base64 encoded images
-			if ( messageObj.message === 'showImage' ) {
-				messageObj = 'base64 encoded image';
+			if ( messageObj.message === 'flyout' ) {
+				messageObj = 'base64 encoded flyout image';
 			}
 
 			if ( messageObj.message === 'clientFiles' ) {

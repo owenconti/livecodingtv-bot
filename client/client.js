@@ -67,17 +67,20 @@ jQuery(document).ready(function($) {
 						} );
 
 						// Append the plugin's HTML to the DOM
-						var $html = $("<div />", {
-							id: obj.name,
-							class: 'plugin-module'
-						}).html( obj.html );
-						$('body').append( $html );
+                        if ( $('#' + obj.name).length === 0 ) {
+                            var $html = $("<div />", {
+    							id: obj.name,
+    							class: 'plugin-module'
+    						}).html( obj.html );
+    						$('body').append( $html );
 
-						// Run the plugin's function,
-						// after a 3 second delay
-						setTimeout(function() {
-							eval( obj.func );
-						}, 3000);
+                            // Run the plugin's function,
+    						// after a 3 second delay
+    						setTimeout(function() {
+    							eval( obj.func );
+    						}, 3000);
+                        }
+
 					});
 					break;
 			}

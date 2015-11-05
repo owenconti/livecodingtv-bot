@@ -1,6 +1,8 @@
 'use strict';
 
 const xmpp = require('node-xmpp-client');
+const Assets = require('../utils/Assets');
+const Websocket = require('../utils/Websocket');
 
 /**
  * Returns a stanza to send to the server.
@@ -51,8 +53,7 @@ module.exports = [{
 				// was sent within the last X seconds (timeframeAllowed),
 				// ban the user.
 				if ( now - startOfLimitMessage.time < ( timeframeAllowed * 1000 ) ) {
-					var affiliationStanza = getUserAffiliationStanza( chat.credentials, stanza.user.username, 'outcast' );
-					chat.client.send( affiliationStanza );
+					banUser( stanza.user.username, chat );
 				}
 			}
 		}
@@ -81,11 +82,44 @@ module.exports = [{
     regex: banRegex,
     action: function( chat, stanza ) {
 		if ( stanza.user.isModerator() ) {
-			var match = banRegex.exec( stanza.message );
-			var userToBan = match[2];
+			let match = banRegex.exec( stanza.message );
+			let userToBan = match[2];
 
-			var affiliationStanza = getUserAffiliationStanza( chat.credentials, userToBan, 'outcast' );
-			chat.client.send( affiliationStanza );
+			banUser( userToBan, chat );
 		}
     }
 }];
+
+function banUser( username, chat ) {
+    var affiliationStanza = getUserAffiliationStanza( chat.credentials, username, 'outcast' );
+    chat.client.send( affiliationStanza );
+
+    Assets.load( 'ban-police.png', function(base64Image) {
+        let htmlContent = `
+<div>
+    <span style="color: #000;
+    font-size: 50px;
+    position: absolute;
+    left: 30px;
+    top: 55px;
+    font-family: Arial;
+    text-transform: uppercase;
+    display: block;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 440px;
+    padding: 0.5em 0;">${ username }</span>
+    <img src="data:image/png;base64,${base64Image}"  />
+</div>
+`;
+        Websocket.sendMessage( chat.credentials.room, {
+            message: 'flyout',
+            type: 'div',
+            content: htmlContent,
+            duration: 10000,
+            animation: 'fly-left'
+        });
+    });
+}
