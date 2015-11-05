@@ -76,8 +76,10 @@ module.exports = {
 ```
 
 ## Custom assets
+The core includes one asset, the `doge.png` image file. If you want to include more assets, place the files in the `setup/custom/assets` directory. Using the `Assets.load( filename.ext )` function, your custom asset will be loaded as base64 encoded string.
 
 ## Plugin settings
+Plugins can have their own settings. If a plugin chooses to have its own settings, the plugin folder will contain a `settings.json` file. You can edit any of the available settings inside that `settings.json` file.
 
 ## Writing plugins
 Plugins can be composed of multiple commands. Commands can have four attributes:
