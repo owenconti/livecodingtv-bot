@@ -66,6 +66,8 @@ module.exports = {
 - Attribute in credentials.js: `githubRepo: 'owenconti/livecodingtv-bot'`
 
 ## Custom settings
+To enable plugins once you've downloaded them, edit the `setup/custom/settings.json` file:
+
 ```
 {
 	"plugins": {
