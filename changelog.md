@@ -2,6 +2,11 @@ Starting to keep track of changes as of October 28, 2015. I will try my best to 
 
 You can also browse the commit history to track my commits: [https://github.com/owenconti/livecodingtv-bot/commits/master](https://github.com/owenconti/livecodingtv-bot/commits/master)
 
+## Nov 5 2015
+* Say command messages limit increased to 80 characters.
+* Added a Say message to the ban command.
+* Decreased ban flyout duration to 6 seconds from 10 seconds.
+
 ## Nov 4 2015
 * Updated ban management to display the ban police image when a user is banned.
 

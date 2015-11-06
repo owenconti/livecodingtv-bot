@@ -3,6 +3,7 @@
 const xmpp = require('node-xmpp-client');
 const Assets = require('../utils/Assets');
 const Websocket = require('../utils/Websocket');
+const Say = require('../utils/Say');
 
 /**
  * Returns a stanza to send to the server.
@@ -118,8 +119,9 @@ function banUser( username, chat ) {
             message: 'flyout',
             type: 'div',
             content: htmlContent,
-            duration: 10000,
-            animation: 'fly-left'
+            duration: 6000,
+            animation: 'flyLeft'
         });
+        Say.say(`${username} You are banned for being a douche`, 'Daniel' );
     });
 }
