@@ -212,7 +212,8 @@ function nextSong( chat ) {
 	let player = getPlayer( chat );
 	let playlist = getPlaylist( chat );
 
-	let nextTrack = nextTrackIndex == playlist.length ? 0 : nextTrackIndex++;
+	nextTrackIndex = nextTrackIndex == playlist.length ? 0 : nextTrackIndex;
+  let nextTrack = nextTrackIndex++;
   player.currentSongIndex = nextTrack;
 	player.skipVotes = [];
 	setPlayer( player, chat );
@@ -238,7 +239,8 @@ function prevSong( chat ) {
 	let player = getPlayer( chat );
 	let playlist = getPlaylist( chat );
 
-	let prevTrack = prevTrackIndex == 0 ? playlist.length - 1: prevTrackIndex--;
+  prevTrackIndex = prevTrackIndex == 0 ? playlist.length - 1 : prevTrackIndex;
+	let prevTrack = prevTrackIndex--;
   player.currentSongIndex = prevTrack;
 	player.skipVotes = [];
 	setPlayer( player, chat );
@@ -248,7 +250,6 @@ function prevSong( chat ) {
 	if ( player.playing && playlist.length > 0 ) {
 		// Player is playing a song
 		let currentSong = playlist[ player.currentSongIndex ];
-    console.log(playlist, player);
 		websocket.sendMessage( chat.credentials.room, {
 			message: 'skip',
 			youtubeID: currentSong.youtubeID
