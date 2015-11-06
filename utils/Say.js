@@ -3,6 +3,7 @@
 const isWin = /^win/.test( process.platform );
 const say = isWin ? require('winsay') : require('say');
 const Log = require('./Log');
+const Settings = require('./Settings');
 const runtime = require('./Runtime');
 
 let queue = [];
@@ -27,6 +28,12 @@ function sayNextItem() {
 
 module.exports = {
 	say( message, voice ) {
+        // Check settings to make sure Say is enabled
+        let sayEnabled = Settings.getSetting( 'SayUtil', 'enabled' );
+        if ( !sayEnabled ) {
+            return;
+        }
+
 		if ( !voice ) {
 			voice = 'Victoria';
 		}

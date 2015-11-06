@@ -14,6 +14,9 @@
 		"user-status" : true,
 		"voices" : true
 	},
+    "ban-management" : {
+        "banSayMessage" : "{{username}} You are banned for being a douche"
+    },
 	"greeting": {
 		"default" : "Welcome to the lab!",
 		"existing" : {
@@ -66,7 +69,7 @@
 			}
 		}
 	},
-	"playlist" : {
-		"requiredVotesToSkip" : 3
-	}
+    "SayUtil" : {
+        "enabled" : true
+    }
 }

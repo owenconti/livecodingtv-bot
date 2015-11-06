@@ -1,6 +1,6 @@
 'use strict';
 
-const xmpp = require('node-xmpp');
+const xmpp = require('node-xmpp-client');
 const crypto = require('crypto');
 const Log = require('./Log');
 const runtime = require('./Runtime');
@@ -39,23 +39,10 @@ class Client {
    */
  	sendPresence() {
     this.client.send(
-      new xmpp.Element('presence', {
+      new xmpp.Stanza('presence', {
           to: this.credentials.roomJid + '/' + this.credentials.username
       })
     );
-  }
-
-  /**
-   * Sends a message to the specified room.
-   * @param  {string} msg
-   * @param  {string} room
-   * @return {void}
-   */
-  sendMessage( msg ) {
-    if ( runtime.debug ) {
-      Log.log('DEBUGGING: ' + msg);
-      return false;
-    }
 
 		// Get the previously sent messages
 		let messages = runtime.brain.get('messages') || {};
@@ -75,13 +62,13 @@ class Client {
 		// Only send the message to the server, if the difference is > 5 seconds
 		if ( !previousMessage || messageObj.time - previousMessage.time > 5000 ) { // 5 seconds
 			this.client.send(
-        new xmpp.Element('message', {
-          to: this.credentials.roomJid,
-          type: 'groupchat'
-        })
-        .c('body')
-        .t( msg )
-      );
+	    		new xmpp.Stanza('message', {
+	    			to: this.credentials.roomJid,
+	    			type: 'groupchat'
+	    		})
+	        	.c('body')
+	            .t( msg )
+	      	);
 		} else {
 			Log.log( 'Skipping sendMessage - previous message sent within 5 seconds' );
 		}
@@ -270,7 +257,7 @@ class Client {
   static findChild( name, children ) {
     var result = null;
     for ( var index in children ) {
-      var child = children[ index ];
+      child var = children[ index ];
       if ( child.name === name ) {
         result = child;
         break;

@@ -13,7 +13,7 @@
     "moment": "^2.10.6",
     "node-base64-image": "^0.1.0",
     "node-persist": "0.0.6",
-    "node-xmpp": "^1.0.2",
+    "node-xmpp-client": "^2.0.2",
     "request": "^2.65.0",
     "say": "^0.6.0",
     "websocket": "^1.0.22",

@@ -1,8 +1,7 @@
 'use strict';
 
 const Client = require( './Client' );
-const path = require('path');
-const websocket = require('./websocket');
+const Websocket = require('./Websocket');
 const Log = require('./Log');
 const Loader = require('./Loader');
 let runtime = require('./Runtime');
@@ -16,8 +15,9 @@ class ChatBot {
 			runtime.coreCommands = coreCommands;
 
 			// Load plugin commands
-			Loader.loadPluginCommands( ( pluginCommands ) => {
+			Loader.loadPluginCommands( ( pluginCommands, pluginWebsocketFiles ) => {
 				runtime.pluginCommands = pluginCommands;
+				runtime.pluginWebsocketFiles = pluginWebsocketFiles;
 
 				// Load the client (connects to server)
 				let chat = new Client( runtime.credentials );
@@ -26,7 +26,7 @@ class ChatBot {
 				ChatBot.runStartupCommands( chat );
 
 				// Start the websocket server
-				websocket.start( chat );
+				Websocket.start( chat );
 
 				// Start listening for stanzas
 				ChatBot.listenForStanzas( chat );
@@ -114,8 +114,9 @@ class ChatBot {
 	 * @return {void}
 	 */
 	static runCommand( command, parsedStanza, chat ) {
+
 		try {
-			var regexMatched = command.regex && command.regex.test( parsedStanza.message );
+			var regexMatched =  command.regex && command.regex.test( parsedStanza.message.toLowerCase() );
 			var ignoreRateLimiting = command.ignoreRateLimiting;
 			var passesRateLimiting = !parsedStanza.rateLimited || ( parsedStanza.rateLimited && ignoreRateLimiting );
 

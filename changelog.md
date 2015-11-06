@@ -2,6 +2,43 @@ Starting to keep track of changes as of October 28, 2015. I will try my best to 
 
 You can also browse the commit history to track my commits: [https://github.com/owenconti/livecodingtv-bot/commits/master](https://github.com/owenconti/livecodingtv-bot/commits/master)
 
+## Nov 5 2015
+* Say command messages limit increased to 80 characters.
+* Added a Say message to the ban command.
+* Decreased ban flyout duration to 6 seconds from 10 seconds.
+* Case-insensitive command matching (assuming all commands register their regex in lowercase).
+* Added setting to customize the on-ban say message.
+* Added setting to enable/disable the Say utility.
+* Added the loadUrl function to the Assets utility class.
+
+## Nov 4 2015
+* Updated ban management to display the ban police image when a user is banned.
+
+## Nov 2 2015
+* Replaced node-xmpp with node-xmpp-client.
+  * **Required update**
+  * You must run `npm install` after pulling this change.
+* Hopeful fix for the brain to stop it from erasing files when an error occurs.
+* Removed public.html and replaced with the `/client` folder.
+* To run the new client page:
+  * Make sure the bot is running
+  * Open a new terminal window and navigate to `/client`
+  * Run `python -m SimpleHTTPServer {PORT}`
+  * Navgiate to `localhost:{PORT}/#{USERNAME}`
+  * The websocket connection should happen, any plugin code should be loaded, and then the client page should be ready to go.
+* Setup plugins to register themselves for the client page.
+* Moved playlist.js command to a `youtube` plugin.
+  * **Required update**
+  * If you used the playlist.js command, you will need to install the plugin to use it.
+  * Ensure you have a `settings.json` file in the `youtube` folder. The structure should be:
+	```
+	{
+		"youtubeApiKey" : "aisjdoi12masdasd",
+		"requiredVotesToSkip" : 3
+	}
+	```
+* Removed the doge flyout from the `say` command. Will come back soon as part of the flyouts plugin.
+
 ## Oct 31 2015
 * Fixed error with Client.js getUser() where it would crash when no `users` brain file existed.
 

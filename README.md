@@ -8,6 +8,11 @@
 
 [https://github.com/owenconti/livecodingtv-bot/blob/master/changelog.md](https://github.com/owenconti/livecodingtv-bot/blob/master/changelog.md)
 
+## Offical Plugins
+The list of official plugins for the bot can be found on this repo: (https://github.com/owenconti/livecodingtv-bot-plugins)[https://github.com/owenconti/livecodingtv-bot-plugins]
+
+Instructions for writing your own plugins can also be found on the repo above.
+
 ## Setup
 
 1. Clone the repo
@@ -61,10 +66,22 @@ module.exports = {
 - Attribute in credentials.js: `githubRepo: 'owenconti/livecodingtv-bot'`
 
 ## Custom settings
+To enable plugins once you've downloaded them, edit the `setup/custom/settings.json` file:
+
+```
+{
+	"plugins": {
+		"noifications": true,
+		"api-triggers": true
+	}
+}
+```
 
 ## Custom assets
+The core includes one asset, the `doge.png` image file. If you want to include more assets, place the files in the `setup/custom/assets` directory. Using the `Assets.load( filename.ext )` function, your custom asset will be loaded as base64 encoded string.
 
 ## Plugin settings
+Plugins can have their own settings. If a plugin chooses to have its own settings, the plugin folder will contain a `settings.json` file. You can edit any of the available settings inside that `settings.json` file.
 
 ## Writing plugins
 Plugins can be composed of multiple commands. Commands can have four attributes:
