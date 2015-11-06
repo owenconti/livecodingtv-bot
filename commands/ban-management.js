@@ -4,6 +4,8 @@ const xmpp = require('node-xmpp-client');
 const Assets = require('../utils/Assets');
 const Websocket = require('../utils/Websocket');
 const Say = require('../utils/Say');
+const Settings = require('../utils/Settings');
+const Templater = require('../utils/Templater');
 
 const unbanRegex = new RegExp( /^(!|\/)unban\s(\w+)$/ );
 const banRegex = new RegExp( /^(!|\/)ban\s(\w+)$/ );
@@ -41,7 +43,7 @@ class BanManagement {
         				// was sent within the last X seconds (timeframeAllowed),
         				// ban the user.
         				if ( now - startOfLimitMessage.time < ( timeframeAllowed * 1000 ) ) {
-        					banUser( stanza.user.username, chat );
+        					BanManagement.banUser( stanza.user.username, chat );
         				}
         			}
         		}
@@ -54,10 +56,10 @@ class BanManagement {
             regex: unbanRegex,
             action: function( chat, stanza ) {
         		if ( stanza.user.isModerator() ) {
-        			var match = unbanRegex.exec( stanza.message );
-        			var userToUnban = match[2];
+        			let match = unbanRegex.exec( stanza.message );
+        			let userToUnban = match[2];
 
-        			var affiliationStanza = getUserAffiliationStanza( chat.credentials, userToUnban, 'none' );
+        			let affiliationStanza = BanManagement.getUserAffiliationStanza( chat.credentials, userToUnban, 'none' );
         			chat.client.send( affiliationStanza );
 
         			chat.sendMessage( '@' + userToUnban + ' has been unbanned!' );
@@ -73,7 +75,7 @@ class BanManagement {
         			let match = banRegex.exec( stanza.message );
         			let userToBan = match[2];
 
-        			banUser( userToBan, chat );
+        			BanManagement.banUser( userToBan, chat );
         		}
             }
         }];
@@ -86,7 +88,7 @@ class BanManagement {
      * @return {void}
      */
     static banUser( username, chat ) {
-        let affiliationStanza = getUserAffiliationStanza( chat.credentials, username, 'outcast' );
+        let affiliationStanza = BanManagement.getUserAffiliationStanza( chat.credentials, username, 'outcast' );
         chat.client.send( affiliationStanza );
 
         // Display the ban police flyout
@@ -116,7 +118,12 @@ class BanManagement {
                 duration: 6000,
                 animation: 'flyLeft'
             });
-            Say.say(`${username} You are banned for being a douche`, 'Daniel' );
+
+            let banSayMessage = Settings.getSetting('ban-management', 'banSayMessage');
+            let message = Templater.run( banSayMessage, {
+                username: username
+            } );
+            Say.say( message, 'Daniel' );
         });
     }
 

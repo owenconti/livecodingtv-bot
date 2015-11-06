@@ -7,6 +7,9 @@ You can also browse the commit history to track my commits: [https://github.com/
 * Added a Say message to the ban command.
 * Decreased ban flyout duration to 6 seconds from 10 seconds.
 * Case-insensitive command matching (assuming all commands register their regex in lowercase).
+* Added setting to customize the on-ban say message.
+* Added setting to enable/disable the Say utility.
+* Added the loadUrl function to the Assets utility class.
 
 ## Nov 4 2015
 * Updated ban management to display the ban police image when a user is banned.

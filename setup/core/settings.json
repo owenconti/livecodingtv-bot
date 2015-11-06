@@ -14,6 +14,9 @@
 		"user-status" : true,
 		"voices" : true
 	},
+    "ban-management" : {
+        "banSayMessage" : "{{username}} You are banned for being a douche"
+    },
 	"greeting": {
 		"default" : "Welcome to the stream!",
 		"existing" : {
@@ -62,5 +65,8 @@
 				"weight" : 100
 			}
 		}
-	}	
+	},
+    "SayUtil" : {
+        "enabled" : true
+    }
 }

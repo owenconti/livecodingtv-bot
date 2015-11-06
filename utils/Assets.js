@@ -5,6 +5,22 @@ const path = require('path');
 const fs = require('fs');
 
 class Assets {
+    static loadUrl( url, callback ) {
+        // base64 encode the loaded image
+		base64.base64encoder( url, {
+			string: true
+		}, function( err, image ) {
+			if ( err ) {
+				console.log(err);
+				return;
+			}
+
+			if ( callback ) {
+				callback( image );
+			}
+		} );
+    }
+
 	static load( fileName, callback ) {
 		let filePath = path.join( __dirname, '../setup/custom/assets/', fileName );
 
@@ -35,7 +51,7 @@ class Assets {
 			if ( callback ) {
 				callback( image );
 			}
-		} )
+		} );
 	}
 }
 
