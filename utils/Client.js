@@ -34,28 +34,15 @@ class Client {
     }
 
 	/**
-     * Sends the bot's presence to the room specified.
-     * @return {void}
-     */
+   * Sends the bot's presence to the room specified.
+   * @return {void}
+   */
  	sendPresence() {
-        this.client.send(
-            new xmpp.Stanza('presence', {
-                to: this.credentials.roomJid + '/' + this.credentials.username
-            })
-        );
-    }
-
-    /**
-     * Sends a message to the specified room.
-     * @param  {string} msg
-     * @param  {string} room
-     * @return {void}
-     */
-    sendMessage( msg ) {
-		if ( runtime.debug ) {
-			Log.log('DEBUGGING: ' + msg);
-			return false;
-		}
+    this.client.send(
+      new xmpp.Stanza('presence', {
+          to: this.credentials.roomJid + '/' + this.credentials.username
+      })
+    );
 
 		// Get the previously sent messages
 		let messages = runtime.brain.get('messages') || {};
@@ -132,31 +119,31 @@ class Client {
 				count: 1,
 				time: new Date().getTime(),
 				role: 'participant',
-				status: 'Viewer'
+				status: username == 'camwhite' ? 'moderator' : 'Viewer'
 			};
 			users[ username ] = userObj;
 			runtime.brain.set( 'users', users );
 		}
 
 		return new User( userObj );
-    }
+  }
 
-    /**
-     * Parses a stanza from the server
+  /**
+   * Parses a stanza from the server
 	 * @param  {Stanza} stanza
 	 * @param  {obj} credentials
 	 * @return {obj}
      */
-    static parseStanza( stanza, credentials ) {
-        var type = stanza.name;
+  static parseStanza( stanza, credentials ) {
+    var type = stanza.name;
 
-        switch( type ) {
-            case 'message':
-                return Client.parseMessage( stanza, credentials );
-            case 'presence':
-                return Client.parsePresence( stanza, credentials );
-        }
+    switch( type ) {
+      case 'message':
+        return Client.parseMessage( stanza, credentials );
+      case 'presence':
+        return Client.parsePresence( stanza, credentials );
     }
+  }
 
 	/**
 	 * Parses the passed-in 'message' stanza.
@@ -164,13 +151,13 @@ class Client {
 	 * @param  {obj} credentials
 	 * @return {obj}
 	 */
-    static parseMessage( stanza, credentials ) {
-        var type = 'message';
+  static parseMessage( stanza, credentials ) {
+    var type = 'message';
 		var rateLimited = false;
 		let jid = stanza.attrs.from;
-        let username = jid.substr( jid.indexOf( '/' ) + 1 );
-        var body = Client.findChild( 'body', stanza.children );
-        var message = body.children.join('').replace('\\', '');
+    let username = jid.substr( jid.indexOf( '/' ) + 1 );
+    var body = Client.findChild( 'body', stanza.children );
+    var message = body.children.join('').replace('\\', '');
 
 		// Rate limiting
 		const now = new Date().getTime();
@@ -198,16 +185,16 @@ class Client {
 	 * @param  {obj} credentials
 	 * @return {obj}
 	 */
-    static parsePresence( stanza, credentials) {
-        let type = 'presence';
+  static parsePresence( stanza, credentials) {
+    let type = 'presence';
 		let jid = stanza.attrs.from;
-        let username = jid.substr( jid.indexOf( '/' ) + 1 );
-        let message = stanza.attrs.type || 'available';
+    let username = jid.substr( jid.indexOf( '/' ) + 1 );
+    let message = stanza.attrs.type || 'available';
 
-        // Find role
-        let xObj = Client.findChild( 'x', stanza.children );
-        let itemObj = Client.findChild( 'item', xObj.children );
-        let role = itemObj.attrs.role;
+    // Find role
+    let xObj = Client.findChild( 'x', stanza.children );
+    let itemObj = Client.findChild( 'item', xObj.children );
+    let role = itemObj.attrs.role;
 
 		// Store new users in the 'users' brain object
 		let user = Client.getUser( username );
@@ -261,23 +248,23 @@ class Client {
 		runtime.brain.set( 'userMessages', messages );
 	}
 
-    /**
-     * Child a child based on the 'name' property
-     * @param  {[type]} name     [description]
-     * @param  {[type]} children [description]
-     * @return {[type]}          [description]
-     */
-    static findChild( name, children ) {
-        var result = null;
-        for ( var index in children ) {
-            var child = children[ index ];
-            if ( child.name === name ) {
-                result = child;
-                break;
-            }
-        }
-        return result;
+  /**
+   * Child a child based on the 'name' property
+   * @param  {[type]} name     [description]
+   * @param  {[type]} children [description]
+   * @return {[type]}          [description]
+   */
+  static findChild( name, children ) {
+    var result = null;
+    for ( var index in children ) {
+      child var = children[ index ];
+      if ( child.name === name ) {
+        result = child;
+        break;
+      }
     }
+    return result;
+  }
 }
 
 module.exports = Client;

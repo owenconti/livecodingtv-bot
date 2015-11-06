@@ -75,12 +75,14 @@ class Loader {
 			}
 
 			folders.forEach( ( pluginName ) => {
+        console.log(pluginName);
 				let pluginIndexFile = path.join( pluginsDir, pluginName, 'index.js' );
 				let pluginClientFile = path.join( pluginsDir, pluginName, 'client.js' );
 
 				// Check settings to see if command is enabled
 				// If command is enabled, load the command
 				let isPluginEnabled = Settings.getSetting('plugins', pluginName);
+        console.log(isPluginEnabled);
 				if ( isPluginEnabled === true ) {
 					Log.log( `[Loader] Plugin loaded: ${pluginName}` );
 

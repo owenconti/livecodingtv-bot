@@ -7,6 +7,9 @@
 
 const runtime = require('../utils/Runtime');
 const Settings = require('../utils/Settings');
+const Assets = require('../utils/Assets');
+const Say = require('../utils/Say');
+const websocket = require('../utils/websocket');
 
 /**
  * Checks the settings files for greetings, for the passed-in viewerType
@@ -59,5 +62,16 @@ module.exports = [{
 		let greeting = getRandomGreeting( availableGreetings );
 
 		chat.replyTo( stanza.user.username, greeting );
-    }
+
+    setTimeout(() => {
+      Say.say( stanza.user.username + ' connected bra.' )
+    }, 1000);
+
+    Assets.load('giphy.gif', function(base64Image) {
+			websocket.sendMessage( chat.credentials.room, {
+				message: 'showImage',
+				image: base64Image
+			});
+		});
+  }
 }];

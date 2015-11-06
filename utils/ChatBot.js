@@ -77,6 +77,7 @@ class ChatBot {
 			// Run the incoming stanza against
 			// the core commands for the stanza's type.
 			let coreCommandsForStanzaType = runtime.coreCommands[ parsedStanza.type ];
+
 			if ( coreCommandsForStanzaType ) {
 				coreCommandsForStanzaType.forEach( ( command ) => {
 					if ( ChatBot.runCommand( command, parsedStanza, chat ) ) {
@@ -90,6 +91,7 @@ class ChatBot {
 			let pluginCommandsForStanzaType = runtime.pluginCommands[ parsedStanza.type ];
 			if ( pluginCommandsForStanzaType ) {
 				pluginCommandsForStanzaType.forEach( ( command ) => {
+
 					if ( ChatBot.runCommand( command, parsedStanza, chat ) ) {
 						parsedStanza.ranCommand = true;
 					}
@@ -97,7 +99,7 @@ class ChatBot {
 			}
 
 			// Update the user's message log
-			Client.updateMessageLog( parsedStanza );
+      Client.updateMessageLog( parsedStanza );
 
 			Log.log( JSON.stringify( parsedStanza, null, 4 ) );
 		} );

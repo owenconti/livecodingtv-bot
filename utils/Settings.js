@@ -13,6 +13,7 @@ class Settings {
 	 * @return {any}
 	 */
 	static getSetting( fileName, key ) {
+    console.log(fileName, key);
 		fileName = path.basename( fileName, '.js' );
 
 		// Check for the setting in settings.json first

@@ -18,22 +18,25 @@
         "banSayMessage" : "{{username}} You are banned for being a douche"
     },
 	"greeting": {
-		"default" : "Welcome to the stream!",
+		"default" : "Welcome to the lab!",
 		"existing" : {
 			"Viewer" : [
-				"Back again! How's life treating you today?",
-				"Hey friend! What are you working on today?"
+				"Welcome back, thanks for tuning in!",
+				"Hey now! Wanna see my dickscript?"
 			],
 			"Royalty" : [
 				"The king has arrived! We appreciate your support!"
 			]
 		},
 		"new" : [
-			"Welcome to the stream! Thanks for stopping by!"
+			"Welcome to the lab! Conversation appreciated ask away!"
 		]
 	},
 	"say" : {
 		"defaultVoice" : "Victoria"
+	},
+  "available" : {
+		"connectMessage" : "{{username}} connected bra."
 	},
 	"unavailable" : {
 		"disconnectMessage" : "{{username}} disconnected."
