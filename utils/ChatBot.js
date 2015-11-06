@@ -114,7 +114,7 @@ class ChatBot {
 	static runCommand( command, parsedStanza, chat ) {
 
 		try {
-			var regexMatched = command.regex && command.regex.test( parsedStanza.message );
+			var regexMatched =  command.regex && command.regex.test( parsedStanza.message.toLowerCase() );
 			var ignoreRateLimiting = command.ignoreRateLimiting;
 			var passesRateLimiting = !parsedStanza.rateLimited || ( parsedStanza.rateLimited && ignoreRateLimiting );
 
