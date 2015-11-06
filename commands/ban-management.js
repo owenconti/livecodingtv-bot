@@ -5,15 +5,10 @@ const Assets = require('../utils/Assets');
 const Websocket = require('../utils/Websocket');
 const Say = require('../utils/Say');
 
+const unbanRegex = new RegExp( /^(!|\/)unban\s(\w+)$/ );
+const banRegex = new RegExp( /^(!|\/)ban\s(\w+)$/ );
+
 class BanManagement {
-    static getUnbanRegex() {
-        return new RegExp( /^(!|\/)unban\s(\w+)$/ );
-    }
-
-    static getBanRegex() {
-        return new RegExp( /^(!|\/)ban\s(\w+)$/ );
-    }
-
     /**
      * Returns the commands this class exports.
      * @return {array}
