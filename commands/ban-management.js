@@ -5,6 +5,7 @@ const Assets = require('../utils/Assets');
 const Websocket = require('../utils/Websocket');
 const Say = require('../utils/Say');
 const Log = require('../utils/Log');
+const Client = require('../utils/Client');
 const Settings = require('../utils/Settings');
 const Templater = require('../utils/Templater');
 
@@ -90,7 +91,7 @@ class BanManagement {
      */
     static banUser( username, chat ) {
         // Don't try to ban the streamer or the bot
-        let user = chat.getUser( username );
+        let user = Client.getUser( username );
         if ( user.isStreamer() || user.isBot() ) {
             Log.log('Attempt to ban streamer or bot.' );
             return false;
