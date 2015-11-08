@@ -148,7 +148,7 @@ class Client {
 	 * @return {obj}
      */
     static parseStanza( stanza, credentials ) {
-        var type = stanza.name;
+        let type = stanza.name;
 
         switch( type ) {
             case 'message':
@@ -165,12 +165,17 @@ class Client {
 	 * @return {obj}
 	 */
     static parseMessage( stanza, credentials ) {
-        var type = 'message';
-		var rateLimited = false;
+        let type = 'message';
+		let rateLimited = false;
 		let jid = stanza.attrs.from;
         let username = jid.substr( jid.indexOf( '/' ) + 1 );
-        var body = Client.findChild( 'body', stanza.children );
-        var message = body.children.join('').replace('\\', '');
+        let body = Client.findChild( 'body', stanza.children );
+
+        if ( !body ) {
+            return false;
+        }
+
+        let message = body.children.join('').replace('\\', '');
 
 		// Rate limiting
 		const now = new Date().getTime();
@@ -268,9 +273,9 @@ class Client {
      * @return {[type]}          [description]
      */
     static findChild( name, children ) {
-        var result = null;
-        for ( var index in children ) {
-            var child = children[ index ];
+        let result = null;
+        for ( let index in children ) {
+            let child = children[ index ];
             if ( child.name === name ) {
                 result = child;
                 break;
