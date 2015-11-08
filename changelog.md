@@ -8,6 +8,7 @@ You can also browse the commit history to track my commits: [https://github.com/
 * Added the ability to pass a settings object to the `client.js` code of plugins.
 * Updated `help` command to output a link to Pastebin when called.
 * When the bot starts, it will generate and store the documentation for help in a Paste on pastebin.com.
+* Greetings are now run through a templater with `username` and `status` variables being passed-in.
 
 ## Nov 5 2015
 * Say command messages limit increased to 80 characters.
