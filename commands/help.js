@@ -21,8 +21,8 @@ module.exports = [{
     types: ['message'],
     regex: /^(!|\/)(help|commands)\s(core)$/,
     action: function( chat, stanza ) {
-		var output = '';
-		var commandsCount = 0;
+		let output = '';
+		let commandsCount = 0;
 
 		runtime.coreCommands.message.forEach( ( command ) => {
 			if ( command.name && command.help ) {
@@ -80,8 +80,8 @@ module.exports = [{
     types: ['message'],
     regex: /^(!|\/)(help|commands)\s(custom)$/,
     action: function( chat, stanza ) {
-		var output = '';
-		var commandsCount = 0;
+		let output = '';
+		let commandsCount = 0;
 
 		// Get our custom commands
 		let customCommands = runtime.brain.get('customCommands') || {};
