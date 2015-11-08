@@ -5,6 +5,7 @@ You can also browse the commit history to track my commits: [https://github.com/
 ## Nov 7 2015
 * Added a setting for the `unavailable` command to enable/disable the command.
 * Added a `setsubject` command, to set the room's subject via XMPP.
+* Added the ability to pass a settings object to the `client.js` code of plugins.
 
 ## Nov 5 2015
 * Say command messages limit increased to 80 characters.
