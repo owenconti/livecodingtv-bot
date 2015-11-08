@@ -2,13 +2,11 @@
 	"coreCommands" : {
 		"ban-management" : true,
 		"custom-commands" : true,
-		"github-commits" : true,
 		"greeting" : true,
 		"help" : true,
-		"insult" : true,
 		"leaderboard" : true,
-		"playlist" : true,
 		"say" : true,
+        "subject" : true,
 		"todo" : true,
 		"unavailable" : true,
 		"user-status" : true,
@@ -36,7 +34,8 @@
 		"defaultVoice" : "Victoria"
 	},
 	"unavailable" : {
-		"disconnectMessage" : "{{username}} disconnected."
+		"disconnectMessage" : "{{username}} disconnected.",
+        "enabled" : true
 	},
 	"user-status" : {
 		"statuses" : {

@@ -94,7 +94,7 @@ class Loader {
 					// Load the client.js file, if it exists
 					try {
 						let clientJsFile = require( pluginClientFile );
-						clientJsFile.func = 'var ' + clientJsFile.name + ' = ' + clientJsFile.func + '; ' + clientJsFile.name + '( socket, username );';
+						clientJsFile.func = 'var ' + clientJsFile.name + ' = ' + clientJsFile.func + '; ' + clientJsFile.name + '( socket, username, pluginSettings );';
 						pluginClientFiles.push( clientJsFile );
 					} catch( e ) {
 						Log.log( `[Loader] No client.js file for plugin ${pluginName}` );

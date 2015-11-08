@@ -13,9 +13,9 @@ module.exports = [{
     regex: listRegex,
     action: function( chat, stanza ) {
 		// LIST ITEMS
-        var todos = runtime.brain.get('todos') || [];
-		var completedTodos = runtime.brain.get('completedTodos') || [];
-        var msg = '';
+        let todos = runtime.brain.get('todos') || [];
+		let completedTodos = runtime.brain.get('completedTodos') || [];
+        let msg = '';
 
         if ( todos.length === 0 ) {
             msg = 'No todos.\n\n'
@@ -43,8 +43,8 @@ module.exports = [{
     action: function( chat, stanza ) {
 		// ADD ITEMS
         if ( stanza.user.isModerator() ) {
-            var todos = runtime.brain.get('todos') || [];
-            var item = addRegex.exec( stanza.message )[3];
+            let todos = runtime.brain.get('todos') || [];
+            let item = addRegex.exec( stanza.message )[3];
 
             todos.push( item );
             runtime.brain.set('todos', todos);
@@ -60,9 +60,9 @@ module.exports = [{
     action: function( chat, stanza ) {
 		// REMOVE ITEMS
         if ( stanza.user.isModerator() ) {
-	        var todos = runtime.brain.get('todos') || [];
-	        var todoIndex = parseInt( removeRegex.exec( stanza.message )[3], 10 );
-			var itemToRemove = todos[ todoIndex - 1 ];
+	        let todos = runtime.brain.get('todos') || [];
+	        let todoIndex = parseInt( removeRegex.exec( stanza.message )[3], 10 );
+			let itemToRemove = todos[ todoIndex - 1 ];
 
 			if ( !itemToRemove ) {
 	            chat.sendMessage( 'Todo #' + todoIndex + ' not found!' );
@@ -83,10 +83,10 @@ module.exports = [{
     action: function( chat, stanza ) {
 		// COMPLETE ITEMS
         if ( stanza.user.isModerator() ) {
-	        var todos = runtime.brain.get('todos') || [];
-			var completedTodos = runtime.brain.get('completedTodos') || [];
-	        var todoIndex = parseInt( completeRegex.exec( stanza.message )[3], 10 );
-	        var itemToComplete = todos[ todoIndex - 1 ];
+	        let todos = runtime.brain.get('todos') || [];
+			let completedTodos = runtime.brain.get('completedTodos') || [];
+	        let todoIndex = parseInt( completeRegex.exec( stanza.message )[3], 10 );
+	        let itemToComplete = todos[ todoIndex - 1 ];
 
 	        if ( !itemToComplete ) {
 	            chat.sendMessage( 'Todo #' + todoIndex + ' not found!' );

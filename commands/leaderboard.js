@@ -25,7 +25,7 @@ module.exports = [{
 		// Map the leaderboard into an array
 		let users = runtime.brain.get( 'users' ) || {};
 		let userScores = [];
-		for ( var username in users ) {
+		for ( let username in users ) {
 			userScores.push( users[ username ] );
 		}
 

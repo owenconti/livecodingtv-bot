@@ -7,6 +7,7 @@
 
 const runtime = require('../utils/Runtime');
 const Settings = require('../utils/Settings');
+const Templater = require('../utils/Templater');
 
 /**
  * Checks the settings files for greetings, for the passed-in viewerType
@@ -45,8 +46,7 @@ function getRandomGreeting( availableGreetings ) {
 		return Settings.getSetting( __filename, 'defaultGreeting' );
 	}
 
-	var length = availableGreetings.length;
-	var index = Math.floor(Math.random() * length);
+	let index = Math.floor(Math.random() * availableGreetings.length);
 	return availableGreetings[ index ];
 };
 
@@ -57,6 +57,10 @@ module.exports = [{
 		let viewerType = stanza.user.viewCount > 1 ? 'existing' : 'new';
 		let availableGreetings = findAvailableGreetings( viewerType, stanza.user.status );
 		let greeting = getRandomGreeting( availableGreetings );
+        greeting = Templater.run( greeting, {
+            username: stanza.user.username,
+            status: stanza.user.status
+        } );
 
 		chat.replyTo( stanza.user.username, greeting );
     }

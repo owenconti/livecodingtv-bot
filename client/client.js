@@ -61,6 +61,10 @@ jQuery(document).ready(function($) {
 					clientFiles.forEach( function(clientFile) {
 						var obj = eval( clientFile );
 
+                        // Declare pluginSettings so they are passed-in
+                        // to eval(obj.func)
+                        var pluginSettings = obj.pluginSettings;
+
 						// Load dependencies
 						obj.dependencies.forEach( function( dependency ) {
 							loadDependency( dependency.name, dependency.url );

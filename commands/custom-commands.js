@@ -20,10 +20,10 @@ module.exports = [{
     types: ['message'],
     regex: runCommandRegex,
     action: function( chat, stanza ) {
-		var match = runCommandRegex.exec( stanza.message );
-		var command = match[2];
-		var customCommands = runtime.brain.get('customCommands') || {};
-		var commandValue = customCommands[ command ];
+		let match = runCommandRegex.exec( stanza.message );
+		let command = match[2];
+		let customCommands = runtime.brain.get('customCommands') || {};
+		let commandValue = customCommands[ command ];
 
 		if ( commandValue ) {
 			chat.sendMessage( commandValue );
@@ -37,11 +37,11 @@ module.exports = [{
     regex: addCommandRegex,
     action: function( chat, stanza ) {
         if ( stanza.user.isModerator() ) {
-			var match = addCommandRegex.exec( stanza.message );
-			var command = match[2];
-			var commandValue = match[3];
+			let match = addCommandRegex.exec( stanza.message );
+			let command = match[2];
+			let commandValue = match[3];
+			let customCommands = runtime.brain.get('customCommands') || {};
 
-			var customCommands = runtime.brain.get('customCommands') || {};
 			customCommands[ command ] = commandValue;
 			runtime.brain.set( 'customCommands', customCommands );
 
@@ -56,10 +56,11 @@ module.exports = [{
     regex: removeCommandRegex,
     action: function( chat, stanza ) {
         if ( stanza.user.isModerator() ) {
-			var match = removeCommandRegex.exec( stanza.message );
-			var command = match[2];
+			let match = removeCommandRegex.exec( stanza.message );
+			let command = match[2];
+			let customCommands = runtime.brain.get('customCommands') || {};
 
-			var customCommands = runtime.brain.get('customCommands') || {};
+            // Remove the command from the customCommands object
 			delete customCommands[ command ];
 
 			runtime.brain.set( 'customCommands', customCommands );

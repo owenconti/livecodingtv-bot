@@ -23,15 +23,15 @@ module.exports = [{
     types: ['message'],
     regex: getStatusRegex,
     action: function( chat, stanza ) {
-		var match = getStatusRegex.exec( stanza.message );
-		var username = match[2];
+		let match = getStatusRegex.exec( stanza.message );
+		let username = match[2];
 		if ( username.indexOf('@') === 0 ) {
 			username = username.substr(1);
 		}
 
 		// Look up the user
-		var users = runtime.brain.get( 'users' ) || {};
-		var user = users[ username ];
+		let users = runtime.brain.get( 'users' ) || {};
+		let user = users[ username ];
 
 		if ( !user ) {
 			chat.sendMessage( `User '${username}' cannot be found.` );
@@ -48,9 +48,9 @@ module.exports = [{
     regex: setStatusRegex,
     action: function( chat, stanza ) {
 		if ( stanza.user.isModerator() ) {
-			var match = setStatusRegex.exec( stanza.message );
-			var statusToSet = match[3].toLowerCase();
-			var username = match[2];
+			let match = setStatusRegex.exec( stanza.message );
+			let statusToSet = match[3].toLowerCase();
+			let username = match[2];
 			if ( username.indexOf('@') === 0 ) {
 				username = username.substr(1);
 			}
