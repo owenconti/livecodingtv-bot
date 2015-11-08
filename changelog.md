@@ -2,6 +2,9 @@ Starting to keep track of changes as of October 28, 2015. I will try my best to 
 
 You can also browse the commit history to track my commits: [https://github.com/owenconti/livecodingtv-bot/commits/master](https://github.com/owenconti/livecodingtv-bot/commits/master)
 
+## Nov 7 2015
+* Added a setting for the `unavailable` command to enable/disable the command.
+
 ## Nov 5 2015
 * Say command messages limit increased to 80 characters.
 * Added a Say message to the ban command.
