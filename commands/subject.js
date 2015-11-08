@@ -5,6 +5,8 @@ const runtime = require('../utils/Runtime');
 const setSubjectRegex = /^(!|\/)setsubject\s(.+)$/;
 
 module.exports = [{
+    name: '!setsubject {subject}',
+    help: 'Sets the room\'s subject to {subject}.',
     types: ['message'],
     regex: setSubjectRegex,
     action: function( chat, stanza ) {

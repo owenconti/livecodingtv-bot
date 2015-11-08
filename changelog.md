@@ -4,6 +4,7 @@ You can also browse the commit history to track my commits: [https://github.com/
 
 ## Nov 7 2015
 * Added a setting for the `unavailable` command to enable/disable the command.
+* Added a `setsubject` command, to set the room's subject via XMPP.
 
 ## Nov 5 2015
 * Say command messages limit increased to 80 characters.
