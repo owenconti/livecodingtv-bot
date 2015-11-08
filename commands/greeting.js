@@ -45,8 +45,7 @@ function getRandomGreeting( availableGreetings ) {
 		return Settings.getSetting( __filename, 'defaultGreeting' );
 	}
 
-	var length = availableGreetings.length;
-	var index = Math.floor(Math.random() * length);
+	let index = Math.floor(Math.random() * availableGreetings.length);
 	return availableGreetings[ index ];
 };
 
