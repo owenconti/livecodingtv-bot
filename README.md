@@ -83,6 +83,20 @@ The core includes one asset, the `doge.png` image file. If you want to include m
 ## Plugin settings
 Plugins can have their own settings. If a plugin chooses to have its own settings, the plugin folder will contain a `settings.json` file. You can edit any of the available settings inside that `settings.json` file.
 
+Where can I find plugins? 
+Take a look at https://github.com/owenconti/livecodingtv-bot-plugins
+
+What you need for getting Plugins to work:
+
+1. Download the plugin to the folder "plugins"
+2. Add it to your settings.json in "setup/custom/" like that:
+```
+"plugins" : {
+	"PLUGIN-NAME": true
+}
+```
+3. Restart the bot
+
 ## Writing plugins
 Plugins can be composed of multiple commands. Commands can have four attributes:
 
