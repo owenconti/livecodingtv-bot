@@ -21,8 +21,8 @@ module.exports = [{
             return;
         }
 
-        Pastebin.createPaste( `${runtime.credentials.username} - LCTV Bot Help Documentation`, newDocumentation, (body) => {
-            helpObject.link = body;
+        Pastebin.createPaste( `${runtime.credentials.username} - LCTV Bot Help Documentation`, newDocumentation, (link) => {
+            helpObject.link = link;
             helpObject.documentation = newDocumentation;
             runtime.brain.set( 'help', helpObject );
         } );

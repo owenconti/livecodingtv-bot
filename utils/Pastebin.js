@@ -14,7 +14,7 @@ class Pastebin {
      */
     static createPaste( pasteName, pasteContent, callback ) {
         // Post the documentation to pastebin
-        Log.log('[help] Creating a new post on pastebin');
+        Log.log('[Pastebin] Creating a new post on pastebin');
         let requestOpts = {
             url: 'http://pastebin.com/api/api_post.php',
             form : {
@@ -29,7 +29,7 @@ class Pastebin {
                 Log.log( 'Error creating TextUploader post: ' + err );
             }
 
-            Log.log('[help] Pastebin post created', body);
+            Log.log('[Pastebin] Pastebin post created', body);
 
             if ( callback ) {
                 callback( body );
