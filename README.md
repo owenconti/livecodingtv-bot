@@ -95,7 +95,7 @@ What you need for getting Plugins to work:
 	"PLUGIN-NAME": true
 }
 ```
-3. Restart the bot
+3 . Restart the bot
 
 ## Writing plugins
 Plugins can be composed of multiple commands. Commands can have four attributes:
