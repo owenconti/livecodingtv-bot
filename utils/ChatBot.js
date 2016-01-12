@@ -138,7 +138,7 @@ class ChatBot {
 	 */
 	static isStartingUp() {
 		const messageTime = new Date().getTime();
-		if ( messageTime - runtime.startUpTime < 5000 ) { // 5 seconds
+		if ( messageTime - runtime.startUpTime < 10000 ) { // 10 seconds
 			Log.log('Starting up, skipping message');
 			return true;
 		}
