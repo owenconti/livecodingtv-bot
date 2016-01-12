@@ -9,23 +9,23 @@
 [https://github.com/owenconti/livecodingtv-bot/blob/master/changelog.md](https://github.com/owenconti/livecodingtv-bot/blob/master/changelog.md)
 
 ## Offical Plugins
-The list of official plugins for the bot can be found on this repo: (https://github.com/owenconti/livecodingtv-bot-plugins)[https://github.com/owenconti/livecodingtv-bot-plugins]
+The list of official plugins for the bot can be found on this repo: [https://github.com/owenconti/livecodingtv-bot-plugins](https://github.com/owenconti/livecodingtv-bot-plugins)
 
 Instructions for writing your own plugins can also be found on the repo above.
 
 ## Setup
 
-1. Clone the repo
+1) Clone the repo
 
-2. Create a `setup/custom/credentials.js` file in the root of the app.
+2) Create a `setup/custom/credentials.js` file and `setup/custom/settings.json` file.
 
-3. Find your XMPP password on LCTV page.
+3) Find your XMPP password on LCTV page.
 	1. Open your live stream page ( https://www.livecoding.tv/USERNAME )
 	2. Open Dev Tools and switch to the Elements tab
 	3. Search the HTML content for "password".
 	4. The XMPP password will be a long string in an object containing 'jid' and 'password'.
 
-4. Fill in the `setup/custom/credentials.js` file with the following format:
+4) Fill in the `setup/custom/credentials.js` file with the following format:
 
 ```
 var username = 'LCTV_BOT_USERNAME';
@@ -41,11 +41,22 @@ module.exports = {
 };
 ```
 
-5. Run `npm install`
+5) Fill `setup/custom/settings.json` with the following JSON data:
 
-6. Run `node index.js`
+```
+{
+	"plugins": {
+		"noifications": true,
+		"api-triggers": true
+	}
+}
+```
 
-7. Some commands require extra API keys or specific variables. You can use the `credentials.js` file to store these variables.
+6) Run `npm install`
+
+7) Run `node index.js`
+
+8) Some commands require extra API keys or specific variables. You can use the `credentials.js` file to store these variables.
 
 ```
 module.exports = {
@@ -57,7 +68,7 @@ module.exports = {
 };
 ```
 
-8. The bot should be running and waiting for your commands!
+9) The bot should be running and waiting for your commands!
 
 ## Custom command credentials
 
@@ -82,6 +93,20 @@ The core includes one asset, the `doge.png` image file. If you want to include m
 
 ## Plugin settings
 Plugins can have their own settings. If a plugin chooses to have its own settings, the plugin folder will contain a `settings.json` file. You can edit any of the available settings inside that `settings.json` file.
+
+Where can I find plugins? 
+Take a look at https://github.com/owenconti/livecodingtv-bot-plugins
+
+What you need for getting Plugins to work:
+
+1) Download the plugin to the folder "plugins"
+2) Add it to your settings.json in "setup/custom/" like that:
+```
+"plugins" : {
+	"PLUGIN-NAME": true
+}
+```
+3) Restart the bot
 
 ## Writing plugins
 Plugins can be composed of multiple commands. Commands can have four attributes:
