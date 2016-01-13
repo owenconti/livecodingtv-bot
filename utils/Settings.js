@@ -15,13 +15,13 @@ class Settings {
 	static getSetting( fileName, key ) {
 		fileName = path.basename( fileName, '.js' );
 
-		// Check for the setting in settings.json first
+		// Check for the setting in custom settings first
 		if ( customSettings[ fileName ] && customSettings[ fileName ][ key ] !== undefined ) {
 			return customSettings[ fileName ][ key ];
 		}
 
-		// If a setting was not found in the settings.json,
-		// then search in the defaultSettings
+		// If a setting was not found in the custom settings
+		// then search in the core settings
 		if ( defaultSettings[ fileName ] && defaultSettings[ fileName ][ key ] !== undefined ) {
 			return defaultSettings[ fileName ][ key ];
 		}

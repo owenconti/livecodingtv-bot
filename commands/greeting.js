@@ -54,6 +54,11 @@ module.exports = [{
 	types: ['presence'],
 	regex: /^available$/,
 	action: function( chat, stanza ) {
+        if ( stanza.user.isStreamer() || stanza.user.isBot() ) {
+            // Don't greet the streamer or the bot
+            return;
+        }
+
 		let viewerType = stanza.user.viewCount > 1 ? 'existing' : 'new';
 		let availableGreetings = findAvailableGreetings( viewerType, stanza.user.status );
 		let greeting = getRandomGreeting( availableGreetings );

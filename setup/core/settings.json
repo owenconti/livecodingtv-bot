@@ -2,13 +2,13 @@
 	"coreCommands" : {
 		"ban-management" : true,
 		"custom-commands" : true,
-		"greeting" : true,
+		"greeting" : false,
 		"help" : true,
 		"leaderboard" : true,
 		"say" : true,
         "subject" : true,
 		"todo" : true,
-		"unavailable" : true,
+		"unavailable" : false,
 		"user-status" : true,
 		"voices" : true
 	},

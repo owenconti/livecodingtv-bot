@@ -2,13 +2,13 @@
 
 const runtime = require('../utils/Runtime');
 const Log = require('../utils/Log');
-const Pastebin = require('../utils/Pastebin');
+const Gist = require('../utils/Gist');
 
 module.exports = [{
     types: ['startup'],
     action: function( chat ) {
         let helpObject = runtime.brain.get('help') || {
-            link: '',
+            id: '',
             documentation: ''
         };
 
@@ -17,15 +17,27 @@ module.exports = [{
 
         // Compare new documentation agianst the brain's stored documentation
         if ( newDocumentation === helpObject.documentation ) {
-            Log.log('[help] Help documentation unchanged, not creating a Paste.');
+            Log.log('[help] Help documentation unchanged, not creating a Gist.');
             return;
         }
 
-        Pastebin.createPaste( `${runtime.credentials.username} - LCTV Bot Help Documentation`, newDocumentation, (link) => {
-            helpObject.link = link;
-            helpObject.documentation = newDocumentation;
-            runtime.brain.set( 'help', helpObject );
-        } );
+        if ( helpObject.id === '' ) {
+            Log.log('[help] Creating new help documentation');
+
+            Gist.createGist( `${runtime.credentials.username} - LCTV Bot Help Documentation`, newDocumentation, (gistID) => {
+                helpObject.id = gistID;
+                helpObject.documentation = newDocumentation;
+                runtime.brain.set( 'help', helpObject );
+            } );
+        } else {
+            Log.log('[help] Updating existing help documentation');
+
+            Gist.updateGist( helpObject.id, newDocumentation, (gistID) => {
+                helpObject.id = gistID;
+                helpObject.documentation = newDocumentation;
+                runtime.brain.set( 'help', helpObject );
+            } );
+        }
     }
 }, {
 	name: '!help',
@@ -36,8 +48,8 @@ module.exports = [{
         let helpObj = runtime.brain.get('help');
         let output = 'No help documentation generated.';
 
-        if ( helpObj.link ) {
-            output = `Help documentation can be found at this Paste: ${ helpObj.link }`;
+        if ( helpObj.id ) {
+            output = `Help documentation can be found at this Gist: ${ Gist.getGistLink(helpObj.id) }`;
         }
 		chat.sendMessage( output );
     }
@@ -51,40 +63,40 @@ function generateHelpDocumentation() {
     Log.log('[help] Generating help documentation');
 
     // Core commands
-    let output = 'CORE COMMANDS:\n';
+    let output = '## Core Commands\n';
 
     runtime.coreCommands.message.forEach( ( command ) => {
         if ( command.name && command.help ) {
-            output += '\n' + command.name + '\n';
-            output += command.help + '\n';
+            output += `### ${command.name}\n`;
+            output += command.help + '\n\n';
         }
     } );
 
     // Plugin commands
-    output += '\n\nPLUGIN COMMANDS:\n';
+    output += '## Plugin Commands\n';
 
     // Loop through the core message customCommands
     let pluginCommands = runtime.pluginCommands.message;
     if ( pluginCommands.length > 0 ) {
         pluginCommands.forEach( ( command ) => {
             if ( command.name && command.help ) {
-                output += '\n' + command.name + '\n';
-                output += command.help + '\n';
+                output += `### ${command.name}\n`;
+                output += command.help + '\n\n';
             }
         } );
     } else {
-        output = 'No plugin commands available.';
+        output = '\nNo plugin commands available.\n';
     }
 
     // Custom commands
-    output += '\n\nCUSTOM COMMANDS:\n';
+    output += '## Custom Commands\n';
 
     // Get our custom commands
     let customCommands = runtime.brain.get('customCommands') || {};
     let customCommandKeys = Object.keys( customCommands );
     if ( customCommandKeys.length > 0 ) {
         customCommandKeys.forEach( ( command ) => {
-            output += '\n!' + command;
+            output += '\n\n!' + command;
         } );
     } else {
         output += 'No custom commands available.';

@@ -65,9 +65,9 @@ class ChatBot {
 				return;
 			}
 
-			runtime.brain.start( __dirname + '/../brain' );
+            runtime.brain.start( __dirname + '/../brain' );
 
-			// Grab the incoming stanza, and parse it
+            // Grab the incoming stanza, and parse it
 			let parsedStanza = Client.parseStanza( stanza, runtime.credentials );
 			if ( !parsedStanza ) {
 				return;
@@ -97,9 +97,9 @@ class ChatBot {
 			}
 
 			// Update the user's message log
-			Client.updateMessageLog( parsedStanza );
+            Client.updateMessageLog( parsedStanza );
 
-			Log.log( JSON.stringify( parsedStanza, null, 4 ) );
+            Log.log( JSON.stringify( parsedStanza, null, 4 ) );
 		} );
 	}
 
@@ -128,7 +128,7 @@ class ChatBot {
 				}
 			}
 		} catch ( e ) {
-			console.trace( 'Command error: ', command, e );
+			Log.log( 'Command error: ', command, e );
 		}
 	}
 
@@ -138,7 +138,7 @@ class ChatBot {
 	 */
 	static isStartingUp() {
 		const messageTime = new Date().getTime();
-		if ( messageTime - runtime.startUpTime < 5000 ) { // 5 seconds
+		if ( messageTime - runtime.startUpTime < 10000 ) { // 10 seconds
 			Log.log('Starting up, skipping message');
 			return true;
 		}

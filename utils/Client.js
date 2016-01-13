@@ -22,7 +22,7 @@ class Client {
         });
 
 		this.client.on('error', function(err) {
-			console.log('CLIENT ERROR: ', err);
+			Log.log('CLIENT ERROR: ', err);
 		});
 
         // Once online, send presence to the room
@@ -30,6 +30,7 @@ class Client {
             Log.log( 'Connected to server' );
 
             this.sendPresence();
+            setInterval(this.sendPresence.bind(this), 1000 * 60);
         }.bind( this ) );
     }
 
@@ -38,6 +39,7 @@ class Client {
      * @return {void}
      */
  	sendPresence() {
+        Log.log('Sending presence to server');
         this.client.send(
             new xmpp.Stanza('presence', {
                 to: this.credentials.roomJid + '/' + this.credentials.username
