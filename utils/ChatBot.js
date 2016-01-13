@@ -65,46 +65,43 @@ class ChatBot {
 				return;
 			}
 
-			runtime.brain.start( __dirname + '/../brain' );
-
-            let parsedStanza;
             try {
+
+			             runtime.brain.start( __dirname + '/../brain' );
+
+
                 // Grab the incoming stanza, and parse it
-    			parsedStanza = Client.parseStanza( stanza, runtime.credentials );
+    			let parsedStanza = Client.parseStanza( stanza, runtime.credentials );
     			if ( !parsedStanza ) {
     				return;
     			}
     			parsedStanza.ranCommand = false;
-            } catch(e) {
-                Log.log('Error parsing stanza', e);
-                return;
-            }
 
-			// Run the incoming stanza against
-			// the core commands for the stanza's type.
-			let coreCommandsForStanzaType = runtime.coreCommands[ parsedStanza.type ];
-			if ( coreCommandsForStanzaType ) {
-				coreCommandsForStanzaType.forEach( ( command ) => {
-					if ( ChatBot.runCommand( command, parsedStanza, chat ) ) {
-						parsedStanza.ranCommand = true;
-					}
-				} );
-			}
+    			// Run the incoming stanza against
+    			// the core commands for the stanza's type.
+    			let coreCommandsForStanzaType = runtime.coreCommands[ parsedStanza.type ];
+    			if ( coreCommandsForStanzaType ) {
+    				coreCommandsForStanzaType.forEach( ( command ) => {
+    					if ( ChatBot.runCommand( command, parsedStanza, chat ) ) {
+    						parsedStanza.ranCommand = true;
+    					}
+    				} );
+    			}
 
-			// Run the incoming stanza against
-			// the plugin commands for the stanza's type.
-			let pluginCommandsForStanzaType = runtime.pluginCommands[ parsedStanza.type ];
-			if ( pluginCommandsForStanzaType ) {
-				pluginCommandsForStanzaType.forEach( ( command ) => {
-					if ( ChatBot.runCommand( command, parsedStanza, chat ) ) {
-						parsedStanza.ranCommand = true;
-					}
-				} );
-			}
+    			// Run the incoming stanza against
+    			// the plugin commands for the stanza's type.
+    			let pluginCommandsForStanzaType = runtime.pluginCommands[ parsedStanza.type ];
+    			if ( pluginCommandsForStanzaType ) {
+    				pluginCommandsForStanzaType.forEach( ( command ) => {
+    					if ( ChatBot.runCommand( command, parsedStanza, chat ) ) {
+    						parsedStanza.ranCommand = true;
+    					}
+    				} );
+    			}
 
-			// Update the user's message log
-			try {
+    			// Update the user's message log
                 Client.updateMessageLog( parsedStanza );
+
             } catch (e) {
                 Log.log('Error updating message log', parsedStanza);
                 return;

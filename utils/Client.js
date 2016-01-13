@@ -229,8 +229,6 @@ class Client {
 			user.lastVisitTime = now;
 		}
 
-        Log.log('presence stanza', message);
-
 		// If presence is unavailable,
 		// return without storing user object
 		if ( message === 'unavailable' ) {
