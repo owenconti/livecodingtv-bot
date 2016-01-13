@@ -7,6 +7,17 @@ You can also browse the commit history to track my commits: [https://github.com/
 * Updated default enabled commands to disable `unavailable` and `greeting` command.
   * If you want to use either of these commands, please make sure you updated your `setup/custom/settings.json` file.
 * No longer greet the bot or the streamer in the `greeting` command.
+* Replaced Pastebin with Gist for help documentation and youtube playlist track output.
+  * **Required update**
+  * Delete your `help` brain file before starting up.
+  * Update the `youtube` plugin to latest from repo, if you use that command.
+  * Setup your Gist/Github access token in `credentials.js`
+    ```
+	{
+		"gistUsername" : "owenconti",
+		"gistAccessToken" : "ajskfnasdifhj98y3129uncawdf"
+	}
+	```
 
 ## Nov 7 2015
 * Added a setting for the `unavailable` command to enable/disable the command.
