@@ -102,12 +102,11 @@ class ChatBot {
     			// Update the user's message log
                 Client.updateMessageLog( parsedStanza );
 
+                Log.log( JSON.stringify( parsedStanza, null, 4 ) );
             } catch (e) {
                 Log.log('Error updating message log', parsedStanza);
                 return;
             }
-
-			Log.log( JSON.stringify( parsedStanza, null, 4 ) );
 		} );
 	}
 
