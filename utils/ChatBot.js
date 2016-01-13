@@ -75,7 +75,7 @@ class ChatBot {
     			}
     			parsedStanza.ranCommand = false;
             } catch(e) {
-                console.trace('Error parsing stanza', e);
+                Log.log('Error parsing stanza', e);
                 return;
             }
 
