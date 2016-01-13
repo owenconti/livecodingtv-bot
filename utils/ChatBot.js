@@ -67,9 +67,10 @@ class ChatBot {
 
 			runtime.brain.start( __dirname + '/../brain' );
 
+            let parsedStanza;
             try {
                 // Grab the incoming stanza, and parse it
-    			let parsedStanza = Client.parseStanza( stanza, runtime.credentials );
+    			parsedStanza = Client.parseStanza( stanza, runtime.credentials );
     			if ( !parsedStanza ) {
     				return;
     			}
@@ -102,7 +103,12 @@ class ChatBot {
 			}
 
 			// Update the user's message log
-			Client.updateMessageLog( parsedStanza );
+			try {
+                Client.updateMessageLog( parsedStanza );
+            } catch (e) {
+                Log.log('Error updating message log', parsedStanza);
+                return;
+            }
 
 			Log.log( JSON.stringify( parsedStanza, null, 4 ) );
 		} );
