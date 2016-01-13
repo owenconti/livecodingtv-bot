@@ -112,8 +112,6 @@ class Client {
     listen( action ) {
         this.client.on('stanza', function( stanza ) {
             action( stanza );
-
-            Log.log('after action()');
         });
     }
 

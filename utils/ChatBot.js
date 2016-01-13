@@ -70,7 +70,7 @@ class ChatBot {
 
                 // Grab the incoming stanza, and parse it
     			let parsedStanza = Client.parseStanza( stanza, runtime.credentials );
-    			if ( !parsedStanza || parsedStanza.message === 'unavailable' ) {
+    			if ( !parsedStanza ) {
     				return;
     			}
     			parsedStanza.ranCommand = false;
