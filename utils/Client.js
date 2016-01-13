@@ -22,7 +22,7 @@ class Client {
         });
 
 		this.client.on('error', function(err) {
-			console.log('CLIENT ERROR: ', err);
+			Log.log('CLIENT ERROR: ', err);
 		});
 
         // Once online, send presence to the room
@@ -151,8 +151,6 @@ class Client {
      */
     static parseStanza( stanza, credentials ) {
         let type = stanza.name;
-
-        Log.log('incoming stanza', stanza);
 
         switch( type ) {
             case 'message':
