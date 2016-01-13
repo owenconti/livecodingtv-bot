@@ -152,6 +152,8 @@ class Client {
     static parseStanza( stanza, credentials ) {
         let type = stanza.name;
 
+        Log.log('incoming stanza', stanza);
+
         switch( type ) {
             case 'message':
                 return Client.parseMessage( stanza, credentials );
@@ -228,6 +230,8 @@ class Client {
 			user.viewCount++;
 			user.lastVisitTime = now;
 		}
+
+        Log.log('presence stanza', message);
 
 		// If presence is unavailable,
 		// return without storing user object

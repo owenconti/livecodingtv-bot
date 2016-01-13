@@ -67,12 +67,17 @@ class ChatBot {
 
 			runtime.brain.start( __dirname + '/../brain' );
 
-			// Grab the incoming stanza, and parse it
-			let parsedStanza = Client.parseStanza( stanza, runtime.credentials );
-			if ( !parsedStanza ) {
-				return;
-			}
-			parsedStanza.ranCommand = false;
+            try {
+                // Grab the incoming stanza, and parse it
+    			let parsedStanza = Client.parseStanza( stanza, runtime.credentials );
+    			if ( !parsedStanza ) {
+    				return;
+    			}
+    			parsedStanza.ranCommand = false;
+            } catch(e) {
+                console.trace('Error parsing stanza', e);
+                return;
+            }
 
 			// Run the incoming stanza against
 			// the core commands for the stanza's type.
