@@ -76,6 +76,17 @@ module.exports = {
 - Github repo must be publicly available
 - Attribute in credentials.js: `githubRepo: 'owenconti/livecodingtv-bot'`
 
+
+### Generating Help documentation
+Help documentation is generated via Gist. Please ensure you have the following variables setup in your credentials file before starting the bot:
+
+```
+{
+	"gistUsername" : "GIST_USERNAME",
+	"gistAccessToken" : "GIST_ACCESS_TOKEN"
+}
+```
+
 ## Custom settings
 To enable plugins once you've downloaded them, edit the `setup/custom/settings.json` file:
 
