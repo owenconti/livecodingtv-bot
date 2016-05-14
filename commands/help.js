@@ -48,9 +48,9 @@ module.exports = [{
         let helpObj = runtime.brain.get('help');
         let output = 'No help documentation generated.';
 
-        if ( helpObj.id ) {
+        if ( helpObj && helpObj.id ) {
             output = `Help documentation can be found at this Gist: ${ Gist.getGistLink(helpObj.id) }`;
-        }
+        } 
 		chat.sendMessage( output );
     }
 }];
