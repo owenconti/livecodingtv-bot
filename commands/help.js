@@ -85,7 +85,7 @@ function generateHelpDocumentation() {
             }
         } );
     } else {
-        output = '\nNo plugin commands available.\n';
+        output += '\nNo plugin commands available.\n';
     }
 
     // Custom commands
