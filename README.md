@@ -1,6 +1,8 @@
 # livecodingtv-bot
 
-# BEFORE YOU BEGIN!
+# NO LONGER SUPPORTED
+
+## BEFORE YOU BEGIN!
 ### This node app uses ES6 features.
 ### Please ensure you are running node v4 or greater!
 
